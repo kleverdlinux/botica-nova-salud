@@ -1,7 +1,7 @@
 import prisma from '../lib/prisma.js';
 import { Prisma } from '@prisma/client';
 import { ErrorNegocio } from '../utils/errores.js';
-import { esProductoVencido, getInicioDiaLima } from '../utils/fechas.js';
+import { esProductoVencido, getInicioDiaLima, getFinDiaLima } from '../utils/fechas.js';
 
 export async function crearVenta({ items, usuarioId, metodoPago = 'EFECTIVO', clienteDoc, clienteNom }) {
   if (!items || items.length === 0) {
@@ -153,9 +153,13 @@ export async function listarVentas({ rol, usuarioId, page = 1, limit = 20 }) {
   const skip = (p - 1) * l;
 
   const where = {};
-  // Si es cajero, solo visualiza sus propias ventas
+  // Si es cajero, solo visualiza sus propias ventas realizadas hoy en horario Lima
   if (rol === 'CAJERO') {
     where.usuarioId = usuarioId;
+    where.createdAt = {
+      gte: getInicioDiaLima(),
+      lte: getFinDiaLima()
+    };
   }
 
   const [total, ventas] = await Promise.all([

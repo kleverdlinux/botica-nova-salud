@@ -11,6 +11,8 @@ import usuarioRoutes from './routes/usuarioRoutes.js';
 import auxRoutes from './routes/auxRoutes.js';
 import inventarioRoutes from './routes/inventarioRoutes.js';
 import ventaRoutes from './routes/ventaRoutes.js';
+import alertaRoutes from './routes/alertaRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
 
 const app = express();
 
@@ -41,6 +43,8 @@ app.use('/api/productos', productoRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/inventario', inventarioRoutes);
 app.use('/api/ventas', ventaRoutes);
+app.use('/api/alertas', alertaRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 app.use('/api', auxRoutes);
 
 // Manejador de rutas no encontradas (404)

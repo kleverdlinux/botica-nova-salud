@@ -206,9 +206,11 @@ export async function actualizarProducto(id, datos) {
   const productoId = parseInt(id, 10);
   if (isNaN(productoId)) throw new ErrorNegocio('ID de producto inválido.', 400);
 
+  const { stock, stockInicial, ...datosSeguros } = datos;
+
   return await prisma.producto.update({
     where: { id: productoId },
-    data: datos
+    data: datosSeguros
   });
 }
 
