@@ -1,0 +1,70 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { loginApi, obtenerPerfilApi } from '../api/authApi.js';
+
+const AuthContext = createContext(null);
+
+export function AuthProvider({ children }) {
+  const [usuario, setUsuario] = useState(() => {
+    const guardado = localStorage.getItem('novasalud_usuario');
+    return guardado ? JSON.parse(guardado) : null;
+  });
+  const [token, setToken] = useState(() => localStorage.getItem('novasalud_token'));
+  const [cargando, setCargando] = useState(true);
+
+  // Al montar la app, validar token contra el backend con /auth/perfil
+  useEffect(() => {
+    async function verificarSesion() {
+      const tokenGuardado = localStorage.getItem('novasalud_token');
+      if (!tokenGuardado) {
+        setCargando(false);
+        return;
+      }
+
+      try {
+        const data = await obtenerPerfilApi();
+        setUsuario(data.usuario);
+        localStorage.setItem('novasalud_usuario', JSON.stringify(data.usuario));
+      } catch (err) {
+        console.warn('Sesión no válida o expirada:', err.response?.data?.error || err.message);
+        localStorage.removeItem('novasalud_token');
+        localStorage.removeItem('novasalud_usuario');
+        setUsuario(null);
+        setToken(null);
+      } finally {
+        setCargando(false);
+      }
+    }
+
+    verificarSesion();
+  }, []);
+
+  const login = async (credenciales) => {
+    const data = await loginApi(credenciales);
+    localStorage.setItem('novasalud_token', data.token);
+    localStorage.setItem('novasalud_usuario', JSON.stringify(data.usuario));
+    setToken(data.token);
+    setUsuario(data.usuario);
+    return data;
+  };
+
+  const logout = () => {
+    localStorage.removeItem('novasalud_token');
+    localStorage.removeItem('novasalud_usuario');
+    setUsuario(null);
+    setToken(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ usuario, token, cargando, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth debe ser utilizado dentro de un AuthProvider');
+  }
+  return context;
+}
