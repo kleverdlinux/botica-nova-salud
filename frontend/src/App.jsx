@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './context/AuthContext.jsx';
+import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import { CarritoProvider } from './context/CarritoContext.jsx';
 import RutaProtegida from './components/RutaProtegida.jsx';
 import LayoutPrivado from './components/LayoutPrivado.jsx';
@@ -12,6 +12,18 @@ import Alertas from './pages/Alertas.jsx';
 import Ventas from './pages/Ventas.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Usuarios from './pages/Usuarios.jsx';
+
+function RutaRaiz() {
+  const { usuario, cargando } = useAuth();
+  if (cargando) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+  return usuario ? <Navigate to="/app/pos" replace /> : <Navigate to="/admin/login" replace />;
+}
 
 export default function App() {
   return (
@@ -84,10 +96,10 @@ export default function App() {
             </Route>
 
             {/* Redirecciones de compatibilidad */}
-            <Route path="/admin" element={<Navigate to="/app/pos" replace />} />
+            <Route path="/" element={<RutaRaiz />} />
+            <Route path="/admin" element={<RutaRaiz />} />
             <Route path="/admin/pos" element={<Navigate to="/app/pos" replace />} />
-            <Route path="/" element={<Navigate to="/app/pos" replace />} />
-            <Route path="*" element={<Navigate to="/app/pos" replace />} />
+            <Route path="*" element={<RutaRaiz />} />
           </Routes>
         </CarritoProvider>
       </AuthProvider>

@@ -10,9 +10,16 @@ export default function Login() {
   const [mostrarPassword, setMostrarPassword] = useState(false);
   const [cargando, setCargando] = useState(false);
 
-  const { login } = useAuth();
+  const { login, usuario, cargando: cargandoAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  React.useEffect(() => {
+    if (!cargandoAuth && usuario) {
+      const destino = location.state?.from?.pathname || '/app/pos';
+      navigate(destino, { replace: true });
+    }
+  }, [usuario, cargandoAuth, navigate, location]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

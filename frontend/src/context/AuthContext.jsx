@@ -5,10 +5,25 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(() => {
-    const guardado = localStorage.getItem('novasalud_usuario');
-    return guardado ? JSON.parse(guardado) : null;
+    try {
+      const guardado = localStorage.getItem('novasalud_usuario');
+      if (!guardado || guardado === 'undefined' || guardado === 'null') return null;
+      return JSON.parse(guardado);
+    } catch (e) {
+      console.warn('Error al leer novasalud_usuario de localStorage:', e);
+      localStorage.removeItem('novasalud_usuario');
+      return null;
+    }
   });
-  const [token, setToken] = useState(() => localStorage.getItem('novasalud_token'));
+  const [token, setToken] = useState(() => {
+    try {
+      const t = localStorage.getItem('novasalud_token');
+      if (!t || t === 'undefined' || t === 'null') return null;
+      return t;
+    } catch {
+      return null;
+    }
+  });
   const [cargando, setCargando] = useState(true);
 
   // Al montar la app, validar token contra el backend con /auth/perfil
