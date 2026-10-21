@@ -1,0 +1,127 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Rol {
+  ADMIN
+  CAJERO
+}
+
+enum TipoMovimiento {
+  ENTRADA
+  SALIDA
+  AJUSTE
+}
+
+enum MetodoPago {
+  EFECTIVO
+  YAPE_PLIN
+  TARJETA
+}
+
+model Usuario {
+  id          Int          @id @default(autoincrement())
+  nombre      String
+  email       String       @unique
+  password    String
+  rol         Rol          @default(CAJERO)
+  activo      Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  ventas      Venta[]
+  movimientos MovimientoInventario[]
+}
+
+model Categoria {
+  id          Int          @id @default(autoincrement())
+  nombre      String       @unique
+  descripcion String?
+  activo      Boolean      @default(true)
+
+  productos   Producto[]
+}
+
+model Proveedor {
+  id          Int          @id @default(autoincrement())
+  ruc         String       @unique
+  razonSocial String
+  telefono    String?
+  contacto    String?
+  activo      Boolean      @default(true)
+
+  productos   Producto[]
+}
+
+model Producto {
+  id               Int          @id @default(autoincrement())
+  codigoBarras     String?      @unique
+  nombre           String
+  principioActivo  String?      // Ej: Amoxicilina, Paracetamol
+  presentacion     String       // Ej: Caja x 20 tabletas, Frasco 120ml
+  laboratorio      String?      // Ej: Portugal, Genfar, Bagó
+  costo            Decimal      @db.Decimal(10, 2)
+  precio           Decimal      @db.Decimal(10, 2)
+  stock            Int          @default(0)
+  stockMinimo      Int          @default(5)
+  lote             String?
+  fechaVencimiento DateTime?
+  imagen           String?
+  activo           Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  categoriaId      Int
+  categoria        Categoria    @relation(fields: [categoriaId], references: [id])
+  proveedorId      Int?
+  proveedor        Proveedor?   @relation(fields: [proveedorId], references: [id])
+
+  detallesVenta    DetalleVenta[]
+  movimientos      MovimientoInventario[]
+}
+
+model Venta {
+  id           Int            @id @default(autoincrement())
+  total        Decimal        @db.Decimal(10, 2)
+  metodoPago   MetodoPago     @default(EFECTIVO)
+  clienteDoc   String?        // DNI o RUC opcional
+  clienteNom   String?
+  createdAt    DateTime       @default(now())
+
+  usuarioId    Int
+  usuario      Usuario        @relation(fields: [usuarioId], references: [id])
+
+  detalles     DetalleVenta[]
+}
+
+model DetalleVenta {
+  id             Int       @id @default(autoincrement())
+  cantidad       Int
+  precioUnitario Decimal   @db.Decimal(10, 2) // Precio congelado al vender
+  subtotal       Decimal   @db.Decimal(10, 2)
+
+  ventaId        Int
+  venta          Venta     @relation(fields: [ventaId], references: [id])
+  productoId     Int
+  producto       Producto  @relation(fields: [productoId], references: [id])
+}
+
+model MovimientoInventario {
+  id            Int            @id @default(autoincrement())
+  tipo          TipoMovimiento
+  cantidad      Int            // Siempre positiva
+  motivo        String         // Ej: "Venta T-000001", "Ingreso factura F01-12", "Merma frasco roto"
+  stockAnterior Int
+  stockNuevo    Int
+  createdAt     DateTime       @default(now())
+
+  productoId    Int
+  producto      Producto       @relation(fields: [productoId], references: [id])
+  usuarioId     Int
+  usuario       Usuario        @relation(fields: [usuarioId], references: [id])
+}
