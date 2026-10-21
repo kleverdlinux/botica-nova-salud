@@ -7,10 +7,11 @@ import { verificarAuth } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
-// Limitador estricto para evitar ataques de fuerza bruta en el login
+// Limitador que solo penaliza los intentos fallidos
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  limit: 10,                 // Máximo 10 intentos (el 11avo se bloquea)
+  windowMs: 15 * 60 * 1000,       // 15 minutos
+  limit: 10,                       // 10 intentos fallidos máximos
+  skipSuccessfulRequests: true,    // ¡Solo cuenta intentos fallidos!
   message: { error: 'Demasiados intentos fallidos. Por seguridad, intente de nuevo en 15 minutos.' },
   standardHeaders: true,
   legacyHeaders: false
