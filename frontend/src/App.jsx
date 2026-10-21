@@ -7,6 +7,9 @@ import RutaProtegida from './components/RutaProtegida.jsx';
 import LayoutPrivado from './components/LayoutPrivado.jsx';
 import Login from './pages/Login.jsx';
 import Pos from './pages/Pos.jsx';
+import Inventario from './pages/Inventario.jsx';
+import Alertas from './pages/Alertas.jsx';
+import Ventas from './pages/Ventas.jsx';
 
 export default function App() {
   return (
@@ -46,22 +49,27 @@ export default function App() {
             {/* Ruta pública de Autenticación */}
             <Route path="/admin/login" element={<Login />} />
 
-            {/* Rutas Privadas del Panel del Sistema */}
+            {/* Rutas Privadas del Panel del Sistema bajo /app/* */}
             <Route
-              path="/admin"
+              path="/app"
               element={
                 <RutaProtegida>
                   <LayoutPrivado />
                 </RutaProtegida>
               }
             >
-              <Route index element={<Navigate to="/admin/pos" replace />} />
+              <Route index element={<Navigate to="/app/pos" replace />} />
               <Route path="pos" element={<Pos />} />
+              <Route path="inventario" element={<Inventario />} />
+              <Route path="alertas" element={<Alertas />} />
+              <Route path="ventas" element={<Ventas />} />
             </Route>
 
-            {/* Redirección por defecto */}
-            <Route path="/" element={<Navigate to="/admin/pos" replace />} />
-            <Route path="*" element={<Navigate to="/admin/pos" replace />} />
+            {/* Redirecciones de compatibilidad */}
+            <Route path="/admin" element={<Navigate to="/app/pos" replace />} />
+            <Route path="/admin/pos" element={<Navigate to="/app/pos" replace />} />
+            <Route path="/" element={<Navigate to="/app/pos" replace />} />
+            <Route path="*" element={<Navigate to="/app/pos" replace />} />
           </Routes>
         </CarritoProvider>
       </AuthProvider>

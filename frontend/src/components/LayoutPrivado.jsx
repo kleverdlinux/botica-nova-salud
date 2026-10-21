@@ -13,7 +13,8 @@ import {
   X,
   Clock,
   ShieldCheck,
-  UserCheck
+  UserCheck,
+  ReceiptText
 } from 'lucide-react';
 import { formatearFechaLima } from '../utils/formateadores.js';
 
@@ -29,27 +30,31 @@ export default function LayoutPrivado() {
 
   const navItems = [
     {
-      to: '/admin/pos',
+      to: '/app/pos',
       label: 'Punto de Venta (POS)',
       icon: ShoppingCart,
       disponible: true
     },
     {
-      to: '/admin/inventario',
+      to: '/app/inventario',
       label: 'Inventario de Productos',
       icon: Package,
-      disponible: false,
-      fase: 'Fase 5b'
+      disponible: true
     },
     {
-      to: '/admin/alertas',
+      to: '/app/alertas',
       label: 'Alertas de Stock y Vencimiento',
       icon: Bell,
-      disponible: false,
-      fase: 'Fase 5b'
+      disponible: true
     },
     {
-      to: '/admin/dashboard',
+      to: '/app/ventas',
+      label: 'Historial de Ventas',
+      icon: ReceiptText,
+      disponible: true
+    },
+    {
+      to: '/app/dashboard',
       label: 'Panel & Métricas (Admin)',
       icon: LayoutDashboard,
       disponible: false,
@@ -57,7 +62,7 @@ export default function LayoutPrivado() {
       soloAdmin: true
     },
     {
-      to: '/admin/usuarios',
+      to: '/app/usuarios',
       label: 'Gestión de Usuarios',
       icon: Users,
       disponible: false,

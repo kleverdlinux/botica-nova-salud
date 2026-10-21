@@ -26,7 +26,7 @@ export default function Login() {
     try {
       const data = await login({ email: email.trim(), password });
       toast.success(`Bienvenido(a), ${data.usuario.nombre}`);
-      const destino = location.state?.from?.pathname || '/admin/pos';
+      const destino = location.state?.from?.pathname || '/app/pos';
       navigate(destino, { replace: true });
     } catch (err) {
       const mensaje = err.response?.data?.error || 'Error al iniciar sesión. Intente nuevamente.';
@@ -122,17 +122,19 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Nota de Demostración para Evaluación SENATI */}
-          <div className="mt-6 pt-5 border-t border-slate-100 bg-slate-50/80 -mx-8 -mb-8 p-6 rounded-b-3xl">
-            <div className="flex items-start space-x-2 text-slate-600">
-              <ShieldCheck className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
-              <div className="text-[11px] leading-relaxed">
-                <p className="font-semibold text-slate-800">Credenciales de Evaluación Académica:</p>
-                <p>• Admin: <code className="text-slate-900 font-mono">admin@novasalud.com</code> / <code className="text-slate-900 font-mono">Admin123!</code></p>
-                <p>• Cajero: <code className="text-slate-900 font-mono">cajero@novasalud.com</code> / <code className="text-slate-900 font-mono">Cajero123!</code></p>
+          {/* Nota de Demostración para Evaluación SENATI (Visible solo en desarrollo) */}
+          {import.meta.env.DEV && (
+            <div className="mt-6 pt-5 border-t border-slate-100 bg-slate-50/80 -mx-8 -mb-8 p-6 rounded-b-3xl">
+              <div className="flex items-start space-x-2 text-slate-600">
+                <ShieldCheck className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
+                <div className="text-[11px] leading-relaxed">
+                  <p className="font-semibold text-slate-800">Credenciales de Evaluación Académica (Dev):</p>
+                  <p>• Admin: <code className="text-slate-900 font-mono">admin@novasalud.com</code> / <code className="text-slate-900 font-mono">Admin123!</code></p>
+                  <p>• Cajero: <code className="text-slate-900 font-mono">cajero@novasalud.com</code> / <code className="text-slate-900 font-mono">Cajero123!</code></p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
