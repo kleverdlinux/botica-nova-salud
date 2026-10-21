@@ -57,16 +57,14 @@ export default function LayoutPrivado() {
       to: '/app/dashboard',
       label: 'Panel & Métricas (Admin)',
       icon: LayoutDashboard,
-      disponible: false,
-      fase: 'Fase 5c',
+      disponible: true,
       soloAdmin: true
     },
     {
       to: '/app/usuarios',
       label: 'Gestión de Usuarios',
       icon: Users,
-      disponible: false,
-      fase: 'Fase 5c',
+      disponible: true,
       soloAdmin: true
     }
   ];

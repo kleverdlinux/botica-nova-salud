@@ -10,6 +10,8 @@ import Pos from './pages/Pos.jsx';
 import Inventario from './pages/Inventario.jsx';
 import Alertas from './pages/Alertas.jsx';
 import Ventas from './pages/Ventas.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import Usuarios from './pages/Usuarios.jsx';
 
 export default function App() {
   return (
@@ -63,6 +65,22 @@ export default function App() {
               <Route path="inventario" element={<Inventario />} />
               <Route path="alertas" element={<Alertas />} />
               <Route path="ventas" element={<Ventas />} />
+              <Route
+                path="dashboard"
+                element={
+                  <RutaProtegida rolesPermitidos={['ADMIN']}>
+                    <Dashboard />
+                  </RutaProtegida>
+                }
+              />
+              <Route
+                path="usuarios"
+                element={
+                  <RutaProtegida rolesPermitidos={['ADMIN']}>
+                    <Usuarios />
+                  </RutaProtegida>
+                }
+              />
             </Route>
 
             {/* Redirecciones de compatibilidad */}
