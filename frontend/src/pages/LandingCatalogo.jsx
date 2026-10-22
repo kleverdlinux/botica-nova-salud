@@ -363,17 +363,34 @@ export default function LandingCatalogo() {
         )}
       </header>
 
-      {/* 2. HERO MONUMENTAL ESTILO MARA VOSS */}
+      {/* 2. HERO MONUMENTAL ESTILO MARA VOSS CON VIDEO & RETRATO EDITORIAL */}
       <section
         id="inicio"
         ref={heroRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="relative pt-36 pb-24 md:pt-44 md:pb-32 px-4 sm:px-6 lg:px-10 max-w-[1440px] mx-auto min-h-[90vh] flex flex-col justify-between overflow-hidden"
+        className="relative pt-36 pb-24 md:pt-44 md:pb-32 px-4 sm:px-6 lg:px-10 max-w-[1440px] mx-auto min-h-[92vh] flex flex-col justify-between overflow-hidden"
       >
+        {/* VIDEO DE FONDO CINEMÁTICO */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="/media/laboratorio-hero.png"
+            className="w-full h-full object-cover object-center opacity-30 mix-blend-screen scale-105 transition-opacity duration-1000"
+          >
+            <source src="/media/hero-video.mp4" type="video/mp4" />
+          </video>
+          {/* Capas de velo para garantizar contraste absoluto de tipografía */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#060A08] via-[#060A08]/90 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#060A08] via-transparent to-[#060A08]/85" />
+        </div>
+
         {/* Efecto de Luz Esmeralda Fluida que sigue el puntero */}
         <div
-          className="pointer-events-none absolute w-[650px] h-[650px] rounded-full blur-[140px] bg-gradient-to-tr from-[#10B981]/15 to-[#34D399]/10 transition-opacity duration-500 ease-out -translate-x-1/2 -translate-y-1/2 z-0"
+          className="pointer-events-none absolute w-[650px] h-[650px] rounded-full blur-[140px] bg-gradient-to-tr from-[#10B981]/20 to-[#34D399]/15 transition-opacity duration-500 ease-out -translate-x-1/2 -translate-y-1/2 z-0"
           style={{
             left: `${mouseGlow.x}px`,
             top: `${mouseGlow.y}px`,
@@ -384,62 +401,84 @@ export default function LandingCatalogo() {
         {/* Textura sutil geométrica de fondo */}
         <div className="absolute inset-0 bg-[radial-gradient(#10B981_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.06] pointer-events-none" />
 
-        {/* CONTENIDO DEL HERO */}
-        <div className="relative z-10 space-y-10">
-          {/* Subtítulo Superior con formato editorial */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#14221A] pb-5">
-            <span className="text-xs sm:text-sm font-mono tracking-widest text-[#9CA3AF] uppercase">
-              // BOTICA & DISPENSACIÓN ESPECIALIZADA
-            </span>
-            <div className="flex items-center space-x-2 text-xs font-mono text-[#34D399]">
-              <ShieldCheck className="w-4 h-4 text-[#10B981]" />
-              <span>DIGEMID CERTIFICADO · QUÍMICO REGENTE TITULADO</span>
-            </div>
-          </div>
-
-          {/* TÍTULO MONUMENTAL MARA VOSS */}
-          <div className="space-y-4">
-            <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-2">
-              <h1 className="text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight leading-[0.88] text-white select-none">
-                <span className="text-[#10B981] inline-block hover:scale-[1.02] transition-transform">NOVA</span>
-                <span className="text-white inline-block ml-3 font-light hover:scale-[1.02] transition-transform">SALUD</span>
-                <sup className="text-xl sm:text-3xl text-[#34D399] font-mono ml-2 font-normal">[01]</sup>
-              </h1>
-              <span className="text-xs sm:text-sm font-mono text-[#6B7280] tracking-widest uppercase md:text-right">
-                CATÁLOGO PÚBLICO // CONSULTA EN TIEMPO REAL
+        {/* CONTENIDO DEL HERO EN GRID */}
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Columna Izquierda: Tipografía Monumental Mara Voss */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* Subtítulo Superior con formato editorial */}
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#14221A] pb-4">
+              <span className="text-xs sm:text-sm font-mono tracking-widest text-[#9CA3AF] uppercase">
+                // BOTICA & DISPENSACIÓN ESPECIALIZADA
               </span>
+              <div className="flex items-center space-x-2 text-xs font-mono text-[#34D399]">
+                <ShieldCheck className="w-4 h-4 text-[#10B981]" />
+                <span>DIGEMID CERTIFICADO · QUÍMICO REGENTE TITULADO</span>
+              </div>
             </div>
 
-            <p className="text-base sm:text-xl md:text-2xl text-[#9CA3AF] font-light max-w-3xl leading-relaxed pt-3">
-              Medicamentos 100% garantizados, orientación farmacéutica cercana y precios justos en Soles. Verifica stock al instante o envíanos tu receta médica.
-            </p>
+            {/* TÍTULO MONUMENTAL MARA VOSS */}
+            <div className="space-y-4">
+              <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-2">
+                <h1 className="text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight leading-[0.88] text-white select-none">
+                  <span className="text-[#10B981] inline-block hover:scale-[1.02] transition-transform">NOVA</span>
+                  <span className="text-white inline-block ml-3 font-light hover:scale-[1.02] transition-transform">SALUD</span>
+                  <sup className="text-xl sm:text-3xl text-[#34D399] font-mono ml-2 font-normal">[01]</sup>
+                </h1>
+              </div>
+
+              <p className="text-base sm:text-xl md:text-2xl text-[#9CA3AF] font-light max-w-2xl leading-relaxed pt-2">
+                Medicamentos 100% garantizados, orientación farmacéutica cercana y precios justos en Soles. Verifica stock al instante o envíanos tu receta médica.
+              </p>
+            </div>
+
+            {/* PÍLDORAS DE ACCIÓN HERO */}
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <a
+                href="#catalogo"
+                className="px-8 py-4 rounded-full bg-white text-black hover:bg-[#10B981] hover:text-black font-bold text-sm sm:text-base flex items-center space-x-3 transition-all duration-200 hover:scale-[1.04] active:scale-[0.98] shadow-xl shadow-white/5"
+              >
+                <span>Explorar Catálogo en Vivo</span>
+                <ArrowDownRight className="w-4 h-4" />
+              </a>
+
+              <a
+                href={generarLinkWhatsApp(null, 'receta')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-7 py-4 rounded-full bg-[#0E1A13] hover:bg-[#15271D] border border-[#1E3827] text-[#E5E7EB] hover:text-white font-semibold text-sm sm:text-base flex items-center space-x-3 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <MessageCircle className="w-4 h-4 text-[#10B981]" />
+                <span>Enviar Receta Médica</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </a>
+            </div>
           </div>
 
-          {/* PÍLDORAS DE ACCIÓN HERO */}
-          <div className="flex flex-wrap items-center gap-4 pt-4">
-            <a
-              href="#catalogo"
-              className="px-8 py-4 rounded-full bg-white text-black hover:bg-[#10B981] hover:text-black font-bold text-sm sm:text-base flex items-center space-x-3 transition-all duration-200 hover:scale-[1.04] active:scale-[0.98] shadow-xl shadow-white/5"
-            >
-              <span>Explorar Catálogo en Vivo</span>
-              <ArrowDownRight className="w-4 h-4" />
-            </a>
+          {/* Columna Derecha: Retrato Editorial de la Directora Farmacéutica con zoom interactivo */}
+          <div className="lg:col-span-4 relative group">
+            <div className="relative rounded-3xl overflow-hidden border border-[#1E3827] bg-[#0B1510] shadow-2xl shadow-[#10B981]/10">
+              {/* Imagen con zoom al hover como en Mara Voss */}
+              <div className="aspect-3/4 sm:aspect-4/5 overflow-hidden relative">
+                <img
+                  src="/media/directora-farmaceutica.png"
+                  alt="Química Farmacéutica Regente - Botica Nova Salud"
+                  className="w-full h-full object-cover object-top filter grayscale contrast-110 brightness-95 group-hover:scale-105 group-hover:filter-none transition-all duration-700 ease-out"
+                />
+                {/* Velo de gradiente inferior */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#060A08] via-transparent to-transparent opacity-90" />
 
-            <a
-              href={generarLinkWhatsApp(null, 'receta')}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-7 py-4 rounded-full bg-[#0E1A13] hover:bg-[#15271D] border border-[#1E3827] text-[#E5E7EB] hover:text-white font-semibold text-sm sm:text-base flex items-center space-x-3 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <MessageCircle className="w-4 h-4 text-[#10B981]" />
-              <span>Enviar Receta Médica</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </a>
-
-            <div className="hidden lg:flex items-center space-x-3 pl-4 border-l border-[#14221A] text-xs font-mono text-[#9CA3AF]">
-              <span>UBICACIÓN: LIMA, PERÚ</span>
-              <span>•</span>
-              <span>ATENCIÓN DIARIA</span>
+                {/* Badge flotante de acreditación */}
+                <div className="absolute bottom-4 left-4 right-4 p-4 rounded-2xl bg-[#060A08]/85 backdrop-blur-md border border-[#1E3827] space-y-1">
+                  <div className="flex items-center space-x-2 text-[10px] font-mono text-[#10B981] uppercase tracking-wider">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse"></span>
+                    <span>DIRECCIÓN TÉCNICA FARMACÉUTICA</span>
+                  </div>
+                  <h4 className="font-bold text-sm text-white">Q.F. Regente Colegiada</h4>
+                  <p className="text-[11px] text-[#9CA3AF]">
+                    Colegio Químico Farmacéutico del Perú · Matrícula CQFP activa
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -486,6 +525,37 @@ export default function LandingCatalogo() {
                 Botica Nova Salud transforma la compra de medicamentos en una experiencia de confianza, seguridad y acompañamiento permanente.
               </span>
             </h2>
+          </div>
+
+          {/* FOTOGRAFÍA EDITORIAL DESTACADA - LABORATORIO BOTÁNICO & CONTROL TÉCNICO */}
+          <div className="relative rounded-3xl overflow-hidden border border-[#1E3827] bg-[#0B1510] shadow-2xl group">
+            <div className="relative aspect-16/9 md:aspect-21/9 overflow-hidden">
+              <img
+                src="/media/laboratorio-hero.png"
+                alt="Laboratorio Botánico y Farmacovigilancia - Botica Nova Salud"
+                className="w-full h-full object-cover filter grayscale contrast-110 brightness-90 group-hover:scale-105 group-hover:filter-none transition-all duration-700 ease-out"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#060A08] via-transparent to-transparent opacity-85" />
+            </div>
+
+            <div className="absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div className="space-y-1.5 max-w-xl">
+                <span className="text-[11px] font-mono tracking-widest text-[#10B981] uppercase block">
+                  // INSTALACIONES & FARMACOVIGILANCIA
+                </span>
+                <h3 className="text-xl md:text-3xl font-extrabold text-white tracking-tight">
+                  Laboratorio de Control & Dispensación Especializada
+                </h3>
+                <p className="text-xs md:text-sm text-[#9CA3AF] leading-relaxed">
+                  Espacios asépticos y cadena de frío regulada que garantizan la máxima pureza de principios activos y la estabilidad de cada formulación.
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-[#060A08]/80 border border-[#10B981]/30 backdrop-blur-md text-xs font-mono text-[#34D399]">
+                <ShieldCheck className="w-4 h-4 text-[#10B981]" />
+                <span>BPA & DIGEMID CERTIFICADO</span>
+              </div>
+            </div>
           </div>
 
           {/* 4 Pilares de Calidad y Confianza (Estilo Bento Grid) */}
