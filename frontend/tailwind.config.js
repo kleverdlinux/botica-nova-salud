@@ -6,7 +6,12 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        display: ['MonaSemi', '"PP Neue Montreal"', 'sans-serif'],
+        sans: ['Mona', 'Arial', 'sans-serif'],
+      },
       colors: {
+        accent: '#ff630f',
         brand: {
           50: '#ecfdf5',
           100: '#d1fae5',
