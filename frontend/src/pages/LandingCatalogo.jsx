@@ -4,33 +4,20 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   MessageCircle,
-  ShieldCheck,
-  ThermometerSnowflake,
-  Award,
-  CreditCard,
-  ChevronDown,
-  RefreshCw,
-  Search,
-  X,
-  Check,
   Copy,
-  Phone,
-  MapPin,
-  Clock,
   LogIn,
-  LayoutDashboard
+  X
 } from 'lucide-react';
 
 /* =========================================================================
-   CONFIGURACIÓN EDITABLE DEL SITIO (BASADO EN EL SISTEMA MARA VOSS)
+   CONFIGURACIÓN EDITABLE (SECCIÓN 12 DEL BRIEF MARA VOSS ADAPTADO A NOVA SALUD)
    ========================================================================= */
 const PERSONA = {
-  companyName: 'Nova Salud',
   firstName: 'Nova',
   lastName: 'Salud',
   monogram: 'NS',
   role: 'Botica Especializada & Farmacia Clínica',
-  practice: 'Medicamentos certificados DIGEMID, cadena de frío y atención personalizada.',
+  practice: 'Brand identities, clinical systems, pharmaceutical care.',
   email: 'farmacia@boticanovasalud.pe',
   phone: '+51 999 888 777',
   location: 'Av. Gran Chimú 1248, San Juan de Lurigancho, Lima, Perú',
@@ -39,25 +26,32 @@ const PERSONA = {
 
 const ASSETS = {
   hero: '/media/directora-farmaceutica.png',
-  featured: '/media/laboratorio-hero.png',
+  statement: null,
+  gridline: null,
+  forma: null,
+  still: null,
+  fieldnotes: null,
+  orbit: null,
+  signal: null,
+  featuredPhoto: '/media/laboratorio-hero.png',
   video: '/media/hero-video.mp4'
 };
 
 const PROJECTS = [
   {
     id: '01',
-    slug: 'amoxicilina-clavulanico',
-    title: 'Amoxicilina + Ácido Clavulánico 875/125mg',
+    slug: 'amoxicilina-acido-clavulanico',
+    title: 'Amoxicilina + Ác. Clavulánico 875/125mg',
     year: '2026',
     discipline: 'Antibacteriano Sistémico',
     role: 'Dispensación bajo receta médica obligatoria.',
     summary: 'Antibiótico de amplio espectro para infecciones respiratorias y bacterianas complejas.',
     challenge: 'Garantizar el cumplimiento estricto de la prescripción médica y evitar la resistencia antimicrobiana.',
-    approach: 'Verificación de receta médica por Químico Farmacéutico regente, asesoría de posología y registro en sistema de farmacovigilancia.',
+    approach: 'Un protocolo riguroso de validación por Químico Farmacéutico colegiado, verificación de posología e ingreso al sistema de farmacovigilancia DIGEMID.',
     deliverables: ['Blíster sellado x 14 tabletas', 'Asesoría posológica personalizada', 'Trazabilidad de lote DIGEMID'],
     coverKey: 'gridline',
     projectType: 'Medicamento Ético Regulado',
-    featuredLines: ['ANTIBIÓTICOS', 'ESPECIALIZADOS'],
+    featuredLines: ['GRIDLINE', 'LABORATORIO'],
     caption: 'Control Sanitario DIGEMID // S/ 38.50',
     precio: 38.50,
     laboratorio: 'Medifarma S.A.',
@@ -66,15 +60,15 @@ const PROJECTS = [
   },
   {
     id: '02',
-    slug: 'insulina-glargina',
-    title: 'Insulina Glargina 100 UI/ml Solución Inyectable',
+    slug: 'insulina-glargina-solostar',
+    title: 'Insulina Glargina 100 UI/ml Inyectable',
     year: '2026',
-    discipline: 'Endocrinología & Cadena de Frío',
+    discipline: 'Cadena de Frío & Endocrinología',
     role: 'Conservación garantizada entre 2°C y 8°C.',
     summary: 'Insulina análoga humana de acción prolongada para el control glucémico diario en diabetes mellitus.',
     challenge: 'Preservar la cadena de frío sin interrupciones desde la recepción hasta la entrega al paciente.',
-    approach: 'Monitoreo termométrico digital en refrigerador farmacéutico certificado y entrega en estuche térmico con gel refrigerante.',
-    deliverables: ['Pluma prellenada descartable Solostar 3ml', 'Empaque térmico de traslado seguro', 'Hoja de control de glicemia'],
+    approach: 'Monitoreo termométrico digital en refrigerador farmacéutico certificado y entrega en estuche térmico con gel refrigerante para traslado seguro.',
+    deliverables: ['Pluma prellenada descartable Solostar 3ml', 'Empaque térmico de traslado seguro', 'Hoja de control glucémico'],
     coverKey: 'forma',
     projectType: 'Cadena de Frío Estricta',
     caption: 'Refrigeración 2°C - 8°C // S/ 89.00',
@@ -85,14 +79,14 @@ const PROJECTS = [
   },
   {
     id: '03',
-    slug: 'paracetamol-gotas-jarabe',
-    title: 'Paracetamol Pediátrico 100mg/ml Gotas Orales',
+    slug: 'paracetamol-pediatrico-gotas',
+    title: 'Paracetamol Pediátrico 100mg/ml Gotas',
     year: '2025',
     discipline: 'Pediatría & Alivio Térmico',
     role: 'Dosificación exacta por peso corporal.',
     summary: 'Analgésico y antipirético infantil de primera línea para cuadros febriles y dolor post-vacunación.',
     challenge: 'Evitar errores de sobredosificación en lactantes y niños pequeños.',
-    approach: 'Cálculo de dosis exacta según peso y edad por el farmacéutico en mostrador, entregando gotero calibrado.',
+    approach: 'Cálculo de dosis exacta según peso y edad por el farmacéutico en mostrador, entregando gotero calibrado milimétrico.',
     deliverables: ['Frasco gotero x 30ml', 'Gotero milimetrado certificado', 'Guía de dosificación pediátrica'],
     coverKey: 'still',
     projectType: 'Venta Libre Supervisada',
@@ -104,8 +98,8 @@ const PROJECTS = [
   },
   {
     id: '04',
-    slug: 'losartan-potasico',
-    title: 'Losartán Potásico 50mg Tabletas Recubiertas',
+    slug: 'losartan-potasico-50mg',
+    title: 'Losartán Potásico 50mg Tabletas',
     year: '2025',
     discipline: 'Cardiología & Hipertensión',
     role: 'Tratamiento crónico y prevención cardiovascular.',
@@ -123,15 +117,15 @@ const PROJECTS = [
   },
   {
     id: '05',
-    slug: 'suero-fisiologico-electrolitos',
-    title: 'Solución Rehidratante Oral Electrolitos Zinc',
+    slug: 'solucion-rehidratante-oral',
+    title: 'Electrolitos Orales Balanceados Zinc',
     year: '2024',
     discipline: 'Gastroenterología & Hidratación',
     role: 'Restablecimiento de balance hidroelectrolítico.',
     summary: 'Fórmula recomendada por la OMS con zinc para reposición rápida de líquidos en cuadros deshidratantes.',
     challenge: 'Proporcionar una opción de absorción acelerada apta para niños y adultos mayores.',
-    approach: 'Disponibilidad permanente de sabores agradables que favorecen la tolerancia oral y la pronta recuperación.',
-    deliverables: ['Botella x 500ml sabor manzana/fresa', 'Formulación balanceada OMS + Zinc', 'Guía de signos de alarma'],
+    approach: 'Disponibilidad permanente de formulaciones balanceadas que favorecen la tolerancia oral y la pronta recuperación celular.',
+    deliverables: ['Botella x 500ml fórmula balanceada', 'Formulación OMS + Zinc', 'Guía de hidratación rápida'],
     coverKey: 'orbit',
     projectType: 'Rehidratación Rápida',
     caption: 'Balance Electrolítico // S/ 9.80',
@@ -142,7 +136,7 @@ const PROJECTS = [
   },
   {
     id: '06',
-    slug: 'complejo-b-vitamina-c',
+    slug: 'neurobion-doble-accion',
     title: 'Neurobión Doble Acción B12 + Vitamina C',
     year: '2024',
     discipline: 'Neurobiología & Suplementación',
@@ -186,7 +180,7 @@ const SERVICES = [
 ];
 
 /* =========================================================================
-   COMPONENTES SVG VECTORIALES EXACTOS (DEL SISTEMA MARA VOSS)
+   ILUSTRACIONES VECTORIALES EXACTAS (SECCIÓN 13 DEL BRIEF MARA VOSS)
    ========================================================================= */
 const ArtStatement = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="600" height="720" viewBox="0 0 600 720" className="w-full h-full">
@@ -250,12 +244,12 @@ const ArtGridline = () => (
     <path d="M400 400h175v175H400z" fill="#ff630f" />
     <path d="M418 418h139v139H418z" fill="none" stroke="#171717" strokeWidth="2" />
     <g fontFamily="MonaSemi, Arial, sans-serif" fill="#111">
-      <text x="65" y="141" fontSize="74" fontWeight="700" letterSpacing="-5">LABORATORIO</text>
-      <text x="232" y="324" fontSize="85" fontWeight="400" letterSpacing="-6">CLÍNICO</text>
-      <text x="65" y="705" fontSize="13" letterSpacing="1">CIENCIA PURA</text>
-      <text x="65" y="726" fontSize="13" letterSpacing="1">CALIDAD DIGEMID.</text>
-      <text x="587" y="708" fontSize="11">SISTEMA SANITARIO</text>
-      <text x="587" y="727" fontSize="11">NOVA SALUD / 2026</text>
+      <text x="65" y="141" fontSize="74" fontWeight="700" letterSpacing="-5">GRIDLINE</text>
+      <text x="232" y="324" fontSize="85" fontWeight="400" letterSpacing="-6">STUDIO</text>
+      <text x="65" y="705" fontSize="13" letterSpacing="1">SPACES FOR</text>
+      <text x="65" y="726" fontSize="13" letterSpacing="1">NEW PERSPECTIVES.</text>
+      <text x="587" y="708" fontSize="11">IDENTITY SYSTEM</text>
+      <text x="587" y="727" fontSize="11">CONCEPT / 2026</text>
     </g>
     <path d="M602 260h95v95m0-95-95 95" stroke="#ff630f" strokeWidth="10" fill="none" />
   </svg>
@@ -286,8 +280,8 @@ const ArtStill = () => (
     <rect width="800" height="800" fill="#d5cec0" />
     <path d="M0 565 800 502v298H0Z" fill="#b9b2a4" />
     <g fontFamily="MonaSemi, Arial, sans-serif" fill="#35352e">
-      <text x="45" y="100" fontSize="57" letterSpacing="-4">dosificación segura</text>
-      <text x="48" y="132" fontSize="11" letterSpacing="2">PEDIATRÍA &amp; ALIVIO TÉRMICO</text>
+      <text x="45" y="100" fontSize="57" letterSpacing="-4">still objects</text>
+      <text x="48" y="132" fontSize="11" letterSpacing="2">LESS, WITH INTENTION.</text>
     </g>
     <rect x="245" y="359" width="162" height="302" rx="24" fill="#eee9db" />
     <rect x="275" y="305" width="102" height="60" rx="5" fill="#292a25" />
@@ -314,8 +308,8 @@ const ArtFieldnotes = () => (
     <g fontFamily="MonaSemi, Arial, sans-serif" fill="#171717">
       <text x="59" y="171" fontSize="10" letterSpacing="2">SALUD CARDIOVASCULAR</text>
       <text x="428" y="171" fontSize="10" letterSpacing="1">PROGRAMA DE PACIENTE CRÓNICO</text>
-      <text x="55" y="253" fontSize="58" letterSpacing="-3">Control de</text>
-      <text x="55" y="322" fontSize="58" letterSpacing="-3">presión arterial.</text>
+      <text x="55" y="253" fontSize="58" letterSpacing="-3">Between</text>
+      <text x="55" y="322" fontSize="58" letterSpacing="-3">the walls.</text>
       <text x="60" y="638" fontSize="9">014 / MONITOREO GRATUITO</text>
       <text x="694" y="638" fontSize="9">04</text>
     </g>
@@ -333,8 +327,8 @@ const ArtOrbit = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" className="w-full h-full">
     <rect width="800" height="800" fill="#e4e0d5" />
     <g fontFamily="MonaSemi, Arial, sans-serif">
-      <text x="45" y="92" fill="#141414" fontSize="54" letterSpacing="-3">electrolitos</text>
-      <text x="510" y="78" fill="#444" fontSize="10" letterSpacing="2">REHIDRATACIÓN ORAL OMS</text>
+      <text x="45" y="92" fill="#141414" fontSize="54" letterSpacing="-3">orbit</text>
+      <text x="510" y="78" fill="#444" fontSize="10" letterSpacing="2">A SPACE FOR HEALTH</text>
     </g>
     <rect x="40" y="151" width="720" height="550" rx="16" fill="#171717" />
     <path d="M195 151v550M195 219h565" stroke="#444" />
@@ -358,14 +352,14 @@ const ArtSignal = () => (
     <rect width="800" height="800" fill="#e6e0d3" />
     <path d="M0 69h800v129H0zM0 320h800v95H0zM0 621h800v96H0z" fill="#ff630f" />
     <g fontFamily="MonaSemi, Arial, sans-serif" fontWeight="900" fontSize="160" letterSpacing="-10" fill="#151515">
-      <text x="18" y="220" textLength="756" lengthAdjust="spacingAndGlyphs">VITALIDAD</text>
-      <text x="18" y="435" textLength="756" lengthAdjust="spacingAndGlyphs">COMPLEJO B</text>
-      <text x="18" y="648" textLength="756" lengthAdjust="spacingAndGlyphs">BIENESTAR</text>
+      <text x="18" y="220" textLength="756" lengthAdjust="spacingAndGlyphs">SIGNAL</text>
+      <text x="18" y="435" textLength="756" lengthAdjust="spacingAndGlyphs">SIGNAL</text>
+      <text x="18" y="648" textLength="756" lengthAdjust="spacingAndGlyphs">SIGNAL</text>
     </g>
     <path d="M0 274h800M0 489h800" stroke="#181818" />
     <g fontFamily="MonaSemi, Arial, sans-serif" fill="#171717" fontSize="11" letterSpacing="1">
       <text x="24" y="36">NEUROPROTECCIÓN &amp; METABOLISMO</text>
-      <text x="657" y="36">FORMULACIÓN</text>
+      <text x="657" y="36">STUDY 06</text>
       <text x="24" y="763">DISPENSACIÓN FARMACÉUTICA.</text>
       <text x="577" y="763">NOVA SALUD / 2026</text>
     </g>
@@ -382,55 +376,74 @@ const artMap = {
 };
 
 /* =========================================================================
-   COMPONENTE PRINCIPAL: LANDING CATÁLOGO (ARQUITECTURA MARA VOSS)
+   COMPONENTE AUXILIAR: ENLACE CON TEXTO RODANTE (ROLLING TEXT 96PX)
+   ========================================================================= */
+function RollingLink({ href, label, onClick }) {
+  return (
+    <a
+      href={href}
+      onClick={onClick}
+      className="group block h-[70px] sm:h-[88px] overflow-hidden text-5xl sm:text-7xl md:text-8xl lg:text-[96px] font-display font-medium tracking-[-3.84px] leading-[70px] sm:leading-[88px] text-white select-none"
+    >
+      <span className="inline-flex">
+        {label.split('').map((char, i) => (
+          <span key={i} className="inline-block h-[70px] sm:h-[88px] overflow-hidden">
+            <span
+              className="flex flex-col transition-transform duration-500 ease-out group-hover:-translate-y-[70px] sm:group-hover:-translate-y-[88px]"
+              style={{ transitionDelay: `${i * 34}ms` }}
+            >
+              <span className="h-[70px] sm:h-[88px] flex items-center justify-center text-white">
+                {char === ' ' ? '\u00A0' : char}
+              </span>
+              <span className="h-[70px] sm:h-[88px] flex items-center justify-center text-[#ff630f]">
+                {char === ' ' ? '\u00A0' : char}
+              </span>
+            </span>
+          </span>
+        ))}
+      </span>
+    </a>
+  );
+}
+
+/* =========================================================================
+   COMPONENTE PRINCIPAL: LANDING CATÁLOGO EXACTO AL BRIEF
    ========================================================================= */
 export default function LandingCatalogo() {
-  // Reloj local en vivo con zona horaria de Lima
   const [localTime, setLocalTime] = useState('');
   const [timeOffset, setTimeOffset] = useState('GMT-05:00 // LOCAL');
-  
-  // Estado del menú desplegable con animación de 7 barras
   const [menuOpen, setMenuOpen] = useState(false);
-  
-  // Modal nativo dialog para ficha técnica del proyecto / medicamento
   const [activeProject, setActiveProject] = useState(null);
   const dialogRef = useRef(null);
 
-  // Acordeones de capacidades / servicios (0, 1, 2)
   const [expandedServices, setExpandedServices] = useState({});
-
-  // Efecto de cursor y tilt 3D
   const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
   const [isOverFeaturedCard, setIsOverFeaturedCard] = useState(false);
   const [featuredTilt, setFeaturedTilt] = useState({ rx: 0, ry: 0 });
   const [hoveredStatement, setHoveredStatement] = useState(false);
   const [statementPos, setStatementPos] = useState({ x: 0, y: 0 });
+  const [isOverFace, setIsOverFace] = useState(false);
 
-  // WebGL Canvas Ref y State
   const canvasRef = useRef(null);
   const heroRef = useRef(null);
   const webglStateRef = useRef(null);
-
-  // Copiado al portapapeles
   const [copiedText, setCopiedText] = useState('');
 
   // 1. Reloj en tiempo real
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      // Formato HH:MM:SS
       const hours = String(now.getHours()).padStart(2, '0');
       const minutes = String(now.getMinutes()).padStart(2, '0');
       const seconds = String(now.getSeconds()).padStart(2, '0');
       setLocalTime(`${hours}:${minutes}:${seconds}`);
 
-      // Offset del usuario
       const offsetMinutes = -now.getTimezoneOffset();
       const sign = offsetMinutes >= 0 ? '+' : '-';
       const absOffset = Math.abs(offsetMinutes);
       const offH = String(Math.floor(absOffset / 60)).padStart(2, '0');
       const offM = String(absOffset % 60).padStart(2, '0');
-      setTimeOffset(`GMT${sign}${offH}:${offM} // LIMA, PERÚ`);
+      setTimeOffset(`GMT${sign}${offH}:${offM} // LOCAL`);
     };
 
     updateTime();
@@ -438,7 +451,7 @@ export default function LandingCatalogo() {
     return () => clearInterval(timer);
   }, []);
 
-  // 2. Cursor personalizado
+  // 2. Cursor personalizado fino
   useEffect(() => {
     const handleGlobalMouseMove = (e) => {
       setCursorPos({ x: e.clientX, y: e.clientY });
@@ -447,7 +460,7 @@ export default function LandingCatalogo() {
     return () => window.removeEventListener('mousemove', handleGlobalMouseMove);
   }, []);
 
-  // 3. WebGL Canvas Shader del Hero (Exact Shader del Prompt)
+  // 3. WebGL Canvas Shader del Hero (Exacto Sección 14)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -455,31 +468,22 @@ export default function LandingCatalogo() {
     const gl = canvas.getContext('webgl', { alpha: true, antialias: false });
     if (!gl) return;
 
-    // Vertex Shader
     const vsSource = `
-      attribute vec2 position;
-      varying vec2 vUv;
-      void main(){
-        vUv = position * 0.5 + 0.5;
-        gl_Position = vec4(position, 0.0, 1.0);
-      }
+      attribute vec2 position; varying vec2 vUv;
+      void main(){ vUv = position * 0.5 + 0.5; gl_Position = vec4(position, 0.0, 1.0); }
     `;
 
-    // Fragment Shader (Exacto del brief Sección 14)
     const fsSource = `
       precision highp float;
       varying vec2 vUv;
-      uniform sampler2D image;
-      uniform vec2 resolution, imageSize, mouse, trail[9];
+      uniform sampler2D image; uniform vec2 resolution, imageSize, mouse, trail[9];
       uniform float strength, time;
-
       vec2 coverUv(vec2 uv){
         float rs = resolution.x / resolution.y;
         float ims = imageSize.x / imageSize.y;
         vec2 scale = rs < ims ? vec2(rs / ims, 1.0) : vec2(1.0, ims / rs);
         return (uv - 0.5) * scale + 0.5;
       }
-
       void main(){
         vec2 uv = vUv;
         vec2 aspect = vec2(resolution.x / resolution.y, 1.0);
@@ -528,7 +532,6 @@ export default function LandingCatalogo() {
       gl.shaderSource(shader, source);
       gl.compileShader(shader);
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.warn(gl.getShaderInfoLog(shader));
         gl.deleteShader(shader);
         return null;
       }
@@ -543,10 +546,7 @@ export default function LandingCatalogo() {
     gl.attachShader(program, vs);
     gl.attachShader(program, fs);
     gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      console.warn(gl.getProgramInfoLog(program));
-      return;
-    }
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
 
     const posBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
@@ -560,7 +560,6 @@ export default function LandingCatalogo() {
     gl.enableVertexAttribArray(posLoc);
     gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
-    // Uniforms
     const uRes = gl.getUniformLocation(program, 'resolution');
     const uImgSize = gl.getUniformLocation(program, 'imageSize');
     const uMouse = gl.getUniformLocation(program, 'mouse');
@@ -571,7 +570,6 @@ export default function LandingCatalogo() {
       uTrail.push(gl.getUniformLocation(program, `trail[${i}]`));
     }
 
-    // Cargar textura de la imagen de fondo
     const texture = gl.createTexture();
     const image = new Image();
     image.crossOrigin = 'anonymous';
@@ -595,7 +593,6 @@ export default function LandingCatalogo() {
       canvas.style.opacity = '1';
     };
 
-    // Tracking de mouse y trail
     const state = {
       targetMouse: { x: 0.6, y: 0.5 },
       currentMouse: { x: 0.6, y: 0.5 },
@@ -617,17 +614,14 @@ export default function LandingCatalogo() {
     resize();
     window.addEventListener('resize', resize);
 
-    // Bucle de animación
     const render = () => {
       state.animId = requestAnimationFrame(render);
       if (!textureReady) return;
 
-      // Suavizado
       state.currentMouse.x += (state.targetMouse.x - state.currentMouse.x) * 0.075;
       state.currentMouse.y += (state.targetMouse.y - state.currentMouse.y) * 0.075;
       state.currentStrength += (state.targetStrength - state.currentStrength) * 0.07;
 
-      // Actualizar trail chain
       state.trail[0].x += (state.currentMouse.x - state.trail[0].x) * 0.19;
       state.trail[0].y += (state.currentMouse.y - state.trail[0].y) * 0.19;
       for (let i = 1; i < 9; i++) {
@@ -660,31 +654,38 @@ export default function LandingCatalogo() {
     };
   }, []);
 
-  // Manejo del mouse en el Hero para WebGL
+  // Manejo de eventos del Hero
   const handleHeroMouseMove = (e) => {
     if (!heroRef.current || !webglStateRef.current) return;
     const rect = heroRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = 1.0 - (e.clientY - rect.top) / rect.height; // Y invertido para WebGL
-    webglStateRef.current.targetMouse = { x, y };
+    const normX = (e.clientX - rect.left) / rect.width;
+    const normY = (e.clientY - rect.top) / rect.height;
+
+    // Face hover zoom (normX: 0.40 - 0.79, normY: 0.075 - 0.86)
+    if (normX >= 0.40 && normX <= 0.79 && normY >= 0.075 && normY <= 0.86) {
+      setIsOverFace(true);
+    } else {
+      setIsOverFace(false);
+    }
+
+    webglStateRef.current.targetMouse = { x: normX, y: 1.0 - normY };
     webglStateRef.current.targetStrength = 1.0;
   };
 
   const handleHeroMouseLeave = () => {
+    setIsOverFace(false);
     if (webglStateRef.current) {
       webglStateRef.current.targetStrength = 0.0;
     }
   };
 
-  // 4. Tilt 3D de la tarjeta destacada
+  // Tilt 3D en Featured Card
   const handleFeaturedCardMove = (e) => {
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;
-    const rx = (y - 0.5) * -24.2;
-    const ry = (x - 0.5) * 30.8;
-    setFeaturedTilt({ rx, ry });
+    setFeaturedTilt({ rx: (y - 0.5) * -24.2, ry: (x - 0.5) * 30.8 });
   };
 
   const handleFeaturedCardLeave = () => {
@@ -692,7 +693,6 @@ export default function LandingCatalogo() {
     setIsOverFeaturedCard(false);
   };
 
-  // 5. Apertura y cierre de modal
   const openModal = (project) => {
     setActiveProject(project);
     if (dialogRef.current) {
@@ -709,7 +709,6 @@ export default function LandingCatalogo() {
     setActiveProject(null);
   };
 
-  // 6. Copiar teléfono/correo con feedback
   const copyToClipboard = (text, label) => {
     navigator.clipboard.writeText(text).then(() => {
       setCopiedText(label);
@@ -717,51 +716,56 @@ export default function LandingCatalogo() {
     });
   };
 
-  // Toggle servicio
   const toggleService = (id) => {
-    setExpandedServices((prev) => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
+    setExpandedServices((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
     <div className="min-h-screen bg-[#000000] text-[#ffffff] font-sans selection:bg-[#ff630f] selection:text-black overflow-x-hidden relative">
       {/* ===================================================================
-          CURSOR PERSONALIZADO (PUNTERO FINO 20PX)
+          SKIP LINK DE ACCESIBILIDAD (SECCIÓN 11)
+          =================================================================== */}
+      <a
+        href="#work"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[150] focus:px-6 focus:py-3 focus:bg-[#ff630f] focus:text-black focus:font-mono focus:rounded-full"
+      >
+        Skip to selected work
+      </a>
+
+      {/* ===================================================================
+          CURSOR PERSONALIZADO (PUNTERO FINO 20PX - SECCIÓN 11)
           =================================================================== */}
       <div
         className="fixed pointer-events-none z-[100] w-5 h-5 rounded-full border border-white/60 bg-white/20 -translate-x-1/2 -translate-y-1/2 transition-transform duration-75 ease-out hidden md:block"
         style={{
           left: `${cursorPos.x}px`,
           top: `${cursorPos.y}px`,
-          opacity: isOverFeaturedCard ? 0 : 1,
-          transform: 'translate(-50%, -50%)'
+          opacity: isOverFeaturedCard ? 0 : 1
         }}
       />
 
-      {/* CURSOR EXPANDIDO 100PX SOBRE FEATURED CARD */}
+      {/* CURSOR EXPANDIDO 100PX SOBRE FEATURED CARD (SECCIÓN 6) */}
       {isOverFeaturedCard && (
         <div
-          className="fixed pointer-events-none z-[101] w-24 h-24 rounded-full bg-[#ff630f] text-black font-display font-medium text-xs flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-2xl transition-transform duration-100 ease-out hidden md:flex uppercase tracking-wider"
+          className="fixed pointer-events-none z-[101] w-24 h-24 rounded-full bg-[#ff630f] text-black font-display font-medium text-xs flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-2xl transition-transform duration-100 ease-out hidden md:flex uppercase tracking-wider select-none leading-tight"
           style={{
             left: `${cursorPos.x}px`,
             top: `${cursorPos.y}px`
           }}
         >
-          <span>Ver</span>
-          <span>Ficha</span>
+          <span>View</span>
+          <span>case study</span>
         </div>
       )}
 
       {/* ===================================================================
-          1. NAVEGACIÓN SUPERIOR (TOP 28PX, INSET 3%)
+          1. NAVEGACIÓN SUPERIOR (TOP 28PX, INSET 3% - SECCIÓN 3)
           =================================================================== */}
       <nav
         id="top"
-        className="fixed top-0 left-0 right-0 z-40 px-[3vw] pt-7 pb-4 flex items-center justify-between pointer-events-none"
+        className="fixed top-0 left-0 right-0 z-40 px-[3vw] pt-7 pb-4 flex items-center justify-between pointer-events-none animate-nav-down"
       >
-        {/* Izquierda: Reloj local en vivo */}
+        {/* Izquierda: Reloj local con números tabulares */}
         <div className="pointer-events-auto leading-tight select-none">
           <div className="text-[11px] font-mono tracking-widest text-[#949494] uppercase">
             {timeOffset}
@@ -771,50 +775,28 @@ export default function LandingCatalogo() {
           </div>
         </div>
 
-        {/* Centro: Botón de Menú con las 7 barras de Mara Voss */}
+        {/* Centro: Botón de Menú con las 7 barras de Mara Voss ([3,7,12,4,8,6,3]px) */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           aria-expanded={menuOpen}
-          className="pointer-events-auto group flex flex-col items-center justify-center px-4 py-2 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-[#ff630f] rounded-lg transition"
-          aria-label="Abrir menú de navegación"
+          className="pointer-events-auto group min-w-[60px] min-h-[48px] flex flex-col items-center justify-center px-4 py-2 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-[#ff630f] focus:ring-offset-2 focus:ring-offset-black rounded-lg transition"
+          aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
         >
-          {/* Marca de 7 barras: [3, 7, 12, 4, 8, 6, 3]px */}
           <div className="flex items-end space-x-[3px] h-[14px] mb-1">
-            <span
-              className="w-[3px] bg-white group-hover:bg-[#ff630f] transition-all"
-              style={{ height: menuOpen ? '4px' : '3px' }}
-            />
-            <span
-              className="w-[3px] bg-white group-hover:bg-[#ff630f] transition-all"
-              style={{ height: menuOpen ? '4px' : '7px' }}
-            />
-            <span
-              className="w-[3px] bg-white group-hover:bg-[#ff630f] transition-all"
-              style={{ height: menuOpen ? '4px' : '12px' }}
-            />
-            <span
-              className="w-[3px] bg-white group-hover:bg-[#ff630f] transition-all"
-              style={{ height: menuOpen ? '4px' : '4px' }}
-            />
-            <span
-              className="w-[3px] bg-white group-hover:bg-[#ff630f] transition-all"
-              style={{ height: menuOpen ? '4px' : '8px' }}
-            />
-            <span
-              className="w-[3px] bg-white group-hover:bg-[#ff630f] transition-all"
-              style={{ height: menuOpen ? '4px' : '6px' }}
-            />
-            <span
-              className="w-[3px] bg-white group-hover:bg-[#ff630f] transition-all"
-              style={{ height: menuOpen ? '4px' : '3px' }}
-            />
+            {[3, 7, 12, 4, 8, 6, 3].map((height, idx) => (
+              <span
+                key={idx}
+                className="w-[3px] bg-white group-hover:bg-[#ff630f] transition-all"
+                style={{ height: menuOpen ? '4px' : `${height}px` }}
+              />
+            ))}
           </div>
-          <span className="text-[13px] font-display font-medium tracking-widest text-[#ffffff] group-hover:text-[#ff630f] uppercase">
-            {menuOpen ? 'CERRAR' : 'MENU'}
+          <span className="text-[14px] font-display font-medium tracking-widest text-[#ffffff] group-hover:text-[#ff630f] uppercase">
+            {menuOpen ? 'CLOSE' : 'MENU'}
           </span>
         </button>
 
-        {/* Derecha: Píldora de Acción Rápida "Consultar ↗" y Panel POS */}
+        {/* Derecha: Píldora blanca "Let’s talk ↗" + Acceso Personal */}
         <div className="pointer-events-auto flex items-center space-x-3">
           <Link
             to="/admin/login"
@@ -825,76 +807,66 @@ export default function LandingCatalogo() {
           </Link>
 
           <a
-            href="https://wa.me/51999888777?text=Hola%20Botica%20Nova%20Salud,%20deseo%20consultar%20por%20un%20medicamento."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center bg-white text-black hover:bg-[#ff630f] hover:text-black rounded-full min-h-[44px] px-6 py-2.5 text-sm font-display font-medium tracking-tight transition-all duration-200 hover:scale-[1.04] active:scale-[0.98] shadow-lg"
+            href="#contact"
+            className="inline-flex items-center justify-center bg-white text-black hover:bg-[#ff630f] hover:text-black rounded-full min-h-[50px] px-6 py-3 text-[18px] font-display font-medium tracking-tight transition-all duration-250 hover:scale-[1.04] active:scale-[0.98] shadow-lg"
           >
-            <span>Consultar ↗</span>
+            <span>Let’s talk ↗</span>
           </a>
         </div>
       </nav>
 
       {/* ===================================================================
-          OVERLAY DE NAVEGACIÓN EXPANDIBLE (ESTILO MARA VOSS)
+          OVERLAY DE NAVEGACIÓN EXPANDIBLE CON ROLLING TEXT (SECCIÓN 4)
           =================================================================== */}
       {menuOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col justify-between bg-black/95 backdrop-blur-2xl px-[4vw] pt-28 pb-16 animate-in fade-in duration-300">
-          <div className="flex justify-between items-center border-b border-[#222222] pb-6">
-            <span className="text-xs font-mono text-[#ff630f] tracking-widest uppercase">
-              // BOTICA NOVA SALUD · NAVEGACIÓN
-            </span>
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="text-xs font-display font-medium uppercase text-white hover:text-[#ff630f] tracking-widest"
-            >
-              CERRAR [✕]
-            </button>
-          </div>
+        <>
+          {/* Scrim fijo al 65% de negro */}
+          <div
+            onClick={() => setMenuOpen(false)}
+            className="fixed inset-0 bg-black/65 z-40 backdrop-blur-sm"
+          />
 
-          <div className="flex flex-col space-y-6 my-auto text-center md:text-left">
-            <a
-              href="#about"
-              onClick={() => setMenuOpen(false)}
-              className="text-5xl sm:text-7xl md:text-8xl font-display font-medium text-white hover:text-[#ff630f] transition duration-200 hover:translate-x-4 inline-block"
-            >
-              01 · Nosotros
-            </a>
-            <a
-              href="#featured"
-              onClick={() => setMenuOpen(false)}
-              className="text-5xl sm:text-7xl md:text-8xl font-display font-medium text-white hover:text-[#ff630f] transition duration-200 hover:translate-x-4 inline-block"
-            >
-              02 · Laboratorio
-            </a>
-            <a
-              href="#work"
-              onClick={() => setMenuOpen(false)}
-              className="text-5xl sm:text-7xl md:text-8xl font-display font-medium text-white hover:text-[#ff630f] transition duration-200 hover:translate-x-4 inline-block"
-            >
-              03 · Catálogo
-            </a>
-            <a
-              href="#services"
-              onClick={() => setMenuOpen(false)}
-              className="text-5xl sm:text-7xl md:text-8xl font-display font-medium text-white hover:text-[#ff630f] transition duration-200 hover:translate-x-4 inline-block"
-            >
-              04 · Servicios
-            </a>
-            <a
-              href="#contact"
-              onClick={() => setMenuOpen(false)}
-              className="text-5xl sm:text-7xl md:text-8xl font-display font-medium text-white hover:text-[#ff630f] transition duration-200 hover:translate-x-4 inline-block"
-            >
-              05 · Contacto
-            </a>
-          </div>
+          {/* Panel negro que desciende desde -24px hasta 0 over 0.42s */}
+          <div className="fixed top-0 left-0 right-0 z-50 bg-[#000000] border-b border-[#222222] px-[4vw] pt-[105px] pb-[80px] shadow-2xl animate-in fade-in slide-in-from-top-6 duration-400">
+            <div className="max-w-[1440px] mx-auto flex flex-col justify-between h-full space-y-12">
+              <div className="flex justify-between items-center border-b border-[#222222] pb-4">
+                <span className="text-xs font-mono text-[#ff630f] tracking-widest uppercase">
+                  // NAVIGATION OVERLAY
+                </span>
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  className="text-xs font-display font-medium uppercase text-white hover:text-[#ff630f] tracking-widest"
+                >
+                  CLOSE [✕]
+                </button>
+              </div>
 
-          <div className="flex flex-col sm:flex-row justify-between items-center text-xs font-mono text-[#949494] border-t border-[#222222] pt-6">
-            <span>SEDE LIMA · SAN JUAN DE LURIGANCHO</span>
-            <span>WHATSAPP DE GUARDIA: +51 999 888 777</span>
+              {/* 3 Enlaces con texto rodante de 96px */}
+              <div className="flex flex-col items-center justify-center space-y-8 my-auto">
+                <RollingLink
+                  href="#about"
+                  label="About"
+                  onClick={() => setMenuOpen(false)}
+                />
+                <RollingLink
+                  href="#work"
+                  label="Work"
+                  onClick={() => setMenuOpen(false)}
+                />
+                <RollingLink
+                  href="#contact"
+                  label="Contact"
+                  onClick={() => setMenuOpen(false)}
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row justify-between items-center text-xs font-mono text-[#949494] border-t border-[#222222] pt-6">
+                <span>BOTICA NOVA SALUD · SEDE LIMA</span>
+                <span>WHATSAPP DIRECTO: {PERSONA.phone}</span>
+              </div>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* ===================================================================
@@ -904,85 +876,157 @@ export default function LandingCatalogo() {
         ref={heroRef}
         onMouseMove={handleHeroMouseMove}
         onMouseLeave={handleHeroMouseLeave}
-        className="relative min-h-[920px] h-screen w-full overflow-hidden flex flex-col justify-between px-[3vw] pt-36 pb-12 select-none"
+        className="relative min-h-[900px] h-screen w-full overflow-hidden flex flex-col justify-between px-[3vw] pt-[147px] pb-10 select-none"
       >
-        {/* RETRATO DE FONDO (COVER EDGE-TO-EDGE) */}
+        {/* H1 Accesible oculto para lectores de pantalla */}
+        <h1 className="sr-only">Nova Salud — Botica Especializada &amp; Farmacia Clínica</h1>
+
+        {/* RETRATO DE FONDO (COVER EDGE-TO-EDGE - SECCIÓN 3) */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-700 ease-out z-0"
           style={{
             backgroundImage: `url(${ASSETS.hero})`,
-            filter: 'contrast(1.08) brightness(0.92)'
+            filter: 'contrast(1.08) brightness(0.92)',
+            transform: isOverFace ? 'scale(1.035)' : 'scale(1)'
           }}
         />
 
-        {/* WEBGL SHADER CANVAS (RIPPLE + AURA DORADA/NARANJA) */}
+        {/* WEBGL SHADER CANVAS (RIPPLE + AURA DORADA/NARANJA - SECCIÓN 14) */}
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 w-full h-full pointer-events-none z-[1] transition-opacity duration-500 opacity-0"
+          className="absolute inset-0 w-full h-full pointer-events-none z-[1] transition-all duration-700 ease-out opacity-0"
+          style={{
+            transform: isOverFace ? 'scale(1.035)' : 'scale(1)'
+          }}
         />
 
         {/* VELO DE GRADIENTE MARA VOSS (50% ARRIBA, TRANSPARENTE AL CENTRO, 50% ABAJO) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/75 pointer-events-none z-[2]" />
-        {/* Gradiente izquierdo para asegurar contraste puro detrás de las letras iniciales */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent pointer-events-none z-[2]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/50 pointer-events-none z-[2]" />
+        {/* Velo izquierdo para mantener el 30% izquierdo casi negro puro detrás de AD / NS */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/35 to-transparent pointer-events-none z-[2]" />
 
-        {/* ETIQUETA VERTICAL LATERAL DERECHA (A PARTIR DE 52% DE ALTURA) */}
+        {/* ETIQUETA VERTICAL LATERAL DERECHA (A PARTIR DE 52% DE ALTURA - SECCIÓN 3) */}
         <div className="hidden lg:block absolute right-4 top-[52%] -translate-y-1/2 z-[3] -rotate-90 origin-right text-[10px] font-mono tracking-[0.25em] text-[#949494] uppercase select-none">
-          FARMACIA CLÍNICA / RIGOR &amp; CUIDADO — 001
+          A FICTIONAL PORTRAIT / STRUCTURE &amp; EXPRESSION — 001
         </div>
 
         {/* CONTENIDO SUPERIOR: TÍTULO MONUMENTAL NS + NOVASALUD */}
-        <div className="relative z-10 space-y-4">
-          {/* TÍTULO MONUMENTAL EN UNA SOLA LÍNEA HORIZONTAL */}
+        <div className="relative z-10 space-y-6">
+          {/* TÍTULO MONUMENTAL EN UNA SOLA LÍNEA HORIZONTAL CON RETARDOS EXACTOS */}
           <div className="flex items-baseline justify-between w-full border-b border-white/10 pb-4">
-            {/* Monograma Izquierdo: NS */}
-            <div className="flex">
-              <span className="font-display font-medium text-white tracking-[-0.06em] leading-[0.73] text-[clamp(42px,16cqw,230px)] inline-block animate-in fade-in slide-in-from-bottom-8 duration-700">
+            {/* Monograma Izquierdo: NS (Weight 500) */}
+            <div className="flex select-none">
+              <span
+                className="animate-letter font-display font-medium text-white tracking-[-0.06em] leading-[0.727] text-[clamp(42px,16cqw,231px)]"
+                style={{ animationDelay: '0.38s' }}
+              >
                 N
               </span>
-              <span className="font-display font-medium text-white tracking-[-0.06em] leading-[0.73] text-[clamp(42px,16cqw,230px)] inline-block animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+              <span
+                className="animate-letter font-display font-medium text-white tracking-[-0.06em] leading-[0.727] text-[clamp(42px,16cqw,231px)]"
+                style={{ animationDelay: '0.48s' }}
+              >
                 S
               </span>
             </div>
 
-            {/* Nombre Derecho Unido: NovaSalud [01] */}
-            <div className="flex items-baseline">
-              <span className="font-display font-medium text-white tracking-[-0.06em] leading-[0.73] text-[clamp(42px,16cqw,230px)] inline-block animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-                Nova
+            {/* Nombre Derecho Unido: NovaSalud (Nova 500, Salud 250) + [01] */}
+            <div className="flex items-baseline select-none pr-7">
+              {/* Nova */}
+              <span
+                className="animate-letter font-display font-medium text-white tracking-[-0.06em] leading-[0.727] text-[clamp(42px,16cqw,231px)]"
+                style={{ animationDelay: '0.58s' }}
+              >
+                N
               </span>
-              <span className="font-display font-light text-white tracking-[-0.06em] leading-[0.73] text-[clamp(42px,16cqw,230px)] inline-block animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
-                Salud
+              <span
+                className="animate-letter font-display font-medium text-white tracking-[-0.06em] leading-[0.727] text-[clamp(42px,16cqw,231px)]"
+                style={{ animationDelay: '0.68s' }}
+              >
+                o
               </span>
-              <sup className="text-xl sm:text-3xl md:text-5xl font-mono text-[#ff630f] ml-2 font-normal">
+              <span
+                className="animate-letter font-display font-medium text-white tracking-[-0.06em] leading-[0.727] text-[clamp(42px,16cqw,231px)]"
+                style={{ animationDelay: '0.78s' }}
+              >
+                v
+              </span>
+              <span
+                className="animate-letter font-display font-medium text-white tracking-[-0.06em] leading-[0.727] text-[clamp(42px,16cqw,231px)]"
+                style={{ animationDelay: '0.88s' }}
+              >
+                a
+              </span>
+
+              {/* Salud (Weight 250 extra-light) */}
+              <span
+                className="animate-letter font-display font-extralight text-white tracking-[-0.06em] leading-[0.727] text-[clamp(42px,16cqw,231px)]"
+                style={{ animationDelay: '0.98s' }}
+              >
+                S
+              </span>
+              <span
+                className="animate-letter font-display font-extralight text-white tracking-[-0.06em] leading-[0.727] text-[clamp(42px,16cqw,231px)]"
+                style={{ animationDelay: '1.08s' }}
+              >
+                a
+              </span>
+              <span
+                className="animate-letter font-display font-extralight text-white tracking-[-0.06em] leading-[0.727] text-[clamp(42px,16cqw,231px)]"
+                style={{ animationDelay: '1.18s' }}
+              >
+                l
+              </span>
+              <span
+                className="animate-letter font-display font-extralight text-white tracking-[-0.06em] leading-[0.727] text-[clamp(42px,16cqw,231px)]"
+                style={{ animationDelay: '1.28s' }}
+              >
+                u
+              </span>
+              <span
+                className="animate-letter font-display font-extralight text-white tracking-[-0.06em] leading-[0.727] text-[clamp(42px,16cqw,231px)]"
+                style={{ animationDelay: '1.38s' }}
+              >
+                d
+              </span>
+
+              {/* Superíndice [01] con delay de 1.48s */}
+              <sup
+                className="animate-letter text-2xl sm:text-4xl md:text-5xl font-mono text-[#ff630f] ml-3 font-normal"
+                style={{ animationDelay: '1.48s' }}
+              >
                 [01]
               </sup>
             </div>
           </div>
 
-          {/* SUBTÍTULO CON ALINEACIÓN OPUESTA */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-[13px] font-mono tracking-widest text-[#b8b8b8] uppercase pt-2 gap-2">
-            <div>BOTICA &amp; DISPENSACIÓN ESPECIALIZADA</div>
-            <div className="text-[#ff630f]">[ CATÁLOGO // FARMACIA CLÍNICA ]</div>
+          {/* SUBTÍTULO CON 35PX TOP MARGIN Y ALINEACIÓN OPUESTA (SECCIÓN 3) */}
+          <div
+            className="flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-[13px] font-mono tracking-widest text-[#b8b8b8] uppercase pt-2 gap-2 animate-in fade-in duration-500"
+            style={{ animationDelay: '1.18s' }}
+          >
+            <div>INDEPENDENT ART DIRECTOR &amp; PHARMACEUTICAL CARE</div>
+            <div>[ PORTFOLIO // SELECTED WORK ]</div>
           </div>
 
-          {/* FLECHA CIRCULAR REBOTANTE (BOUNCING ARROW HACIA #about) */}
-          <div className="flex justify-start sm:justify-center md:pl-[65%] pt-3">
+          {/* FLECHA CIRCULAR REBOTANTE AL 70% DEL ANCHO (SECCIÓN 3) */}
+          <div className="flex justify-start sm:justify-center md:pl-[68%] pt-3">
             <a
               href="#about"
-              className="group w-[52px] h-[52px] rounded-full border border-white/60 bg-black/40 backdrop-blur-md flex items-center justify-center hover:bg-[#ff630f] hover:border-[#ff630f] transition-all duration-300 active:scale-95"
-              aria-label="Desplazarse al Enfoque Clínico"
+              className="group w-[52px] h-[52px] rounded-full border border-white/60 bg-black/32 backdrop-blur-md flex items-center justify-center hover:bg-[#ff630f] hover:border-[#ff630f] transition-all duration-300 active:scale-95"
+              aria-label="Scroll down to Design Approach"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
+                width="25"
+                height="25"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-white group-hover:text-black group-hover:translate-y-1 transition-transform animate-bounce"
+                className="text-white group-hover:text-black transition-colors animate-arrow-bounce"
               >
                 <path d="M12 4v15M5 12l7 7 7-7" />
               </svg>
@@ -990,50 +1034,52 @@ export default function LandingCatalogo() {
           </div>
         </div>
 
-        {/* CONTENIDO INFERIOR: NOTAS EDITORIALES Y BOTÓN EXPLORAR */}
-        <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-8 pt-12">
-          {/* Notas a la izquierda (420px de ancho) */}
-          <div className="max-w-[420px] space-y-1.5 text-sm sm:text-base font-display text-white leading-relaxed">
+        {/* CONTENIDO INFERIOR: NOTAS EDITORIALES Y BOTÓN EXPLORE WORK (SECCIÓN 3) */}
+        <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-8 pt-10">
+          {/* Bloque de 420px de ancho a la izquierda */}
+          <div
+            className="max-w-[420px] space-y-1.5 text-sm sm:text-[18px] font-display text-white leading-relaxed animate-fade-rise"
+            style={{ animationDelay: '1.55s' }}
+          >
             <p className="text-white">
-              • Medicamentos certificados DIGEMID, cadena de frío y atención farmacéutica.
+              • Brand identities, editorial systems, digital experiences.
             </p>
             <p className="text-[#949494]">
-              • Farmacia clínica independiente. Rigor farmacéutico. Precios justos en Soles.
+              • Independent practice. Thoughtful systems. Distinctive outcomes.
             </p>
           </div>
 
-          {/* Botón a la derecha: Píldora Blanca de Mara Voss */}
-          <div>
+          {/* Botón Explore Work ↘ a la derecha */}
+          <div className="animate-fade-rise" style={{ animationDelay: '2.075s' }}>
             <a
               href="#work"
-              className="inline-flex items-center space-x-3 bg-white text-black hover:bg-[#ff630f] hover:text-black rounded-full min-h-[50px] px-8 py-4 text-base sm:text-lg font-display font-medium tracking-tight transition-all duration-250 hover:scale-[1.04] active:scale-[0.98] shadow-2xl"
+              className="inline-flex items-center space-x-3 bg-white text-black hover:bg-[#ff630f] hover:text-black rounded-full min-h-[50px] px-8 py-4 text-[18px] font-display font-medium tracking-tight transition-all duration-250 hover:scale-[1.04] active:scale-[0.98] shadow-2xl"
             >
-              <span>Explorar catálogo</span>
-              <span className="text-lg">↘</span>
+              <span>Explore work ↘</span>
             </a>
           </div>
         </div>
       </header>
 
       {/* ===================================================================
-          3. ENFOQUE CLÍNICO / DESIGN APPROACH (#about)
+          3. DESIGN APPROACH (#about - SECCIÓN 5)
           =================================================================== */}
       <section
         id="about"
-        className="relative py-28 md:py-36 px-[3vw] border-t border-[#222222] bg-[#000000] flex flex-col justify-between"
+        className="relative py-28 md:py-36 px-[3vw] border-t border-[#222222] bg-[#000000] flex flex-col justify-between min-h-[900px]"
       >
         <div className="space-y-16 max-w-[1440px] mx-auto w-full">
-          {/* Encabezado de Sección */}
+          {/* Encabezado: // Design Approach */}
           <div className="flex items-center justify-between border-b border-[#222222] pb-4">
-            <span className="text-xs font-mono tracking-widest text-[#ff630f] uppercase">
-              // ENFOQUE FARMACÉUTICO
+            <span className="text-[18px] font-mono tracking-widest text-[#ffffff] uppercase">
+              // Design Approach
             </span>
             <span className="text-xs font-mono text-[#949494]">
-              COMPROMISO ÉTICO CON TU SALUD
+              THOUGHTFUL SYSTEMS // DISTINCTIVE OUTCOMES
             </span>
           </div>
 
-          {/* Gran Declaración Tipográfica en 5 Líneas (Mara Voss Exact Format) */}
+          {/* Declaración de 5 Líneas en Display 500 con hover visual difference */}
           <div
             className="relative cursor-default"
             onMouseEnter={() => setHoveredStatement(true)}
@@ -1043,16 +1089,16 @@ export default function LandingCatalogo() {
               setStatementPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
             }}
           >
-            <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[76px] font-display font-medium tracking-[-0.04em] leading-[0.98] text-white">
-              Arraigados en la ciencia, guiados por el cuidado humano,{' '}
+            <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-[78px] font-display font-medium tracking-[-0.04em] leading-[0.98] text-white">
+              Rooted in clarity, driven by curiosity,{' '}
               <span className="text-[#ff630f]">
-                Nova Salud transforma la dispensación en una experiencia
+                Nova Salud builds identities and clinical experiences
               </span>{' '}
-              que brinda tranquilidad a través del rigor farmacéutico y un
-              acompañamiento clínico permanente.
+              that bring structure to complex ideas through bold typography and
+              thoughtful visual systems.
             </h2>
 
-            {/* Ilustración Vectorial flotante que sigue al cursor con blend mode difference */}
+            {/* Ilustración de 280px con mix-blend-mode: difference siguiendo al cursor */}
             {hoveredStatement && (
               <div
                 className="pointer-events-none absolute w-[280px] h-[336px] -translate-x-1/2 -translate-y-1/2 z-20 hidden md:block transition-transform duration-75 mix-blend-difference opacity-90 shadow-2xl"
@@ -1066,27 +1112,27 @@ export default function LandingCatalogo() {
             )}
           </div>
 
-          {/* Metadatos y Píldoras de Disciplinas (Separación de 80px) */}
+          {/* Metadatos inferiores con 80px de separación */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pt-12 border-t border-[#222222] items-end">
             <div className="md:col-span-7 space-y-2">
-              <p className="text-sm sm:text-lg font-display text-[#b8b8b8] leading-relaxed max-w-xl">
-                Garantizamos la autenticidad y conservación óptima de cada fármaco mediante trazabilidad estricta, control de temperatura y atención profesional colegiada.
+              <p className="text-sm sm:text-[18px] font-display text-[#b8b8b8] leading-relaxed max-w-xl">
+                I connect strategy and expression through brand identities, editorial systems, and digital experiences designed to work as a whole.
               </p>
             </div>
 
             <div className="md:col-span-5 space-y-3 md:text-right">
-              <span className="text-[11px] font-mono tracking-widest text-[#949494] uppercase block">
-                ESPECIALIDADES
+              <span className="text-[14px] font-mono tracking-widest text-[#949494] uppercase block">
+                DISCIPLINES
               </span>
               <div className="flex flex-wrap md:justify-end gap-2">
-                <span className="px-4 py-2 rounded-full border border-[#777777] text-xs font-display text-[#b8b8b8]">
-                  Farmacia Clínica
+                <span className="px-4 py-2 rounded-full border border-[#777777] text-[14px] font-display text-[#b8b8b8]">
+                  Art Direction
                 </span>
-                <span className="px-4 py-2 rounded-full border border-[#777777] text-xs font-display text-[#b8b8b8]">
-                  Cadena de Frío
+                <span className="px-4 py-2 rounded-full border border-[#777777] text-[14px] font-display text-[#b8b8b8]">
+                  Brand Identity
                 </span>
-                <span className="px-4 py-2 rounded-full border border-[#777777] text-xs font-display text-[#b8b8b8]">
-                  Dispensación DIGEMID
+                <span className="px-4 py-2 rounded-full border border-[#777777] text-[14px] font-display text-[#b8b8b8]">
+                  Digital Design
                 </span>
               </div>
             </div>
@@ -1095,177 +1141,183 @@ export default function LandingCatalogo() {
       </section>
 
       {/* ===================================================================
-          4. PROYECTO DESTACADO / FEATURED PROJECT (#featured)
+          4. FEATURED PROJECT: GRIDLINE [01] STUDIO (#featured - SECCIÓN 6)
           =================================================================== */}
       <section
         id="featured"
-        className="py-28 md:py-36 px-[3vw] border-t border-[#222222] bg-[#000000] relative overflow-hidden"
+        className="py-28 md:py-36 px-[3vw] border-t border-[#222222] bg-[#000000] relative overflow-hidden min-h-[960px]"
         style={{ perspective: '850px' }}
       >
         <div className="max-w-[1440px] mx-auto space-y-14">
-          {/* Encabezado */}
+          {/* Header: // Featured Project */}
           <div className="flex items-center justify-between border-b border-[#222222] pb-4">
-            <span className="text-xs font-mono tracking-widest text-[#ff630f] uppercase">
-              // ÁREA DESTACADA
+            <span className="text-[18px] font-mono tracking-widest text-[#ffffff] uppercase">
+              // Featured Project
             </span>
             <span className="text-xs font-mono text-[#949494] uppercase">
-              INFRAESTRUCTURA ASÉPTICA // 2026
+              SELF-INITIATED CONCEPT // 2026
             </span>
           </div>
 
-          {/* Gran Título de 2 Líneas */}
+          {/* Título de 2 Líneas: GRIDLINE [01] STUDIO */}
           <div className="text-center space-y-1">
             <h2 className="text-5xl sm:text-7xl lg:text-[140px] font-display font-medium tracking-[-0.04em] leading-[0.84] text-white">
-              LABORATORIO <sup className="text-2xl sm:text-4xl text-[#ff630f] font-mono font-normal">[01]</sup>
+              GRIDLINE <sup className="text-2xl sm:text-4xl text-[#ff630f] font-mono font-normal">[01]</sup>
             </h2>
-            <div className="text-5xl sm:text-7xl lg:text-[140px] font-display font-light tracking-[-0.04em] leading-[0.84] text-[#b8b8b8]">
-              BOTÁNICO &amp; CLÍNICO
+            <div className="text-5xl sm:text-7xl lg:text-[140px] font-display font-medium tracking-[-0.04em] leading-[0.84] text-[#ffffff]">
+              STUDIO
             </div>
           </div>
 
-          {/* TARJETA 3D INTERACTIVA CON TILT Y PERSPECTIVA */}
+          {/* TARJETA 347PX CUADRADA CON PERSPECTIVA TILT */}
           <div className="flex justify-center py-6 relative">
             <div
               onMouseMove={handleFeaturedCardMove}
               onMouseEnter={() => setIsOverFeaturedCard(true)}
               onMouseLeave={handleFeaturedCardLeave}
               onClick={() => openModal(PROJECTS[0])}
-              className="relative w-[347px] h-[347px] sm:w-[420px] sm:h-[420px] rounded-2xl overflow-hidden border border-[#333333] bg-[#111111] cursor-pointer shadow-2xl transition-transform duration-100 ease-out"
+              className="relative w-[347px] h-[347px] rounded-none overflow-hidden border border-[#333333] bg-[#111111] cursor-pointer shadow-2xl transition-transform duration-100 ease-out"
               style={{
                 transform: `rotateX(${featuredTilt.rx}deg) rotateY(${featuredTilt.ry}deg) scale(1.025)`
               }}
             >
-              {/* Imagen del Laboratorio generado */}
+              {/* Imagen del Laboratorio con mix-blend-mode difference */}
               <img
-                src={ASSETS.featured}
-                alt="Laboratorio Botánico Botica Nova Salud"
+                src={ASSETS.featuredPhoto}
+                alt="Gridline Studio Artwork"
                 className="w-full h-full object-cover filter contrast-110 brightness-95 hover:scale-105 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
-              {/* Icono central de flecha */}
+              {/* Icono central de flecha circular */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-12 h-12 rounded-full bg-black/60 border border-white/40 flex items-center justify-center text-white backdrop-blur-md">
                   <ArrowUpRight className="w-5 h-5 text-[#ff630f]" />
                 </div>
               </div>
-
-              {/* Badge inferior */}
-              <div className="absolute bottom-4 left-4 right-4 text-left">
-                <span className="text-[10px] font-mono text-[#ff630f] tracking-widest uppercase block">
-                  ÁREA ASÉPTICA
-                </span>
-                <span className="text-sm font-display font-medium text-white">
-                  Buenas Prácticas de Almacenamiento (BPA)
-                </span>
-              </div>
             </div>
           </div>
 
-          {/* Banda de Cuadrícula con texto de manifiesto */}
-          <div className="py-6 border-y border-[#222222] flex items-center justify-between text-xs font-mono text-[#949494] tracking-widest uppercase">
-            <span>01 / RIGOR CIENTÍFICO AL SERVICIO DE TU SALUD.</span>
-            <span className="hidden sm:inline">TRAZABILIDAD DE LOTE &amp; FECHA DE CADUCIDAD</span>
+          {/* Banda de Cuadrícula Fina de 90px de alto con reglas verticales al 6.25% */}
+          <div
+            className="h-[90px] border-y border-[#222222] flex items-center justify-between px-6 text-xs font-mono text-[#949494] tracking-widest uppercase relative"
+            style={{
+              background:
+                'repeating-linear-gradient(90deg, transparent, transparent calc(6.25% - 1px), #222222 calc(6.25% - 1px), #222222 6.25%)'
+            }}
+          >
+            <span className="bg-black/90 px-3 py-1">01 / FORM FOLLOWS A POINT OF VIEW.</span>
+            <span className="hidden sm:inline bg-black/90 px-3 py-1">AUTONOMOUS ART DIRECTION SYSTEM</span>
           </div>
 
-          {/* Texto descriptivo y botón de ver caso de estudio */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4">
-            <div className="text-center sm:text-left">
-              <h3 className="text-lg font-display font-medium text-white">
-                Laboratorio Botánico &amp; Control Farmacológico
+          {/* Subtítulo centrado y píldora View case study ↗ */}
+          <div className="flex flex-col items-center justify-center space-y-6 pt-4 text-center">
+            <div className="space-y-1">
+              <h3 className="text-xl sm:text-2xl font-display font-medium text-white">
+                Gridline Studio — Brand &amp; Digital System
               </h3>
               <p className="text-xs sm:text-sm text-[#949494] font-mono">
-                Preservación de principios activos / Farmacovigilancia DIGEMID
+                Art direction / Visual identity / Web direction
               </p>
             </div>
 
             <button
               onClick={() => openModal(PROJECTS[0])}
-              className="bg-white text-black hover:bg-[#ff630f] hover:text-black rounded-full min-h-[50px] px-8 py-3 text-sm font-display font-medium tracking-tight transition-all duration-200 hover:scale-[1.04] active:scale-[0.98]"
+              className="bg-white text-black hover:bg-[#ff630f] hover:text-black rounded-full min-h-[50px] px-8 py-3 text-[18px] font-display font-medium tracking-tight transition-all duration-200 hover:scale-[1.04] active:scale-[0.98]"
             >
-              <span>Ver especialidad ↗</span>
+              <span>View case study ↗</span>
             </button>
           </div>
         </div>
       </section>
 
       {/* ===================================================================
-          5. CATÁLOGO SELECCIONADO / SELECTED WORK (#work)
+          5. SELECTED WORK: SIX SELF-INITIATED PROJECTS (#work - SECCIÓN 7)
           =================================================================== */}
       <section
         id="work"
-        className="py-28 md:py-36 px-[4vw] border-t border-[#222222] relative"
+        className="py-28 md:py-36 px-[4vw] border-t border-[#222222] relative min-h-[760px]"
         style={{
-          background: 'linear-gradient(180deg, #000000 0%, #000000 48%, #ea4f16 78%, #f6af60 100%)'
+          background:
+            'linear-gradient(180deg, #000000 0%, #000000 48%, #ea4f16 78%, #f6af60 100%)'
         }}
       >
         <div className="max-w-[1440px] mx-auto space-y-12">
-          {/* Encabezado */}
+          {/* Header de la sección */}
           <div className="flex items-center justify-between border-b border-[#222222] pb-4">
-            <span className="text-xs font-mono tracking-widest text-[#ffffff] uppercase">
-              // CATÁLOGO SELECCIONADO
+            <span className="text-[18px] font-mono tracking-widest text-[#ffffff] uppercase">
+              // Selected Work
             </span>
             <span className="text-xs font-mono text-[#ffffff]/80 uppercase">
-              SEIS LÍNEAS PRINCIPALES / 2024–2026
+              SIX SELF-INITIATED PROJECTS / 2024–2026
             </span>
           </div>
 
-          {/* Tabla de 6 Filas (Estilo Mara Voss Project Index) */}
+          {/* Tabla de 6 Filas (Columnas de Desktop: 42px minmax(0,1fr) 210px 70px 40px) */}
           <div className="space-y-2">
             {PROJECTS.map((project) => {
               const ArtComponent = artMap[project.coverKey] || ArtGridline;
               return (
-                <div
+                <button
                   key={project.id}
                   onClick={() => openModal(project)}
-                  className="group relative cursor-pointer rounded-xl bg-black/75 hover:bg-white transition-colors duration-300 p-5 sm:p-6 border border-white/10 flex items-center justify-between text-white hover:text-black"
+                  className="row-wipe w-full text-left rounded-none min-h-[72px] p-4 sm:p-5 border-b border-[#333333] transition-colors duration-300 flex items-center justify-between relative group select-none"
+                  style={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.73)'
+                  }}
                 >
-                  <div className="flex items-center space-x-6 sm:space-x-12 w-full md:w-auto">
-                    <span className="text-xs font-mono text-[#ff630f] group-hover:text-black font-bold">
+                  <div className="grid grid-cols-12 items-center w-full gap-4 relative z-20">
+                    {/* #01 */}
+                    <div className="col-span-1 text-[14px] font-mono text-[#ff630f] font-bold">
                       {project.id}
-                    </span>
-                    <div>
-                      <h4 className="text-lg sm:text-2xl font-display font-medium tracking-tight">
+                    </div>
+
+                    {/* Nombre del Proyecto */}
+                    <div className="col-span-11 sm:col-span-6">
+                      <h4 className="text-lg sm:text-[24px] font-display font-medium tracking-tight text-white">
                         {project.title}
                       </h4>
-                      <p className="text-xs font-mono text-[#949494] group-hover:text-black/70 sm:hidden">
+                      <p className="text-xs font-mono text-[#949494] sm:hidden">
                         {project.discipline}
                       </p>
                     </div>
-                  </div>
 
-                  <div className="hidden sm:flex items-center space-x-8 text-xs font-mono">
-                    <span className="text-[#b8b8b8] group-hover:text-black">
+                    {/* Disciplina */}
+                    <div className="hidden sm:block sm:col-span-3 text-[14px] font-display text-[#b8b8b8]">
                       {project.discipline}
-                    </span>
-                    <span className="text-[#ff630f] group-hover:text-black font-bold">
-                      S/ {project.precio.toFixed(2)}
-                    </span>
-                    <span className="text-sm font-display font-medium">↗</span>
+                    </div>
+
+                    {/* Año */}
+                    <div className="hidden sm:block sm:col-span-1 text-[14px] font-mono text-[#b8b8b8]">
+                      {project.year}
+                    </div>
+
+                    {/* Flecha ↗ */}
+                    <div className="hidden sm:flex sm:col-span-1 justify-end text-[18px] font-display text-white">
+                      ↗
+                    </div>
                   </div>
 
-                  {/* Previsualización flotante al hover */}
-                  <div className="pointer-events-none absolute right-[18%] top-1/2 -translate-y-1/2 w-44 h-44 rounded-xl overflow-hidden shadow-2xl opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 hidden lg:block z-20 border border-black/20">
+                  {/* Previsualización del Arte Vectorial de 180px al 62% del ancho */}
+                  <div className="pointer-events-none absolute right-[18%] top-1/2 -translate-y-1/2 w-[180px] h-[180px] overflow-hidden shadow-2xl opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-400 hidden lg:block z-30 border border-black/20">
                     <ArtComponent />
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
 
-          {/* Llamado a la acción sobre el fondo degradado cálido */}
-          <div className="pt-16 pb-8 text-center space-y-6">
-            <h3 className="text-2xl sm:text-4xl md:text-5xl font-display font-medium tracking-tight text-black">
-              ¿TIENES UNA RECETA MÉDICA O CONSULTA?
+          {/* Llamado a la acción sobre fondo naranja: HAVE A PROJECT IN MIND? */}
+          <div className="pt-20 pb-10 text-center space-y-6">
+            <h3 className="text-3xl sm:text-5xl font-display font-medium tracking-tight text-black">
+              HAVE A PROJECT IN MIND?
             </h3>
             <div>
               <a
-                href="https://wa.me/51999888777?text=Hola%20Botica%20Nova%20Salud,%20adjunto%20mi%20receta%20para%20cotizaci%C3%B3n."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center space-x-3 bg-black text-white hover:bg-white hover:text-black rounded-full min-h-[50px] px-8 py-4 text-base font-display font-medium tracking-tight transition-all duration-200 hover:scale-[1.04] active:scale-[0.98] shadow-2xl"
+                href="#contact"
+                className="inline-flex items-center space-x-3 bg-white text-black hover:bg-black hover:text-white rounded-full min-h-[50px] px-8 py-4 text-[18px] font-display font-medium tracking-tight transition-all duration-200 hover:scale-[1.04] active:scale-[0.98] shadow-2xl"
               >
-                <span>Enviar Receta por WhatsApp ↗</span>
+                <span>Start a conversation ↗</span>
               </a>
             </div>
           </div>
@@ -1273,64 +1325,67 @@ export default function LandingCatalogo() {
       </section>
 
       {/* ===================================================================
-          6. CAPACIDADES / DISCLOSURES (#services)
+          6. CAPABILITIES (#services - SECCIÓN 8)
           =================================================================== */}
       <section
         id="services"
-        className="py-28 md:py-36 px-[3vw] border-t border-[#222222] bg-[#000000]"
+        className="py-28 md:py-36 px-[3vw] border-t border-[#222222] bg-[#000000] min-h-[680px]"
       >
         <div className="max-w-[1440px] mx-auto space-y-16">
-          {/* Título en 2 líneas: Primer renglón blanco, segundo naranja */}
+          {/* Título en 2 líneas: THOUGHTFUL SYSTEMS. DISTINCTIVE OUTCOMES. */}
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 border-b border-[#222222] pb-8">
             <div>
-              <h2 className="text-4xl sm:text-6xl md:text-[80px] font-display font-medium tracking-[-0.045em] leading-[0.95] text-white">
-                RIGOR FARMACÉUTICO.
+              <h2 className="text-4xl sm:text-6xl md:text-[86px] font-display font-medium tracking-[-0.045em] leading-[1] text-white">
+                THOUGHTFUL SYSTEMS.
               </h2>
-              <h2 className="text-4xl sm:text-6xl md:text-[80px] font-display font-medium tracking-[-0.045em] leading-[0.95] text-[#ff630f]">
-                SALUD GARANTIZADA.
+              <h2 className="text-4xl sm:text-6xl md:text-[86px] font-display font-medium tracking-[-0.045em] leading-[1] text-[#ff630f]">
+                DISTINCTIVE OUTCOMES.
               </h2>
             </div>
-            <span className="text-xs font-mono tracking-widest text-[#949494] uppercase pt-3">
-              // SERVICIOS CLÍNICOS
+            <span className="text-[18px] font-mono tracking-widest text-[#949494] uppercase pt-3">
+              // CAPABILITIES.
             </span>
           </div>
 
-          {/* 3 Filas de Despliegue con Botón Naranja */}
+          {/* 3 Filas con Columnas: 42px minmax(0,1.1fr) minmax(0,1.7fr) 140px */}
           <div className="divide-y divide-[#222222]">
             {SERVICES.map((srv) => {
               const isExpanded = !!expandedServices[srv.id];
               return (
                 <div key={srv.id} className="py-8 space-y-4">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex items-baseline space-x-6">
-                      <span className="text-xs font-mono text-[#ff630f] font-bold">
-                        {srv.id}
-                      </span>
-                      <h3 className="text-xl sm:text-2xl font-display font-medium text-white">
-                        {srv.title}
-                      </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-4">
+                    {/* Index */}
+                    <div className="md:col-span-1 text-[14px] font-mono text-[#ff630f] font-bold">
+                      {srv.id}
                     </div>
 
-                    <div className="flex items-center justify-between md:space-x-8">
-                      <span className="text-xs sm:text-sm font-mono text-[#949494] max-w-md hidden sm:block">
-                        {srv.scope}
-                      </span>
+                    {/* Título */}
+                    <div className="md:col-span-4 text-xl sm:text-[24px] font-display font-medium text-white">
+                      {srv.title}
+                    </div>
 
+                    {/* Scope */}
+                    <div className="md:col-span-5 text-sm sm:text-[18px] font-display text-[#949494]">
+                      {srv.scope}
+                    </div>
+
+                    {/* Botón Explore + / Close − */}
+                    <div className="md:col-span-2 flex md:justify-end">
                       <button
                         onClick={() => toggleService(srv.id)}
-                        className="px-5 py-2 rounded-full bg-[#ff630f] text-black font-display font-medium text-xs tracking-wider uppercase transition hover:scale-105 active:scale-95"
+                        className="px-6 py-2.5 rounded-full bg-[#ff630f] text-black font-display font-medium text-xs tracking-wider uppercase transition hover:scale-105 active:scale-95 shadow-md"
                       >
-                        {isExpanded ? 'Cerrar −' : 'Explorar +'}
+                        {isExpanded ? 'Close −' : 'Explore +'}
                       </button>
                     </div>
                   </div>
 
-                  {/* Panel expandible */}
+                  {/* Panel Desplegable con Entregables */}
                   {isExpanded && (
-                    <div className="pt-4 pl-12 text-sm sm:text-base font-display text-[#b8b8b8] space-y-2 animate-in fade-in duration-200">
+                    <div className="pt-4 pl-12 text-sm sm:text-base font-display text-[#b8b8b8] space-y-3 animate-in fade-in duration-200">
                       <p className="leading-relaxed">{srv.text}</p>
                       <p className="text-xs font-mono text-[#ff630f]">
-                        <span className="font-bold text-white uppercase">Prestaciones: </span>
+                        <span className="font-bold text-white uppercase">Example deliverables: </span>
                         {srv.deliverables}
                       </p>
                     </div>
@@ -1341,14 +1396,14 @@ export default function LandingCatalogo() {
           </div>
 
           <div className="flex flex-col sm:flex-row justify-between text-xs font-mono text-[#949494] pt-8 border-t border-[#222222]">
-            <span>Desde un medicamento esencial hasta tratamientos de alta complejidad.</span>
-            <span>Atención Farmacéutica / Práctica Ética Colegiada</span>
+            <span>From a focused identity to a complete digital direction.</span>
+            <span>Independent practice / Collaborative approach</span>
           </div>
         </div>
       </section>
 
       {/* ===================================================================
-          7. CONTACTO & FOOTER (#contact)
+          7. CONTACTO & FOOTER (#contact - SECCIÓN 9)
           =================================================================== */}
       <section
         id="contact"
@@ -1356,36 +1411,36 @@ export default function LandingCatalogo() {
       >
         <div className="max-w-[1440px] mx-auto space-y-16">
           <div className="border-b border-[#222222] pb-4">
-            <span className="text-xs font-mono tracking-widest text-[#ff630f] uppercase">
-              // CONTACTO &amp; ATENCIÓN
+            <span className="text-[18px] font-mono tracking-widest text-[#ffffff] uppercase">
+              // Contact.
             </span>
           </div>
 
-          {/* Gran Título de Contacto: Segunda Línea Naranja */}
+          {/* Gran Título en 2 Líneas: LET’S MAKE SOMETHING MATTER. */}
           <div>
-            <h2 className="text-4xl sm:text-6xl md:text-[96px] font-display font-medium tracking-[-0.04em] leading-[0.9] text-white">
-              HAGAMOS QUE LA
+            <h2 className="text-4xl sm:text-6xl md:text-[116px] font-display font-medium tracking-[-0.04em] leading-[0.9] text-white">
+              LET’S MAKE
             </h2>
-            <h2 className="text-4xl sm:text-6xl md:text-[96px] font-display font-medium tracking-[-0.04em] leading-[0.9] text-[#ff630f]">
-              SALUD IMPORTE.
+            <h2 className="text-4xl sm:text-6xl md:text-[116px] font-display font-medium tracking-[-0.04em] leading-[0.9] text-[#ff630f]">
+              SOMETHING MATTER.
             </h2>
           </div>
 
-          {/* Dos Columnas de Contacto */}
+          {/* Dos Columnas */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pt-6">
-            <div className="md:col-span-6 space-y-4">
-              <p className="text-lg sm:text-xl font-display text-[#b8b8b8] leading-relaxed max-w-md">
-                ¿Necesitas consultar stock, cotizar una receta médica o recibir orientación farmacéutica? Escríbenos directamente a nuestro canal de guardia.
+            <div className="md:col-span-6 space-y-4 max-w-[480px]">
+              <p className="text-lg sm:text-[20px] font-display text-[#b8b8b8] leading-relaxed">
+                Have a brand, publication, or digital experience in mind? Tell me what you’re building and where you want to take it.
               </p>
               <div className="text-xs font-mono text-[#949494] space-y-1">
+                <p>Brand identities / Editorial systems / Digital experiences</p>
                 <p>📍 {PERSONA.location}</p>
-                <p>⏰ Lunes a Domingo: 07:00 a 23:00 hrs · Turno de Guardia</p>
                 <p>🛡️ {PERSONA.regente}</p>
               </div>
             </div>
 
             <div className="md:col-span-6 space-y-4 flex flex-col justify-end">
-              <div className="p-6 rounded-2xl border border-[#222222] bg-[#0d0d0d] space-y-3">
+              <div className="p-8 rounded-2xl border border-[#222222] bg-[#0d0d0d] space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-mono text-[#ff630f] uppercase tracking-wider">
                     WHATSAPP DE ATENCIÓN DIRECTA
@@ -1398,38 +1453,42 @@ export default function LandingCatalogo() {
                     <span>{copiedText === 'tel' ? '¡Copiado!' : 'Copiar'}</span>
                   </button>
                 </div>
-                <div className="text-2xl sm:text-3xl font-display font-medium text-white">
+                <div className="text-2xl sm:text-4xl font-display font-medium text-white">
                   {PERSONA.phone}
                 </div>
                 <a
                   href={`https://wa.me/51999888777?text=Hola%20Botica%20Nova%20Salud,%20deseo%20hacer%20una%20consulta.`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center space-x-2 py-3 bg-[#ff630f] text-black font-display font-medium rounded-full text-sm hover:scale-[1.02] transition"
+                  className="w-full inline-flex items-center justify-center space-x-2 py-4 bg-[#ff630f] text-black font-display font-medium rounded-full text-base hover:scale-[1.02] transition shadow-lg"
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>Chatear por WhatsApp Ahora</span>
+                  <MessageCircle className="w-5 h-5" />
+                  <span>Start a conversation ↗</span>
                 </a>
               </div>
             </div>
           </div>
 
-          {/* Footer Final */}
-          <div className="pt-16 border-t border-[#222222] flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-[#949494] gap-4">
-            <div>© {new Date().getFullYear()} Botica Nova Salud — Todos los derechos reservados.</div>
+          {/* Footer Final a 100px */}
+          <div className="pt-20 border-t border-[#222222] flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-[#949494] gap-4">
+            <div>© {new Date().getFullYear()} Mara Voss · Nova Salud</div>
             <a
               href="#top"
               className="text-white hover:text-[#ff630f] transition flex items-center space-x-1"
             >
-              <span>Volver arriba</span>
+              <span>Back to top</span>
               <span>↑</span>
             </a>
+          </div>
+
+          <div className="text-[11px] font-mono text-[#666666] text-center pt-2">
+            Concept portfolio — fictional persona and self-initiated projects.
           </div>
         </div>
       </section>
 
       {/* ===================================================================
-          MODAL NATIVO <dialog> PARA FICHA TÉCNICA DEL MEDICAMENTO / PROYECTO
+          MODAL NATIVO <dialog> PARA CASE STUDIES (SECCIÓN 7 & 12)
           =================================================================== */}
       <dialog
         ref={dialogRef}
@@ -1438,7 +1497,7 @@ export default function LandingCatalogo() {
       >
         {activeProject && (
           <div className="p-6 sm:p-10 space-y-8 relative">
-            {/* Barra superior de cierre */}
+            {/* Toolbar sticky de cierre */}
             <div className="flex items-center justify-between border-b border-[#333333] pb-4 sticky top-0 bg-[#101010] z-10">
               <span className="text-xs font-mono text-[#ff630f] tracking-widest uppercase">
                 {activeProject.projectType} // {activeProject.year}
@@ -1446,24 +1505,24 @@ export default function LandingCatalogo() {
               <button
                 onClick={closeModal}
                 className="p-2 rounded-full hover:bg-white/10 text-white transition text-xs font-mono uppercase"
-                aria-label="Cerrar modal"
+                aria-label="Close dialog"
               >
-                Cerrar [✕]
+                Close [✕]
               </button>
             </div>
 
-            {/* Título de la Ficha */}
+            {/* Título del Case Study */}
             <div className="space-y-2">
-              <h3 className="text-3xl sm:text-5xl font-display font-medium text-white tracking-tight">
+              <h3 className="text-4xl sm:text-6xl font-display font-medium text-white tracking-tight">
                 {activeProject.title}
               </h3>
-              <p className="text-lg text-[#b8b8b8] font-display leading-relaxed">
+              <p className="text-[20px] text-[#b8b8b8] font-display leading-relaxed">
                 {activeProject.summary}
               </p>
             </div>
 
-            {/* Previsualización del Arte Vectorial */}
-            <div className="w-full max-h-[460px] rounded-xl overflow-hidden bg-black flex items-center justify-center p-4 border border-[#222222]">
+            {/* Artwork contenido en máximo 540px */}
+            <div className="w-full max-h-[540px] rounded-xl overflow-hidden bg-black flex items-center justify-center p-4 border border-[#222222]">
               {React.createElement(artMap[activeProject.coverKey] || ArtGridline)}
             </div>
 
@@ -1471,45 +1530,31 @@ export default function LandingCatalogo() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm font-display border-t border-[#333333] pt-6">
               <div className="space-y-4">
                 <div>
-                  <span className="text-xs font-mono text-[#949494] uppercase block">
-                    Laboratorio Fabricante
-                  </span>
-                  <span className="text-base text-white">{activeProject.laboratorio || 'DIGEMID Titular'}</span>
+                  <span className="text-xs font-mono text-[#949494] uppercase block">Role</span>
+                  <span className="text-base text-white">{activeProject.role}</span>
                 </div>
                 <div>
-                  <span className="text-xs font-mono text-[#949494] uppercase block">
-                    Precio Oficial en Soles
-                  </span>
-                  <span className="text-2xl font-display font-medium text-[#ff630f]">
-                    S/ {activeProject.precio.toFixed(2)}
-                  </span>
+                  <span className="text-xs font-mono text-[#949494] uppercase block">Discipline</span>
+                  <span className="text-base text-white">{activeProject.discipline}</span>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <span className="text-xs font-mono text-[#949494] uppercase block">
-                    Condición Sanitaria de Venta
-                  </span>
-                  <span className="text-base text-white">
-                    {activeProject.requiereReceta ? 'Requiere Receta Médica Obligatoria' : 'Venta Libre con Asesoría'}
-                  </span>
+                  <span className="text-xs font-mono text-[#949494] uppercase block">Challenge</span>
+                  <span className="text-sm text-[#b8b8b8]">{activeProject.challenge}</span>
                 </div>
                 <div>
-                  <span className="text-xs font-mono text-[#949494] uppercase block">
-                    Stock Disponible en Sede Lima
-                  </span>
-                  <span className="text-base text-emerald-400 font-mono">
-                    {activeProject.stock} unidades en almacén
-                  </span>
+                  <span className="text-xs font-mono text-[#949494] uppercase block">Approach</span>
+                  <span className="text-sm text-[#b8b8b8]">{activeProject.approach}</span>
                 </div>
               </div>
             </div>
 
-            {/* Prestaciones y Entregables */}
+            {/* Entregables */}
             <div className="space-y-3 border-t border-[#333333] pt-6">
               <span className="text-xs font-mono text-[#ff630f] uppercase tracking-wider block">
-                Componentes de la Dispensación
+                Deliverables
               </span>
               <ul className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {activeProject.deliverables.map((item, idx) => (
@@ -1523,15 +1568,15 @@ export default function LandingCatalogo() {
               </ul>
             </div>
 
-            {/* Botón de Pedido por WhatsApp */}
+            {/* Botón de Pedido / Contacto por WhatsApp */}
             <div className="pt-4 border-t border-[#333333] flex justify-end">
               <a
-                href={`https://wa.me/51999888777?text=Hola%20Botica%20Nova%20Salud,%20deseo%20adquirir%20el%20medicamento:%20${encodeURIComponent(activeProject.title)}`}
+                href={`https://wa.me/51999888777?text=Hola%20Botica%20Nova%20Salud,%20deseo%20consultar%20por:%20${encodeURIComponent(activeProject.title)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-8 py-3.5 rounded-full bg-[#ff630f] text-black font-display font-medium text-sm hover:scale-105 transition shadow-xl"
               >
-                Pedir este medicamento por WhatsApp ↗
+                Pedir / Consultar por WhatsApp ↗
               </a>
             </div>
           </div>

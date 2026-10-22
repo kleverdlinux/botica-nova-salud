@@ -32,9 +32,94 @@
 }
 
 
+@keyframes letterRise {
+  0% {
+    opacity: 0;
+    transform: translateY(115%) rotate(3deg) scale(0.96);
+    filter: blur(32px);
+  }
+  65% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg) scale(1);
+    filter: blur(0px);
+  }
+}
+
+@keyframes arrowBounce {
+  0%, 70%, 100% {
+    transform: translateY(-3px);
+  }
+  35% {
+    transform: translateY(5px);
+  }
+}
+
+@keyframes navEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeRise {
+  0% {
+    opacity: 0;
+    transform: translateY(56px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-letter {
+  display: inline-block;
+  animation: letterRise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-arrow-bounce {
+  animation: arrowBounce 1.9s cubic-bezier(0.45, 0, 0.3, 1) infinite;
+}
+
+.animate-nav-down {
+  animation: navEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-rise {
+  animation: fadeRise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* White difference wipe over project row */
+.row-wipe {
+  position: relative;
+  overflow: hidden;
+}
+.row-wipe::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  transform: translateX(-101%);
+  transition: transform 0.45s cubic-bezier(0.44, 0, 0.56, 1);
+  mix-blend-mode: difference;
+  pointer-events: none;
+  z-index: 10;
+}
+.row-wipe:hover::before {
+  transform: translateX(0);
+}
+
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-800 antialiased font-sans selection:bg-brand-500 selection:text-white;
+    @apply bg-[#000000] text-white antialiased font-sans selection:bg-[#ff630f] selection:text-black;
   }
 }
 
