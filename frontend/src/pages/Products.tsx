@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { ProductCard } from "@/components/ProductCard";
-import { products, collections, getCollectionBySlug } from "@/data/products";
+import { ProductDetailModal } from "@/components/ProductDetailModal";
+import { Product, products, collections, getCollectionBySlug } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -43,6 +44,7 @@ const Products = () => {
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [visibleCount, setVisibleCount] = useState(24);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Al cambiar de categoría o filtro, resetear visibleCount a 24
   useEffect(() => {
@@ -267,6 +269,7 @@ const Products = () => {
                     key={product.id}
                     product={product}
                     index={index}
+                    onQuickView={(p) => setSelectedProduct(p)}
                   />
                 ))}
               </div>
@@ -347,6 +350,13 @@ const Products = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Modal de Detalle Rápido de Producto */}
+      <ProductDetailModal
+        product={selectedProduct}
+        isOpen={Boolean(selectedProduct)}
+        onClose={() => setSelectedProduct(null)}
+      />
     </Layout>
   );
 };

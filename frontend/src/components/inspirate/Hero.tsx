@@ -6,12 +6,14 @@ interface HeroProps {
   onOpenQuotation: () => void;
   onOpenCatalog: () => void;
   onOpenBrand: () => void;
+  onOpenProductModal?: (slug: string) => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({
   onOpenQuotation,
   onOpenCatalog,
   onOpenBrand,
+  onOpenProductModal,
 }) => {
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -143,11 +145,11 @@ export const Hero: React.FC<HeroProps> = ({
 
         {/* Bottom-Right Floating Card: Link directly to product in catalog */}
         <div
-          onClick={() => navigate('/product/fotoprotector-isdin-fusion-water-magic-spf50')}
+          onClick={() => onOpenProductModal ? onOpenProductModal('fotoprotector-isdin-fusion-water-magic-spf50') : navigate('/product/fotoprotector-isdin-fusion-water-magic-spf50')}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') navigate('/product/fotoprotector-isdin-fusion-water-magic-spf50');
+            if (e.key === 'Enter' || e.key === ' ') { if (onOpenProductModal) { onOpenProductModal('fotoprotector-isdin-fusion-water-magic-spf50'); } else { navigate('/product/fotoprotector-isdin-fusion-water-magic-spf50'); } }
           }}
           className="group mt-12 lg:mt-0 self-center lg:self-auto lg:absolute lg:right-[24px] lg:bottom-[24px] w-full max-w-[340px] bg-white p-[12px] pb-[20px] cursor-pointer shadow-2xl rounded-sm hover:ring-2 hover:ring-[#0d9488]/40 transition-all"
         >

@@ -17,6 +17,7 @@ import {
 import { FaWhatsapp } from "react-icons/fa6";
 import { Layout } from "@/components/Layout";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductDetailModal } from "@/components/ProductDetailModal";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { getProductBySlug, getRelatedProducts, collections, Product } from "@/data/products";
 import { useWishlist } from "@/hooks/useWishlist";
@@ -26,6 +27,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 const ProductDetail = () => {
+  const [modalProduct, setModalProduct] = useState<Product | null>(null);
   const { slug } = useParams<{ slug: string }>();
   const product = getProductBySlug(slug || "");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -419,26 +421,44 @@ const ProductDetail = () => {
 
               {/* Actions Block: Quantity, Add to Cart, WhatsApp, Wishlist */}
               <div className="space-y-3 pt-2">
-                <div className="flex items-center gap-3">
-                  <div className="w-32">
-                    <QuantitySelector
-                      quantity={quantity}
-                      onQuantityChange={setQuantity}
-                    />
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 sm:w-32 sm:flex-none">
+                      <QuantitySelector
+                        quantity={quantity}
+                        onQuantityChange={setQuantity}
+                      />
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleWishlistToggle}
+                      className="sm:hidden h-11 w-11 rounded-lg border-border hover:bg-accent shrink-0"
+                      title={inWishlist ? "Quitar de favoritos" : "Guardar en favoritos"}
+                    >
+                      <Heart
+                        className={cn(
+                          "w-5 h-5 transition-all",
+                          inWishlist ? "fill-primary text-primary" : "text-muted-foreground"
+                        )}
+                      />
+                    </Button>
                   </div>
+
                   <Button
                     size="lg"
                     onClick={handleAddToCart}
                     className="flex-1 rounded-sm py-5 text-xs sm:text-sm font-extrabold tracking-wider uppercase bg-[#18181b] text-white hover:bg-[#0d9488] transition-all shadow-sm cursor-pointer"
                   >
-                    <ShoppingBag className="w-4 h-4 mr-2" />
-                    Agregar al Carrito • S/ {((Number(currentPrice) || 0) * quantity).toFixed(2)}
+                    <ShoppingBag className="w-4 h-4 mr-2 shrink-0" />
+                    <span>Agregar al Carrito • S/ {((Number(currentPrice) || 0) * quantity).toFixed(2)}</span>
                   </Button>
+
                   <Button
                     variant="outline"
                     size="icon"
                     onClick={handleWishlistToggle}
-                    className="h-11 w-11 rounded-lg border-border hover:bg-accent shrink-0"
+                    className="hidden sm:inline-flex h-11 w-11 rounded-lg border-border hover:bg-accent shrink-0"
                     title={inWishlist ? "Quitar de favoritos" : "Guardar en favoritos"}
                   >
                     <Heart
@@ -500,12 +520,13 @@ const ProductDetail = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
               {relatedProducts.map((p, index) => (
-                <ProductCard key={p.id} product={p} index={index} />
+                <ProductCard key={p.id} product={p} index={index} onQuickView={(prod) => setModalProduct(prod)} />
               ))}
             </div>
           </div>
         </section>
       )}
+      <ProductDetailModal product={modalProduct} isOpen={Boolean(modalProduct)} onClose={() => setModalProduct(null)} />
     </Layout>
   );
 };

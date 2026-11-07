@@ -8,11 +8,13 @@ interface HitsShowcaseProps {
   onSelectProduct?: (product: Product) => void;
   onQuickOrder?: (product: Product) => void;
   onOpenCatalog?: () => void;
+  onOpenProductModal?: (slug: string) => void;
 }
 
 export const HitsShowcase: React.FC<HitsShowcaseProps> = ({
   favorites,
   onToggleFavorite,
+  onOpenProductModal,
 }) => {
   const navigate = useNavigate();
   const [leftSpotHovered, setLeftSpotHovered] = useState(false);
@@ -62,11 +64,11 @@ export const HitsShowcase: React.FC<HitsShowcaseProps> = ({
           <div
             onMouseEnter={() => setLeftSpotHovered(true)}
             onMouseLeave={() => setLeftSpotHovered(false)}
-            onClick={() => navigate('/product/panadol-antigripal-nf')}
+            onClick={() => onOpenProductModal ? onOpenProductModal('panadol-antigripal-nf') : navigate('/product/panadol-antigripal-nf')}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') navigate('/product/panadol-antigripal-nf');
+              if (e.key === 'Enter' || e.key === ' ') { if (onOpenProductModal) { onOpenProductModal('panadol-antigripal-nf'); } else { navigate('/product/panadol-antigripal-nf'); } }
             }}
             style={{ left: '17.2%', top: '31.5%' }}
             className="group absolute w-[210px] sm:w-[240px] h-[295px] sm:h-[335px] border border-white/60 bg-black/25 backdrop-blur-[2px] cursor-pointer z-20 flex flex-col justify-end p-[16px] transition-all hover:border-[#2dd4bf]"
@@ -125,11 +127,11 @@ export const HitsShowcase: React.FC<HitsShowcaseProps> = ({
           <div
             onMouseEnter={() => setRightTopHovered(true)}
             onMouseLeave={() => setRightTopHovered(false)}
-            onClick={() => navigate('/product/apronax-550-mg')}
+            onClick={() => onOpenProductModal ? onOpenProductModal('apronax-550-mg') : navigate('/product/apronax-550-mg')}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') navigate('/product/apronax-550-mg');
+              if (e.key === 'Enter' || e.key === ' ') { if (onOpenProductModal) { onOpenProductModal('apronax-550-mg'); } else { navigate('/product/apronax-550-mg'); } }
             }}
             style={{ left: '42.8%', top: '7.5%' }}
             className="group absolute w-[200px] sm:w-[240px] h-[280px] sm:h-[335px] border border-white/60 bg-black/25 backdrop-blur-[2px] cursor-pointer z-20 flex flex-col justify-end p-[16px] transition-all hover:border-[#2dd4bf]"
@@ -172,11 +174,11 @@ export const HitsShowcase: React.FC<HitsShowcaseProps> = ({
           <div
             onMouseEnter={() => setRightBottomHovered(true)}
             onMouseLeave={() => setRightBottomHovered(false)}
-            onClick={() => navigate('/product/fotoprotector-isdin-fusion-water-magic-spf50')}
+            onClick={() => onOpenProductModal ? onOpenProductModal('fotoprotector-isdin-fusion-water-magic-spf50') : navigate('/product/fotoprotector-isdin-fusion-water-magic-spf50')}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') navigate('/product/fotoprotector-isdin-fusion-water-magic-spf50');
+              if (e.key === 'Enter' || e.key === ' ') { if (onOpenProductModal) { onOpenProductModal('fotoprotector-isdin-fusion-water-magic-spf50'); } else { navigate('/product/fotoprotector-isdin-fusion-water-magic-spf50'); } }
             }}
             style={{ left: '42.8%', top: '52.5%' }}
             className="group absolute w-[200px] sm:w-[240px] h-[280px] sm:h-[335px] border border-white/60 bg-black/25 backdrop-blur-[2px] cursor-pointer z-20 flex flex-col justify-end p-[16px] transition-all hover:border-[#2dd4bf]"
@@ -224,7 +226,7 @@ export const HitsShowcase: React.FC<HitsShowcaseProps> = ({
           return (
             <div
               key={product.id}
-              onClick={() => navigate(`/product/${getProductSlug(product)}`)}
+              onClick={() => onOpenProductModal ? onOpenProductModal(getProductSlug(product)) : navigate(`/product/${getProductSlug(product)}`)}
               className="group bg-white flex flex-col justify-between cursor-pointer transition-all duration-300 hover:shadow-md"
             >
               {/* Image Area with Secondary Hover Image */}
@@ -282,7 +284,7 @@ export const HitsShowcase: React.FC<HitsShowcaseProps> = ({
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/product/${getProductSlug(product)}`);
+                      if (onOpenProductModal) { onOpenProductModal(getProductSlug(product)); } else { navigate(`/product/${getProductSlug(product)}`); }
                     }}
                     className="text-[10px] font-extrabold uppercase tracking-[0.04em] text-[#18181b] hover:text-[#0d9488] transition-colors cursor-pointer"
                   >
