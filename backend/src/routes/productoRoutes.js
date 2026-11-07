@@ -18,9 +18,10 @@ router.get('/', productoController.listar);
 // 3. Obtener por ID específico
 router.get('/:id', productoController.obtenerPorId);
 
-// 4. Operaciones de escritura (Exclusivas de ADMIN)
-router.post('/', requiereRol('ADMIN'), validar(productoCreateSchema), productoController.crear);
-router.put('/:id', requiereRol('ADMIN'), validar(productoUpdateSchema), productoController.actualizar);
-router.delete('/:id', requiereRol('ADMIN'), productoController.desactivar);
+// 4. Operaciones de escritura (ADMIN y ALMACEN)
+router.post('/', requiereRol('ADMIN', 'ALMACEN'), validar(productoCreateSchema), productoController.crear);
+router.put('/:id', requiereRol('ADMIN', 'ALMACEN'), validar(productoUpdateSchema), productoController.actualizar);
+router.patch('/:id/activar', requiereRol('ADMIN', 'ALMACEN'), productoController.activar);
+router.delete('/:id', requiereRol('ADMIN', 'ALMACEN'), productoController.desactivar);
 
 export default router;

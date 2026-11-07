@@ -30,3 +30,8 @@ export const kardex = asyncHandler(async (req, res) => {
   );
   return res.status(200).json(resultado);
 });
+
+export const kardexGlobal = asyncHandler(async (req, res) => {
+  const resultado = await inventarioService.obtenerKardexGlobal(req.query);
+  return res.status(200).json(resultado);
+});

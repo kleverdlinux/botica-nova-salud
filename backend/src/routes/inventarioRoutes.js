@@ -7,10 +7,11 @@ import { entradaInventarioSchema, ajusteInventarioSchema } from '../schemas/inve
 const router = Router();
 
 // Todas las operaciones de kardex y movimientos manuales requieren sesión y rol ADMIN
-router.use(verificarAuth, requiereRol('ADMIN'));
+router.use(verificarAuth, requiereRol('ADMIN', 'ALMACEN'));
 
 router.post('/entrada', validar(entradaInventarioSchema), inventarioController.entrada);
 router.post('/ajuste', validar(ajusteInventarioSchema), inventarioController.ajuste);
+router.get('/kardex', inventarioController.kardexGlobal);
 router.get('/kardex/:productoId', inventarioController.kardex);
 
 export default router;

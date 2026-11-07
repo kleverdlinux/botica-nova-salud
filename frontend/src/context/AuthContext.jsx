@@ -37,8 +37,9 @@ export function AuthProvider({ children }) {
 
       try {
         const data = await obtenerPerfilApi();
-        setUsuario(data.usuario);
-        localStorage.setItem('novasalud_usuario', JSON.stringify(data.usuario));
+        const usuarioObtenido = data?.usuario || data;
+        setUsuario(usuarioObtenido);
+        localStorage.setItem('novasalud_usuario', JSON.stringify(usuarioObtenido));
       } catch (err) {
         console.warn('Sesión no válida o expirada:', err.response?.data?.error || err.message);
         localStorage.removeItem('novasalud_token');
@@ -69,8 +70,17 @@ export function AuthProvider({ children }) {
     setToken(null);
   };
 
+  const actualizarUsuario = (datos) => {
+    const datosLimpios = datos?.usuario || datos;
+    setUsuario(prev => {
+      const fusionado = { ...prev, ...datosLimpios };
+      localStorage.setItem('novasalud_usuario', JSON.stringify(fusionado));
+      return fusionado;
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ usuario, token, cargando, login, logout }}>
+    <AuthContext.Provider value={{ usuario, token, cargando, login, logout, actualizarUsuario }}>
       {children}
     </AuthContext.Provider>
   );

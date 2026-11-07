@@ -9,3 +9,8 @@ export async function obtenerPerfilApi() {
   const { data } = await clienteAxios.get('/auth/perfil');
   return data;
 }
+
+export async function actualizarPerfilApi(datos) {
+  const { data } = await clienteAxios.put('/auth/perfil', datos);
+  return data;
+}

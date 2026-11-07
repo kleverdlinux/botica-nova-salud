@@ -20,12 +20,12 @@ const PERSONA = {
   practice: 'Brand identities, clinical systems, pharmaceutical care.',
   email: 'farmacia@boticanovasalud.pe',
   phone: '+51 999 888 777',
-  location: 'Av. Gran Chimú 1248, San Juan de Lurigancho, Lima, Perú',
+  location: 'Av. Principal 1248, Zona Comercial, Lima, Perú',
   regente: 'Q.F. Regente Colegiada · Matrícula CQFP Activa'
 };
 
 const ASSETS = {
-  hero: '/media/directora-farmaceutica.png',
+  hero: '/images/hero/pharmacist-hero-hd.jpg',
   statement: null,
   gridline: null,
   forma: null,
@@ -174,7 +174,7 @@ const SERVICES = [
     id: '03',
     title: 'Atención Farmacéutica & Monitoreo de Parámetros',
     scope: 'Toma de Presión Gratuita / Control de Glucosa / Asesoría en Tratamiento',
-    text: 'Servicio asistencial directo en nuestro establecimiento en San Juan de Lurigancho para la medición de parámetros vitales y orientación en adherencia al tratamiento.',
+    text: 'Servicio asistencial directo en nuestro establecimiento comercial para la medición de parámetros vitales y orientación en adherencia al tratamiento.',
     deliverables: 'Medición de presión arterial con tensiómetros clínicos calibrados, orientación en horarios de ingesta y carné preventivo para pacientes crónicos.'
   }
 ];
@@ -317,7 +317,7 @@ const ArtFieldnotes = () => (
     <path d="M428 550 603 455" stroke="#ff630f" strokeWidth="2" />
     <g fontFamily="MonaSemi, Arial, sans-serif" fill="#e8e2d7">
       <text x="35" y="82" fontSize="31" letterSpacing="-1">losartán 50mg</text>
-      <text x="35" y="732" fontSize="10" letterSpacing="2">ATENCIÓN PERMANENTE EN SAN JUAN DE LURIGANCHO</text>
+      <text x="35" y="732" fontSize="10" letterSpacing="2">ATENCIÓN Y DISPENSACIÓN PERMANENTE</text>
     </g>
     <path d="M672 76h93" stroke="#ff630f" strokeWidth="5" />
   </svg>
@@ -1457,7 +1457,7 @@ export default function LandingCatalogo() {
                   {PERSONA.phone}
                 </div>
                 <a
-                  href={`https://wa.me/51999888777?text=Hola%20Botica%20Nova%20Salud,%20deseo%20hacer%20una%20consulta.`}
+                  href={`https://wa.me/51955545561?text=Hola%20Botica%20Nova%20Salud,%20deseo%20hacer%20una%20consulta.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center space-x-2 py-4 bg-[#ff630f] text-black font-display font-medium rounded-full text-base hover:scale-[1.02] transition shadow-lg"
@@ -1571,7 +1571,7 @@ export default function LandingCatalogo() {
             {/* Botón de Pedido / Contacto por WhatsApp */}
             <div className="pt-4 border-t border-[#333333] flex justify-end">
               <a
-                href={`https://wa.me/51999888777?text=Hola%20Botica%20Nova%20Salud,%20deseo%20consultar%20por:%20${encodeURIComponent(activeProject.title)}`}
+                href={`https://wa.me/51955545561?text=Hola%20Botica%20Nova%20Salud,%20deseo%20consultar%20por:%20${encodeURIComponent(activeProject.title)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-8 py-3.5 rounded-full bg-[#ff630f] text-black font-display font-medium text-sm hover:scale-105 transition shadow-xl"

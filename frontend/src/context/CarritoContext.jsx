@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useMemo } from 'react';
-import toast from 'react-hot-toast';
+import toast from '../utils/alertaSweet.js';
 
 const CarritoContext = createContext(null);
 

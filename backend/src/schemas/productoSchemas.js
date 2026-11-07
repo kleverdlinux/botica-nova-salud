@@ -18,7 +18,7 @@ export const productoCreateSchema = z.object({
     }
     return new Date(val);
   }, z.date().optional().nullable()),
-  imagen: z.string().url('URL de imagen inválida').optional().nullable(),
+  imagen: z.string().trim().optional().nullable().or(z.literal('')),
   categoriaId: z.coerce.number().int().positive('Categoría requerida'),
   proveedorId: z.coerce.number().int().positive().optional().nullable()
 });

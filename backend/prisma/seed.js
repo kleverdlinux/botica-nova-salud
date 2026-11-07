@@ -9,30 +9,45 @@ async function main() {
   // 1. Usuarios con contraseñas seguras hasheadas (bcrypt con 10 rondas)
   const passAdmin = await bcrypt.hash('Admin123!', 10);
   const passCajero = await bcrypt.hash('Cajero123!', 10);
+  const passAlmacen = await bcrypt.hash('Almacen123!', 10);
 
   const admin = await prisma.usuario.upsert({
     where: { email: 'admin@novasalud.com' },
-    update: {},
+    update: { avatar: '/avatars/admin/admin-3.jpg' },
     create: {
       nombre: 'Administrador Nova Salud',
       email: 'admin@novasalud.com',
       password: passAdmin,
-      rol: 'ADMIN'
+      rol: 'ADMIN',
+      avatar: '/avatars/admin/admin-3.jpg'
     }
   });
 
   const cajero = await prisma.usuario.upsert({
     where: { email: 'cajero@novasalud.com' },
-    update: {},
+    update: { avatar: '/avatars/cajero/cajero-2.jpg' },
     create: {
-      nombre: 'Carlos Ramos (Cajero)',
+      nombre: 'Carla Ramos (Cajero)',
       email: 'cajero@novasalud.com',
       password: passCajero,
-      rol: 'CAJERO'
+      rol: 'CAJERO',
+      avatar: '/avatars/cajero/cajero-2.jpg'
     }
   });
 
-  console.log('Usuarios sembrados: admin@novasalud.com y cajero@novasalud.com');
+  const almacen = await prisma.usuario.upsert({
+    where: { email: 'almacen@novasalud.com' },
+    update: { rol: 'ALMACEN', avatar: '/avatars/almacen/almacen-2.jpg' },
+    create: {
+      nombre: 'Gestor de Almacén & Kardex',
+      email: 'almacen@novasalud.com',
+      password: passAlmacen,
+      rol: 'ALMACEN',
+      avatar: '/avatars/almacen/almacen-2.jpg'
+    }
+  });
+
+  console.log('Usuarios sembrados: admin@novasalud.com, cajero@novasalud.com y almacen@novasalud.com');
 
   // 2. Proveedor
   const prov1 = await prisma.proveedor.upsert({
@@ -185,3 +200,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+

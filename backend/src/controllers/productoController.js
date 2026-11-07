@@ -41,6 +41,14 @@ export const desactivar = asyncHandler(async (req, res) => {
   });
 });
 
+export const activar = asyncHandler(async (req, res) => {
+  const activado = await productoService.activarProducto(req.params.id);
+  return res.status(200).json({
+    mensaje: 'Producto reactivado exitosamente.',
+    producto: activado
+  });
+});
+
 export const listarCategorias = asyncHandler(async (req, res) => {
   const categorias = await productoService.listarCategorias();
   return res.status(200).json(categorias);

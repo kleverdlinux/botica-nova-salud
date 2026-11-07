@@ -57,3 +57,14 @@ export function estaPorVencer(fechaVencimiento) {
   const limite60Dias = new Date(inicioHoyLima.getTime() + 60 * 86_400_000);
   return fVenc >= inicioHoyLima && fVenc <= limite60Dias;
 }
+
+export function calcularDiasParaCaducar(fechaVencimiento) {
+  if (!fechaVencimiento) return null;
+  const fVenc = new Date(fechaVencimiento);
+  if (isNaN(fVenc.getTime())) return null;
+
+  const hoyStr = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
+  const inicioHoyLima = new Date(`${hoyStr}T00:00:00.000-05:00`);
+  const diffTiempo = fVenc.getTime() - inicioHoyLima.getTime();
+  return Math.ceil(diffTiempo / 86_400_000);
+}

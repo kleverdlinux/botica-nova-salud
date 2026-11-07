@@ -1,14 +1,44 @@
 import prisma from '../lib/prisma.js';
 import { ErrorNegocio } from '../utils/errores.js';
+import { getInicioDiaLima, esProductoVencido } from '../utils/fechas.js';
+
+// Sincronización sanitaria automática DIGEMID (Horario America/Lima):
+// Inhabilita automáticamente (activo: false) en la base de datos cualquier producto cuya fecha de caducidad
+// sea anterior a hoy en Lima. De esta manera ningún medicamento vencido queda en estado ACTIVO,
+// desaparece de la tienda web pública y queda bloqueado para venta en mostrador POS.
+export async function sincronizarCaducidadAutomatica() {
+  try {
+    const inicioHoyLima = getInicioDiaLima();
+    const res = await prisma.producto.updateMany({
+      where: {
+        activo: true,
+        fechaVencimiento: {
+          lt: inicioHoyLima
+        }
+      },
+      data: {
+        activo: false
+      }
+    });
+    return res.count;
+  } catch (err) {
+    console.error('Error al sincronizar caducidad automática:', err);
+    return 0;
+  }
+}
 
 // 1. Búsqueda rápida para el POS (Máximo 20 productos, sin costos ni proveedor)
 export async function buscarProductosPOS(termino) {
   const query = termino ? termino.trim() : '';
   if (!query) return [];
 
+  // Garantizar que no haya medicamentos caducados en estado activo antes de consultar
+  await sincronizarCaducidadAutomatica();
+
   return await prisma.producto.findMany({
     where: {
       activo: true,
+      stock: { gt: 0 },
       OR: [
         { nombre: { contains: query, mode: 'insensitive' } },
         { codigoBarras: { equals: query } },
@@ -26,6 +56,7 @@ export async function buscarProductosPOS(termino) {
       stock: true,
       lote: true,
       fechaVencimiento: true,
+      imagen: true,
       categoriaId: true
       // EXCLUIDOS: costo, proveedorId
     },
@@ -36,15 +67,24 @@ export async function buscarProductosPOS(termino) {
 
 // 2. Listado paginado de productos según Rol (Admin vs Cajero)
 export async function listarProductos({ rol, activoQuery, page = 1, limit = 20, categoriaId, busqueda }) {
+  // Sincronizar automáticamente el estado activo según fecha de vencimiento
+  await sincronizarCaducidadAutomatica();
+
   const p = Math.max(1, parseInt(page, 10) || 1);
-  const l = Math.max(1, Math.min(100, parseInt(limit, 10) || 20));
+  const l = Math.max(1, Math.min(500, parseInt(limit, 10) || 20));
   const skip = (p - 1) * l;
 
   const where = {};
 
   // Filtro de estado activo según rol
-  if (rol === 'ADMIN' && activoQuery !== undefined) {
-    where.activo = activoQuery === 'true';
+  if (rol === 'ADMIN') {
+    if (activoQuery === 'false') {
+      where.activo = false;
+    } else if (activoQuery === 'all') {
+      // Sin filtro de activo: incluye activos e inactivos (ideal para auditoría de lotes)
+    } else {
+      where.activo = true; // Por defecto el catálogo muestra SOLO fármacos activos vigentes
+    }
   } else {
     where.activo = true; // El cajero SIEMPRE recibe solo activos
   }
@@ -62,8 +102,9 @@ export async function listarProductos({ rol, activoQuery, page = 1, limit = 20, 
     ];
   }
 
-  // Proyecciones estrictas por rol
-  const select = rol === 'ADMIN'
+  // Proyecciones estrictas por rol (ADMIN y ALMACEN ven gestión completa; CAJERO solo mostrador)
+  const esGestor = rol === 'ADMIN' || rol === 'ALMACEN';
+  const select = esGestor
     ? {
         id: true,
         codigoBarras: true,
@@ -71,7 +112,7 @@ export async function listarProductos({ rol, activoQuery, page = 1, limit = 20, 
         principioActivo: true,
         presentacion: true,
         laboratorio: true,
-        costo: true,      // Admin ve costo
+        costo: true,      // Gestores ven costo
         precio: true,
         stock: true,
         stockMinimo: true,
@@ -80,8 +121,10 @@ export async function listarProductos({ rol, activoQuery, page = 1, limit = 20, 
         imagen: true,
         activo: true,
         createdAt: true,
+        categoriaId: true,
+        proveedorId: true,
         categoria: { select: { id: true, nombre: true } },
-        proveedor: { select: { id: true, razonSocial: true, ruc: true } } // Admin ve proveedor
+        proveedor: { select: { id: true, razonSocial: true, ruc: true } }
       }
     : {
         id: true,
@@ -96,6 +139,7 @@ export async function listarProductos({ rol, activoQuery, page = 1, limit = 20, 
         lote: true,
         fechaVencimiento: true,
         imagen: true,
+        categoriaId: true,
         categoria: { select: { id: true, nombre: true } }
         // Cajero NO ve costo ni proveedor
       };
@@ -125,7 +169,8 @@ export async function obtenerProductoPorId(id, rol) {
   const productoId = parseInt(id, 10);
   if (isNaN(productoId)) throw new ErrorNegocio('ID de producto inválido.', 400);
 
-  const select = rol === 'ADMIN'
+  const esGestor = rol === 'ADMIN' || rol === 'ALMACEN';
+  const select = esGestor
     ? {
         id: true,
         codigoBarras: true,
@@ -175,6 +220,11 @@ export async function obtenerProductoPorId(id, rol) {
 export async function crearProducto(datos, usuarioId) {
   const { stockInicial = 0, ...productoData } = datos;
 
+  // Si se registra con fecha ya caducada, nace automáticamente inactivo
+  if (productoData.fechaVencimiento && esProductoVencido(productoData.fechaVencimiento)) {
+    productoData.activo = false;
+  }
+
   return await prisma.$transaction(async (tx) => {
     const nuevoProducto = await tx.producto.create({
       data: {
@@ -208,6 +258,24 @@ export async function actualizarProducto(id, datos) {
 
   const { stock, stockInicial, ...datosSeguros } = datos;
 
+  // Lógica Sanitaria Automática DIGEMID:
+  // Si la fecha de expiración es anterior a hoy en Lima, el producto se inhabilita automáticamente (activo: false)
+  // retirándolo de inmediato del catálogo web público y del POS.
+  if (datosSeguros.fechaVencimiento) {
+    if (esProductoVencido(datosSeguros.fechaVencimiento)) {
+      datosSeguros.activo = false;
+    } else {
+      // Si estaba caducado previamente y se actualiza a una fecha vigente, se reactiva de inmediato
+      const actual = await prisma.producto.findUnique({
+        where: { id: productoId },
+        select: { activo: true, fechaVencimiento: true }
+      });
+      if (actual && !actual.activo && (!actual.fechaVencimiento || esProductoVencido(actual.fechaVencimiento))) {
+        datosSeguros.activo = true;
+      }
+    }
+  }
+
   return await prisma.producto.update({
     where: { id: productoId },
     data: datosSeguros
@@ -225,13 +293,57 @@ export async function desactivarProducto(id) {
   });
 }
 
+// 6b. Reactivar producto
+export async function activarProducto(id) {
+  const productoId = parseInt(id, 10);
+  if (isNaN(productoId)) throw new ErrorNegocio('ID de producto inválido.', 400);
+
+  const prod = await prisma.producto.findUnique({
+    where: { id: productoId },
+    select: { fechaVencimiento: true, nombre: true }
+  });
+
+  if (!prod) throw new ErrorNegocio('Producto no encontrado.', 404);
+
+  if (prod.fechaVencimiento && esProductoVencido(prod.fechaVencimiento)) {
+    throw new ErrorNegocio(
+      `No se puede reactivar "${prod.nombre}" porque su lote actual está caducado. Debe registrar un nuevo lote vigente en "Entrada de Mercadería".`,
+      400
+    );
+  }
+
+  return await prisma.producto.update({
+    where: { id: productoId },
+    data: { activo: true }
+  });
+}
+
 // 7. Auxiliares: Categorías y Proveedores para selectores
 export async function listarCategorias() {
-  return await prisma.categoria.findMany({
+  const categorias = await prisma.categoria.findMany({
     where: { activo: true },
-    select: { id: true, nombre: true, descripcion: true },
-    orderBy: { nombre: 'asc' }
+    select: {
+      id: true,
+      nombre: true,
+      descripcion: true,
+      _count: {
+        select: { productos: { where: { activo: true } } }
+      },
+      productos: {
+        where: { activo: true },
+        select: { stock: true }
+      }
+    },
+    orderBy: { id: 'asc' }
   });
+
+  return categorias.map((c) => ({
+    id: c.id,
+    nombre: c.nombre,
+    descripcion: c.descripcion,
+    totalProductos: c._count.productos,
+    totalStock: c.productos.reduce((acc, p) => acc + (p.stock || 0), 0)
+  }));
 }
 
 export async function listarProveedores() {

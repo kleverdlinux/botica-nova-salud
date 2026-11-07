@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+  <defs>
+    <linearGradient id="adminBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="adminGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <rect width="160" height="160" rx="40" fill="url(#adminBg)"/>
+  <circle cx="80" cy="80" r="68" fill="none" stroke="url(#adminGold)" stroke-width="2.5" stroke-dasharray="4 3" opacity="0.4"/>
+  <path d="M80 34 L114 48 V78 C114 102 99 122 80 128 C61 122 46 102 46 78 V48 Z" fill="#020617" stroke="url(#adminGold)" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Corona / Insignia de Dirección -->
+  <path d="M66 84 L72 70 L80 78 L88 70 L94 84 Z" fill="url(#adminGold)"/>
+  <circle cx="80" cy="62" r="3.5" fill="#fbbf24"/>
+  <circle cx="68" cy="65" r="2.5" fill="#fbbf24"/>
+  <circle cx="92" cy="65" r="2.5" fill="#fbbf24"/>
+  <rect x="62" y="90" width="36" height="5" rx="2.5" fill="url(#adminGold)"/>
+  <text x="80" y="112" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="900" fill="#f8fafc" text-anchor="middle" letter-spacing="2">ADMIN</text>
+</svg>

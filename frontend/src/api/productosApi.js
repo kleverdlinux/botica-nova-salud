@@ -37,6 +37,12 @@ export async function desactivarProductoApi(id) {
   return data;
 }
 
+// Reactivar producto (ADMIN)
+export async function activarProductoApi(id) {
+  const { data } = await clienteAxios.patch(`/productos/${id}/activar`);
+  return data;
+}
+
 // Listar categorías activas para selectores
 export async function listarCategoriasApi() {
   const { data } = await clienteAxios.get('/categorias');
@@ -46,5 +52,12 @@ export async function listarCategoriasApi() {
 // Listar proveedores activos para selectores (ADMIN)
 export async function listarProveedoresApi() {
   const { data } = await clienteAxios.get('/proveedores');
+  return data;
+}
+
+// Consultar DNI (8 dígitos) o RUC (11 dígitos) con autollenado de datos del cliente
+export async function consultarDocumentoApi(numero) {
+  if (!numero || !numero.trim()) return null;
+  const { data } = await clienteAxios.get(`/consulta-documento?numero=${encodeURIComponent(numero.trim())}`);
   return data;
 }

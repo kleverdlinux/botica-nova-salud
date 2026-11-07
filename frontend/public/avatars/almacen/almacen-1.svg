@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+  <defs>
+    <linearGradient id="almacenBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#312e81"/>
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  <rect width="160" height="160" rx="40" fill="url(#almacenBg)"/>
+  <circle cx="80" cy="80" r="68" fill="none" stroke="url(#amberGrad)" stroke-width="2.5" stroke-dasharray="4 3" opacity="0.4"/>
+  <!-- Cubos / Cajas Isométricas de Medicamentos -->
+  <g transform="translate(80, 72)">
+    <!-- Caja Central Superior -->
+    <path d="M0 -32 L26 -18 L0 -4 L-26 -18 Z" fill="#fbbf24"/>
+    <path d="M-26 -18 L0 -4 V24 L-26 10 Z" fill="#d97706"/>
+    <path d="M0 -4 L26 -18 V10 L0 24 Z" fill="#b45309"/>
+    <line x1="0" y1="-32" x2="0" y2="-4" stroke="#78350f" stroke-width="1.5" stroke-dasharray="2 2"/>
+    
+    <!-- Cinta y Cruz Farmacéutica en la caja -->
+    <path d="M-10 -13 L0 -8 L10 -13" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <path d="M0 -18 L0 2" fill="none" stroke="#ffffff" stroke-width="2"/>
+  </g>
+  <!-- Base de Pallet BPA -->
+  <rect x="42" y="104" width="76" height="8" rx="2" fill="#4338ca" stroke="url(#amberGrad)" stroke-width="2"/>
+  <rect x="50" y="112" width="12" height="6" rx="1" fill="#fbbf24"/>
+  <rect x="74" y="112" width="12" height="6" rx="1" fill="#fbbf24"/>
+  <rect x="98" y="112" width="12" height="6" rx="1" fill="#fbbf24"/>
+  <text x="80" y="136" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="900" fill="#fde68a" text-anchor="middle" letter-spacing="2">KARDEX BPA</text>
+</svg>

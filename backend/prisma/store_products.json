@@ -1,0 +1,2255 @@
+{
+  "collections": [
+    {
+      "id": "medicamentos",
+      "name": "Medicamentos & Farmacia Ética",
+      "slug": "medicamentos",
+      "description": "Analgésicos, antibióticos, antigripales y fármacos éticos con certificación DIGEMID",
+      "image": "/media/catalog-hero/pexels-polina-tankilevitch-3735715.jpg",
+      "heroImage": "/media/catalog-hero/pexels-polina-tankilevitch-3735715.jpg"
+    },
+    {
+      "id": "cardiovascular",
+      "name": "Salud Cardiovascular & Crónicos",
+      "slug": "cardiovascular",
+      "description": "Antihipertensivos, antidiabéticos y control integral para pacientes crónicos",
+      "image": "/media/esp-cardiovascular.jpg",
+      "heroImage": "/media/esp-cardiovascular.jpg"
+    },
+    {
+      "id": "bienestar-suplementos",
+      "name": "Bienestar, Vitaminas & Suplementos",
+      "slug": "bienestar-suplementos",
+      "description": "Multivitamínicos, minerales, colágeno y nutrientes de alta biodisponibilidad",
+      "image": "/media/featured-collection.jpg",
+      "heroImage": "/media/featured-collection.jpg"
+    },
+    {
+      "id": "dermocosmetica",
+      "name": "Dermocosmética & Cuidado Personal",
+      "slug": "dermocosmetica",
+      "description": "Tratamientos dermatológicos de alta eficacia para la salud y protección de tu piel",
+      "image": "/media/catalog-hero/fs-cut-color-PL1WRIJOQuQ-unsplash.jpg",
+      "heroImage": "/media/catalog-hero/fs-cut-color-PL1WRIJOQuQ-unsplash.jpg"
+    },
+    {
+      "id": "pediatria",
+      "name": "Cuidado Pediátrico & Infantil",
+      "slug": "pediatria",
+      "description": "Nutrición infantil, cremas protectoras y cuidados delicados para el bebé y la madre",
+      "image": "/media/esp-pediatrico.jpg",
+      "heroImage": "/media/esp-pediatrico.jpg"
+    },
+    {
+      "id": "botiquin",
+      "name": "Botiquín & Primeros Auxilios",
+      "slug": "botiquin",
+      "description": "Materiales de curación, apósitos, gasas estériles y kits esenciales para emergencias",
+      "image": "/media/esp-botiquines.jpg",
+      "heroImage": "/media/esp-botiquines.jpg"
+    }
+  ],
+  "products": [
+    {
+      "id": "panadol-antigripal-nf",
+      "name": "Panadol Antigripal NF",
+      "slug": "panadol-antigripal-nf",
+      "collection": "medicamentos",
+      "price": 2.4,
+      "unitPrice": 2.4,
+      "unitLabel": "Sobre x2 tabs",
+      "boxPrice": 114.9,
+      "boxLabel": "Caja x52 sobres",
+      "description": "Alivio rápido de congestión nasal, fiebre, dolor de cabeza y cuerpo cortado",
+      "longDescription": "Panadol Antigripal NF de Haleon combina Paracetamol 500mg, Clorhidrato de Fenilefrina 5mg y Maleato de Clorfenamina 2mg para descongestionar el tracto respiratorio y cortar la gripe sin irritar el estómago.",
+      "materials": "Paracetamol 500mg, Fenilefrina 5mg, Clorfenamina 2mg (Haleon)",
+      "dimensions": "Caja x 52 sobres (104 tabletas)",
+      "images": [
+        "/media/products/panadol-antigripal-nf.jpg",
+        "/media/products/panadol-1.png"
+      ],
+      "featured": true
+    },
+    {
+      "id": "apronax-550mg",
+      "name": "Apronax 550 mg",
+      "slug": "apronax-550-mg",
+      "collection": "medicamentos",
+      "price": 7.2,
+      "unitPrice": 7.2,
+      "unitLabel": "Blíster x4 tabs",
+      "boxPrice": 210,
+      "boxLabel": "Caja x120 tabs",
+      "description": "Analgésico y antiinflamatorio potente de acción prolongada hasta por 12 horas",
+      "longDescription": "Apronax 550 mg (Naproxeno Sódico) de Laboratorios Bayer alivia dolores intensos musculares, articulares, inflamaciones dentales y lumbalgias con su tecnología de rápida disolución.",
+      "materials": "Naproxeno Sódico 550 mg (Bayer)",
+      "dimensions": "Caja dispensadora x 120 tabletas recubiertas (30 blísteres de 4)",
+      "images": [
+        "/media/products/apronax-1.png",
+        "/media/products/apronax-2.png"
+      ],
+      "new": true
+    },
+    {
+      "id": "amoxicilina-500mg-medifarma",
+      "name": "Amoxicilina + Bromhexina NF 500 mg + 8 mg",
+      "slug": "amoxicilina-bromhexina-500mg-portugal",
+      "collection": "medicamentos",
+      "price": 5.5,
+      "unitPrice": 5.5,
+      "unitLabel": "Blíster x10 cáp",
+      "boxPrice": 46.5,
+      "boxLabel": "Caja x100 cáp",
+      "description": "Antibacteriano de amplio espectro combinado con mucolítico fluidificante",
+      "longDescription": "Amoxicilina + Bromhexina NF de Laboratorios Portugal combate infecciones bacterianas de vías respiratorias a la vez que fluidifica y expulsa las flemas densas.",
+      "materials": "Amoxicilina Trihidrato 500 mg + Bromhexina Clorhidrato 8 mg (Laboratorios Portugal)",
+      "dimensions": "Caja x 100 cápsulas (10 blísteres de 10)",
+      "images": [
+        "/media/products/amoxicilina-500mg-medifarma.jpg"
+      ]
+    },
+    {
+      "id": "azitromicina-500mg-genfar",
+      "name": "Eritromicina Genfar 500 mg",
+      "slug": "eritromicina-500mg-genfar",
+      "collection": "medicamentos",
+      "price": 7.2,
+      "unitPrice": 7.2,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 34.5,
+      "boxLabel": "Caja x50 tabs",
+      "description": "Antibiótico macrólido bactericida para infecciones de garganta, piel y respiratorias",
+      "longDescription": "Eritromicina 500 mg de Genfar es un antibiótico oral indicado en pacientes alérgicos a penicilinas, eficaz en faringoamigdalitis, bronquitis aguda e infecciones cutáneas.",
+      "materials": "Eritromicina 500 mg (Genfar)",
+      "dimensions": "Caja x 50 tabletas recubiertas (5 blísteres de 10)",
+      "images": [
+        "/media/products/azitromicina-500mg-genfar.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "bismutol-262mg-tabletas",
+      "name": "Bismutol 262 mg Tabletas Masticables",
+      "slug": "bismutol-262mg-tabletas",
+      "collection": "medicamentos",
+      "price": 1.5,
+      "unitPrice": 1.5,
+      "unitLabel": "Sobre x2 tabs",
+      "boxPrice": 118,
+      "boxLabel": "Dispensador x160 tabs",
+      "description": "Alivio digestivo eficaz para 5 síntomas: acidez, indigestión, diarrea, náuseas y malestar",
+      "longDescription": "Bismutol de Millet / Medifarma recubre la mucosa digestiva neutralizando el ácido estomacal y actuando contra bacterias causantes de diarrea del viajero y pesadez estomacal.",
+      "materials": "Subsalicilato de Bismuto 262 mg (Millet / Medifarma)",
+      "dimensions": "Dispensador x 160 tabletas masticables (80 sachets)",
+      "images": [
+        "/media/products/bismutol-262mg-tabletas.jpg"
+      ]
+    },
+    {
+      "id": "cefalexina-500mg-medifarma",
+      "name": "Cefalexina Pharma Genéricos 500 mg",
+      "slug": "cefalexina-500mg-pharma-genericos",
+      "collection": "medicamentos",
+      "price": 8.2,
+      "unitPrice": 8.2,
+      "unitLabel": "Blíster x10 cáp",
+      "boxPrice": 36.5,
+      "boxLabel": "Caja x50 cáp",
+      "description": "Cefalosporina antibiótica de primera generación para infecciones bacterianas agudas",
+      "longDescription": "Cefalexina 500mg de Pharma Genéricos está formulada para erradicar infecciones de vías urinarias, piel, tejidos blandos y respiratorias con alta biodisponibilidad oral.",
+      "materials": "Cefalexina Monohidrato 500 mg (Pharma Genéricos)",
+      "dimensions": "Caja x 50 cápsulas (5 blísteres de 10)",
+      "images": [
+        "/media/products/cefalexina-500mg-medifarma.jpg"
+      ]
+    },
+    {
+      "id": "ciprofloxacino-500mg-iqfarma",
+      "name": "Ciprofloxacino IQFarma 500 mg",
+      "slug": "ciprofloxacino-500mg-iqfarma",
+      "collection": "medicamentos",
+      "price": 4.2,
+      "unitPrice": 4.2,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 38.9,
+      "boxLabel": "Caja x100 tabs",
+      "description": "Fluoroquinolona antibacteriana potente para infecciones urinarias y gastrointestinales",
+      "longDescription": "Ciprofloxacino 500mg de IQFARMA es un antimicrobiano bactericida de amplio espectro para cistitis, prostatitis, gastroenteritis bacteriana e infecciones sistémicas.",
+      "materials": "Ciprofloxacino Clorhidrato 500 mg (IQFARMA)",
+      "dimensions": "Caja x 100 tabletas recubiertas (10 blísteres de 10)",
+      "images": [
+        "/media/products/ciprofloxacino-500mg-iqfarma.jpg"
+      ]
+    },
+    {
+      "id": "clorfenamina-4mg-portugal",
+      "name": "Clorfenamina Maleato Portugal 4 mg",
+      "slug": "clorfenamina-4mg-portugal",
+      "collection": "medicamentos",
+      "price": 1.3,
+      "unitPrice": 1.3,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 12.5,
+      "boxLabel": "Caja x100 tabs",
+      "description": "Antihistamínico H1 para control inmediato de rinitis alérgica, estornudos y urticaria",
+      "longDescription": "Clorfenamina Maleato 4mg de Portugal alivia la congestión nasal alérgica, el lagrimeo ocular constante, la picazón de garganta y las ronchas por alergia alimentaria o medicamentosa.",
+      "materials": "Clorfenamina Maleato 4 mg (Laboratorios Portugal)",
+      "dimensions": "Caja x 100 tabletas (10 blísteres de 10)",
+      "images": [
+        "/media/products/clorfenamina-4mg-portugal.jpg"
+      ]
+    },
+    {
+      "id": "dexabroncol-jarabe-120ml",
+      "name": "Cefabroncol-S 250 mg / 5 mL Suspensión",
+      "slug": "cefabroncol-s-250mg-suspension",
+      "collection": "medicamentos",
+      "price": 42.3,
+      "unitPrice": 42.3,
+      "unitLabel": "Frasco x60ml",
+      "boxPrice": 80,
+      "boxLabel": "Pack x2 frascos",
+      "description": "Antibiótico bactericida pediátrico en polvo para reconstituir en suspensión oral",
+      "longDescription": "Cefabroncol-S de Medifarma es una suspensión antibiótica oral de Cefalexina 250mg/5mL especialmente diseñada para niños con infecciones bronquiales, faringoamigdalitis y otitis media aguda.",
+      "materials": "Cefalexina Monohidrato 250 mg / 5 mL (Medifarma)",
+      "dimensions": "Frasco x 60 mL polvo para suspensión oral con cuchara dosificadora",
+      "images": [
+        "/media/products/dexabroncol-jarabe-120ml.jpg"
+      ]
+    },
+    {
+      "id": "diclofenaco-sodico-50mg-portugal",
+      "name": "Diclofenaco Genfar 50 mg",
+      "slug": "diclofenaco-50mg-genfar",
+      "collection": "medicamentos",
+      "price": 2.8,
+      "unitPrice": 2.8,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 7.9,
+      "boxLabel": "Caja x30 tabs",
+      "description": "Antiinflamatorio no esteroideo y analgésico de liberación retardada",
+      "longDescription": "Diclofenaco Genfar 50mg actúa bloqueando la síntesis de prostaglandinas para reducir la inflamación y dolor articular en artritis, traumatismos, cirugías dentales y lumbalgias.",
+      "materials": "Diclofenaco Sódico 50 mg (Genfar)",
+      "dimensions": "Caja x 30 tabletas retard (3 blísteres de 10)",
+      "images": [
+        "/media/products/diclofenaco-sodico-50mg-portugal.jpg"
+      ]
+    },
+    {
+      "id": "fluconazol-150mg-medifarma",
+      "name": "Fluconazol Portugal 150 mg",
+      "slug": "fluconazol-150mg-portugal",
+      "collection": "medicamentos",
+      "price": 2.5,
+      "unitPrice": 2.5,
+      "unitLabel": "Blíster x1 cáp",
+      "boxPrice": 118,
+      "boxLabel": "Caja x100 cáp",
+      "description": "Antimicótico sistémico oral de dosis única para infecciones por hongos y candidiasis",
+      "longDescription": "Fluconazol 150mg de Laboratorios Portugal elimina hongos dermatofitos y levaduras causantes de candidiasis vaginal, balanitis y tiñas corporales con una sola toma oral.",
+      "materials": "Fluconazol 150 mg (Laboratorios Portugal)",
+      "dimensions": "Caja x 100 cápsulas (Blísteres monodosis)",
+      "images": [
+        "/media/products/fluconazol-150mg-medifarma.jpg"
+      ]
+    },
+    {
+      "id": "gaseovet-gotas-15ml",
+      "name": "Gaseovet Gotas 80 mg/mL",
+      "slug": "gaseovet-gotas-15ml",
+      "collection": "medicamentos",
+      "price": 22.2,
+      "unitPrice": 22.2,
+      "unitLabel": "Frasco gotero x15ml",
+      "boxPrice": 42,
+      "boxLabel": "Pack x2 frascos",
+      "description": "Antiflatulento antiflogístico en suspensión gotas para cólicos y gases acumulados",
+      "longDescription": "Gaseovet Gotas de Medifarma dispersa las burbujas de gas atrapadas en el estómago e intestinos, aliviando la hinchazón, distensión abdominal y cólicos de forma inmediata.",
+      "materials": "Simeticona 80 mg / mL (Medifarma)",
+      "dimensions": "Frasco gotero x 15 mL suspensión oral",
+      "images": [
+        "/media/products/gaseovet-gotas-15ml.jpg"
+      ]
+    },
+    {
+      "id": "ginkan-500mg-metronidazol",
+      "name": "Ginkan 500 (Metronidazol 500 mg)",
+      "slug": "ginkan-500-metronidazol-baliarda",
+      "collection": "medicamentos",
+      "price": 13.9,
+      "unitPrice": 13.9,
+      "unitLabel": "Caja x8 comp",
+      "boxPrice": 13.9,
+      "boxLabel": "Caja x8 comp",
+      "description": "Antibacteriano y antiparasitario específico contra anaerobios y protozoarios",
+      "longDescription": "Ginkan 500 de Baliarda con Metronidazol 500mg es el tratamiento eficaz contra tricomoniasis urogenital, giardiasis, amebiasis intestinal e infecciones odontológicas mixtas.",
+      "materials": "Metronidazol 500 mg (Baliarda)",
+      "dimensions": "Caja x 8 comprimidos recubiertos",
+      "images": [
+        "/media/products/ginkan-500mg-metronidazol.jpg"
+      ]
+    },
+    {
+      "id": "ibuprofeno-400mg-portugal",
+      "name": "Ibuprofeno Genfar 400 mg",
+      "slug": "ibuprofeno-400mg-genfar",
+      "collection": "medicamentos",
+      "price": 1.4,
+      "unitPrice": 1.4,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 12.9,
+      "boxLabel": "Caja x100 tabs",
+      "description": "Analgésico, antipirético y desinflamante de rápida absorción gastrointestinal",
+      "longDescription": "Ibuprofeno Genfar 400mg combate el dolor de cabeza, dolor dental agudo, dolor de garganta, estados febriles e inflamación muscular y tendinosa.",
+      "materials": "Ibuprofeno 400 mg (Genfar)",
+      "dimensions": "Caja x 100 tabletas recubiertas (10 blísteres de 10)",
+      "images": [
+        "/media/products/ibuprofeno-400mg-portugal.jpg"
+      ]
+    },
+    {
+      "id": "kitadol-500mg-paracetamol",
+      "name": "Kitadol Migraña",
+      "slug": "kitadol-migrana-80tabs",
+      "collection": "medicamentos",
+      "price": 2.1,
+      "unitPrice": 2.1,
+      "unitLabel": "Sobre x2 tabs",
+      "boxPrice": 74,
+      "boxLabel": "Caja x80 tabs",
+      "description": "Fórmula de ataque potenciada con cafeína contra migraña y cefalea pulsátil",
+      "longDescription": "Kitadol Migraña de Millet combina Paracetamol con Cafeína como coadyuvante analgésico que acelera la absorción y potencia el alivio del dolor de cabeza severo y jaquecas.",
+      "materials": "Paracetamol 500 mg + Cafeína 65 mg (Millet / Medifarma)",
+      "dimensions": "Caja x 80 tabletas recubiertas (40 sobres de 2)",
+      "images": [
+        "/media/products/kitadol-500mg-paracetamol.jpg"
+      ]
+    },
+    {
+      "id": "loratadina-10mg-genfar",
+      "name": "Loratadina Portugal 10 mg",
+      "slug": "loratadina-10mg-portugal",
+      "collection": "medicamentos",
+      "price": 2.4,
+      "unitPrice": 2.4,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 22,
+      "boxLabel": "Caja x100 tabs",
+      "description": "Antialérgico oral de 24 horas de acción que no produce sueño ni sedación",
+      "longDescription": "Loratadina 10mg de Laboratorios Portugal bloquea los receptores histamínicos periféricos, aliviando la rinitis alérgica estacional, estornudos, prurito ocular y urticaria idiopática.",
+      "materials": "Loratadina 10 mg (Laboratorios Portugal)",
+      "dimensions": "Caja x 100 tabletas (10 blísteres de 10)",
+      "images": [
+        "/media/products/loratadina-10mg-genfar.jpg"
+      ]
+    },
+    {
+      "id": "nastizol-compositum",
+      "name": "Nastizol Junior Antigripal NF",
+      "slug": "nastizol-junior-antigripal-nf",
+      "collection": "medicamentos",
+      "price": 6,
+      "unitPrice": 6,
+      "unitLabel": "Blíster x10 comp",
+      "boxPrice": 11.5,
+      "boxLabel": "Caja x20 comp",
+      "description": "Comprimidos masticables sabor frambuesa para gripe, fiebre y congestión infantil",
+      "longDescription": "Nastizol Junior Antigripal NF de Bagó está formulado para niños con comprimidos masticables fáciles de ingerir que bajan la fiebre, desinflaman la nariz y calman el malestar corporal.",
+      "materials": "Paracetamol 80 mg, Fenilefrina 1.25 mg, Clorfenamina 0.5 mg (Bagó)",
+      "dimensions": "Caja x 20 comprimidos masticables (2 blísteres de 10)",
+      "images": [
+        "/media/products/nastizol-compositum.jpg"
+      ]
+    },
+    {
+      "id": "omeprazol-20mg-genfar",
+      "name": "Omeprazol Portugal 20 mg",
+      "slug": "omeprazol-20mg-portugal",
+      "collection": "medicamentos",
+      "price": 2.8,
+      "unitPrice": 2.8,
+      "unitLabel": "Blíster x10 cáp",
+      "boxPrice": 26.5,
+      "boxLabel": "Caja x100 cáp",
+      "description": "Antiulceroso e inhibidor de bomba de protones para gastritis, acidez y reflujo",
+      "longDescription": "Omeprazol 20mg de Portugal con microgránulos gastrorresistentes suprime la secreción ácida gástrica durante todo el día, protegiendo las paredes del estómago y esófago.",
+      "materials": "Omeprazol microgránulos entéricos 20 mg (Laboratorios Portugal)",
+      "dimensions": "Caja x 100 cápsulas de liberación retardada (10 blísteres de 10)",
+      "images": [
+        "/media/products/omeprazol-20mg-genfar.jpg"
+      ]
+    },
+    {
+      "id": "plidan-compuesto-nf",
+      "name": "Plidan Compuesto",
+      "slug": "plidan-compuesto-megalabs",
+      "collection": "medicamentos",
+      "price": 8.2,
+      "unitPrice": 8.2,
+      "unitLabel": "Blíster x10 comp",
+      "boxPrice": 80,
+      "boxLabel": "Caja x100 comp",
+      "description": "Antiespasmódico con analgésico para cólicos digestivos, biliares y menstruales",
+      "longDescription": "Plidan Compuesto de Megalabs combina Butilbromuro de Escopolamina con Paracetamol para relajar las contracciones espasmódicas de órganos huecos y cortar el dolor intenso.",
+      "materials": "Escopolamina butilbromuro 10 mg + Paracetamol 500 mg (Megalabs)",
+      "dimensions": "Caja x 100 comprimidos recubiertos (10 blísteres de 10)",
+      "images": [
+        "/media/products/plidan-compuesto-nf.jpg"
+      ]
+    },
+    {
+      "id": "prednisona-20mg-medifarma",
+      "name": "Prednisona IQFarma 20 mg",
+      "slug": "prednisona-20mg-iqfarma",
+      "collection": "medicamentos",
+      "price": 3.2,
+      "unitPrice": 3.2,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 28,
+      "boxLabel": "Caja x100 tabs",
+      "description": "Glucocorticoide sistémico antiinflamatorio e inmunosupresor de acción intermedia",
+      "longDescription": "Prednisona 20mg de IQFARMA está prescrita para crisis asmáticas, procesos alérgicos severos, artritis reumatoide y enfermedades inflamatorias agudas bajo supervisión médica.",
+      "materials": "Prednisona 20 mg (IQFARMA)",
+      "dimensions": "Caja x 100 tabletas (10 blísteres de 10)",
+      "images": [
+        "/media/products/prednisona-20mg-medifarma.jpg"
+      ]
+    },
+    {
+      "id": "losartan-potasico-50mg-medifarma",
+      "name": "Losartán 50 mg IQFARMA",
+      "slug": "losartan-50mg-iqfarma",
+      "collection": "cardiovascular",
+      "price": 4.5,
+      "unitPrice": 4.5,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 25.5,
+      "boxLabel": "Caja x60 tabs",
+      "description": "Antihipertensivo antagonista ARA II para el control sostenido de la presión arterial",
+      "longDescription": "Losartán 50 mg de IQFARMA es un bloqueador de los receptores de angiotensina II indicado en hipertensión arterial y para reducir el riesgo de accidente cerebrovascular y daño renal.",
+      "materials": "Losartán Potásico 50 mg (Laboratorio IQFARMA)",
+      "dimensions": "Caja x 60 tabletas recubiertas (6 blísteres de 10)",
+      "images": [
+        "/media/products/losartan-potasico-50mg-medifarma.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "amlodipino-5mg-genfar",
+      "name": "Amlodipino Genfar 5 mg",
+      "slug": "amlodipino-5mg-genfar",
+      "collection": "cardiovascular",
+      "price": 3.2,
+      "unitPrice": 3.2,
+      "unitLabel": "Caja x10 tabs",
+      "boxPrice": 8.9,
+      "boxLabel": "Pack x30 tabs (3 cajas)",
+      "description": "Bloqueador de canales de calcio para hipertensión arterial y angina de pecho",
+      "longDescription": "Amlodipino Besilato 5 mg de Genfar produce relajación del músculo liso vascular coronario y periférico, reduciendo la presión arterial y el esfuerzo cardíaco.",
+      "materials": "Amlodipino Besilato 5 mg (Genfar)",
+      "dimensions": "Caja x 10 tabletas (Blíster de 10)",
+      "images": [
+        "/media/products/amlodipino-5mg-genfar.jpg"
+      ]
+    },
+    {
+      "id": "enalapril-20mg-medifarma",
+      "name": "Enalapril Portugal 20 mg",
+      "slug": "enalapril-20mg-portugal",
+      "collection": "cardiovascular",
+      "price": 2.5,
+      "unitPrice": 2.5,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 22,
+      "boxLabel": "Caja x100 tabs",
+      "description": "Inhibidor de la ECA (IECA) para control eficaz de la hipertensión esencial",
+      "longDescription": "Enalapril Maleato 20 mg de Laboratorios Portugal ayuda a relajar los vasos sanguíneos para que el corazón bombee sangre más fácilmente, previniendo fallas cardíacas.",
+      "materials": "Enalapril Maleato 20 mg (Laboratorios Portugal)",
+      "dimensions": "Caja x 100 tabletas (10 blísteres de 10)",
+      "images": [
+        "/media/products/enalapril-20mg-medifarma.jpg"
+      ]
+    },
+    {
+      "id": "atorvastatina-20mg-medifarma",
+      "name": "Atorvastatina Portugal 20 mg",
+      "slug": "atorvastatina-20mg-portugal",
+      "collection": "cardiovascular",
+      "price": 4.8,
+      "unitPrice": 4.8,
+      "unitLabel": "Caja x10 tabs",
+      "boxPrice": 13.5,
+      "boxLabel": "Pack x30 tabs (3 cajas)",
+      "description": "Agente modificador de lípidos para reducción de colesterol LDL y triglicéridos",
+      "longDescription": "Atorvastatina Cálcica 20 mg de Laboratorios Portugal inhibe la HMG-CoA reductasa, reduciendo significativamente el colesterol malo en sangre y previniendo infartos.",
+      "materials": "Atorvastatina Cálcica 20 mg (Laboratorios Portugal)",
+      "dimensions": "Caja x 10 tabletas recubiertas (1 blíster de 10)",
+      "images": [
+        "/media/products/atorvastatina-20mg-medifarma.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "metformina-850mg-genfar",
+      "name": "Metformina Genfar 850 mg",
+      "slug": "metformina-850mg-genfar",
+      "collection": "cardiovascular",
+      "price": 3.5,
+      "unitPrice": 3.5,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 9.8,
+      "boxLabel": "Caja x30 tabs",
+      "description": "Antidiabético normoglucemiante de primera línea para Diabetes Mellitus Tipo 2",
+      "longDescription": "Metformina Clorhidrato 850 mg de Genfar reduce la producción hepática de glucosa y mejora la captación de insulina en tejidos periféricos sin causar aumento de peso.",
+      "materials": "Metformina Clorhidrato 850 mg (Genfar)",
+      "dimensions": "Caja x 30 tabletas (3 blísteres de 10)",
+      "images": [
+        "/media/products/metformina-850mg-genfar.jpg"
+      ],
+      "new": true
+    },
+    {
+      "id": "glimepirida-4mg-medifarma",
+      "name": "Gliribet 4 mg (Glimepirida) MK",
+      "slug": "gliribet-4mg-glimepirida-mk",
+      "collection": "cardiovascular",
+      "price": 12,
+      "unitPrice": 12,
+      "unitLabel": "Blíster x10 comp",
+      "boxPrice": 34.9,
+      "boxLabel": "Caja x30 comp",
+      "description": "Sulfonilurea oral de toma única diaria para control de la hiperglucemia",
+      "longDescription": "Gliribet 4 mg de MKT Pharma / MK contiene Glimepirida, medicamento que estimula la secreción de insulina por células beta del páncreas en pacientes con diabetes tipo 2.",
+      "materials": "Glimepirida 4 mg (MK / MKT Pharma)",
+      "dimensions": "Caja x 30 comprimidos (3 blísteres de 10)",
+      "images": [
+        "/media/products/gliribet-4mg-glimepirida-mk.jpg"
+      ]
+    },
+    {
+      "id": "cardioaspirina-100mg-bayer",
+      "name": "Cardioaspirina 100 EC Bayer",
+      "slug": "cardioaspirina-100-ec-bayer",
+      "collection": "cardiovascular",
+      "price": 8.5,
+      "unitPrice": 8.5,
+      "unitLabel": "Blíster x10 comp",
+      "boxPrice": 16.6,
+      "boxLabel": "Caja x20 comp",
+      "description": "Antiagregante plaquetario con cubierta entérica que no irrita el estómago",
+      "longDescription": "Cardioaspirina 100 EC de Bayer contiene 100 mg de Ácido Acetilsalicílico con capa entérica de protección gástrica, previniendo la formación de coágulos y trombos arteriales.",
+      "materials": "Ácido Acetilsalicílico 100 mg (Bayer)",
+      "dimensions": "Caja x 20 comprimidos con cubierta entérica (2 blísteres de 10)",
+      "images": [
+        "/media/products/cardioaspirina-100mg-bayer.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "carvedilol-12-5mg-bago",
+      "name": "Carvedilol Genfar 12.5 mg",
+      "slug": "carvedilol-12-5mg-genfar",
+      "collection": "cardiovascular",
+      "price": 4.5,
+      "unitPrice": 4.5,
+      "unitLabel": "Blíster x10 comp",
+      "boxPrice": 12.8,
+      "boxLabel": "Caja x30 comp",
+      "description": "Betabloqueador con acción vasodilatadora periférica para insuficiencia cardíaca",
+      "longDescription": "Carvedilol 12.5 mg de Genfar bloquea receptores adrenérgicos beta-1, beta-2 y alfa-1, reduciendo la resistencia vascular periférica y protegiendo el miocardio.",
+      "materials": "Carvedilol 12.5 mg (Genfar)",
+      "dimensions": "Caja x 30 comprimidos (3 blísteres de 10)",
+      "images": [
+        "/media/products/carvedilol-genfar-12-5mg.jpg"
+      ]
+    },
+    {
+      "id": "valsartan-80mg-sandoz",
+      "name": "Valsartán AC Farma 80 mg",
+      "slug": "valsartan-80mg-ac-farma",
+      "collection": "cardiovascular",
+      "price": 8.5,
+      "unitPrice": 8.5,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 24.5,
+      "boxLabel": "Caja x30 tabs",
+      "description": "Antagonista potente de receptores de angiotensina II para hipertensión arterial",
+      "longDescription": "Valsartán 80 mg de AC Farma (Línea DCI) produce bloqueo selectivo de receptores AT1, normalizando la presión arterial de forma sostenida durante 24 horas.",
+      "materials": "Valsartán 80 mg (AC Farma - Línea DCI)",
+      "dimensions": "Caja x 30 tabletas (3 blísteres de 10)",
+      "images": [
+        "/media/products/valsartan-ac-farma-80mg.jpg"
+      ]
+    },
+    {
+      "id": "concor-5mg-bisoprolol",
+      "name": "Concor 5 mg (Bisoprolol) Merck",
+      "slug": "concor-5mg-bisoprolol-merck",
+      "collection": "cardiovascular",
+      "price": 52,
+      "unitPrice": 52,
+      "unitLabel": "Blíster x10 comp",
+      "boxPrice": 154.4,
+      "boxLabel": "Caja x30 comp",
+      "description": "Betabloqueador cardioselectivo de alta precisión para arritmias e hipertensión",
+      "longDescription": "Concor 5 mg de Merck KGaA contiene Bisoprolol Fumarato en comprimidos con forma de corazón, modulando la frecuencia cardíaca sin alterar la resistencia de las vías aéreas.",
+      "materials": "Bisoprolol Fumarato 5 mg (Merck KGaA)",
+      "dimensions": "Caja x 30 comprimidos recubiertos (3 blísteres de 10)",
+      "images": [
+        "/media/products/concor-5mg-bisoprolol.jpg"
+      ]
+    },
+    {
+      "id": "glibenclamida-5mg-portugal",
+      "name": "Glibenclamida Portugal 5 mg",
+      "slug": "glibenclamida-5mg-portugal",
+      "collection": "cardiovascular",
+      "price": 1.5,
+      "unitPrice": 1.5,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 13.5,
+      "boxLabel": "Caja x100 tabs",
+      "description": "Sulfonilurea hipoglucemiante para el control de la glucosa en sangre en ayunas",
+      "longDescription": "Glibenclamida 5 mg de Laboratorios Portugal ayuda al páncreas a sintetizar y secretar insulina biológica en el tratamiento de diabetes mellitus tipo 2.",
+      "materials": "Glibenclamida 5 mg (Laboratorios Portugal)",
+      "dimensions": "Caja x 100 tabletas (10 blísteres de 10)",
+      "images": [
+        "/media/products/glibenclamida-portugal-5mg.jpg"
+      ]
+    },
+    {
+      "id": "eutirox-100mcg-merck",
+      "name": "Eutirox 100 mcg Merck",
+      "slug": "eutirox-100mcg-merck",
+      "collection": "cardiovascular",
+      "price": 33.75,
+      "unitPrice": 33.75,
+      "unitLabel": "Blíster x25 tabs",
+      "boxPrice": 66.5,
+      "boxLabel": "Caja x50 tabs",
+      "description": "Hormona tiroidea sintética de máxima pureza para hipotiroidismo primario",
+      "longDescription": "Eutirox 100 microgramos de Merck contiene Levotiroxina Sódica cristalina bioequivalente a la tiroxina endógena humana, normalizando el metabolismo y la vitalidad.",
+      "materials": "Levotiroxina Sódica 100 mcg (Merck KGaA)",
+      "dimensions": "Caja con 50 tabletas (2 blísteres de 25)",
+      "images": [
+        "/media/products/eutirox-100mcg-merck.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "clopidogrel-75mg-medifarma",
+      "name": "Clopidogrel Portugal 75 mg",
+      "slug": "clopidogrel-75mg-portugal",
+      "collection": "cardiovascular",
+      "price": 9.8,
+      "unitPrice": 9.8,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 28.5,
+      "boxLabel": "Caja x30 tabs",
+      "description": "Antitrombótico antiagregante plaquetario para prevención secundaria de ictus",
+      "longDescription": "Clopidogrel 75 mg de Laboratorios Portugal previene la formación de coágulos intravasculares en pacientes con infarto de miocardio, accidente cerebrovascular o stent coronario.",
+      "materials": "Clopidogrel Bisulfato 75 mg (Laboratorios Portugal)",
+      "dimensions": "Caja x 30 tabletas recubiertas (3 blísteres de 10)",
+      "images": [
+        "/media/products/clopidogrel-portugal-75mg.jpg"
+      ]
+    },
+    {
+      "id": "hidroclorotiazida-25mg-portugal",
+      "name": "Hidroclorotiazida IQFARMA 25 mg",
+      "slug": "hidroclorotiazida-25mg-iqfarma",
+      "collection": "cardiovascular",
+      "price": 2.2,
+      "unitPrice": 2.2,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 19.5,
+      "boxLabel": "Caja x100 tabs",
+      "description": "Diurético tiazídico para el control de hipertensión y retención de líquidos",
+      "longDescription": "Hidroclorotiazida 25 mg de IQFARMA estimula la excreción renal de sodio y agua reduciendo la volemia y aliviando edemas periféricos y presión arterial elevada.",
+      "materials": "Hidroclorotiazida 25 mg (Laboratorio IQFARMA)",
+      "dimensions": "Caja x 100 tabletas (10 blísteres de 10)",
+      "images": [
+        "/media/products/hidroclorotiazida-iqfarma-25mg.jpg"
+      ]
+    },
+    {
+      "id": "espironolactona-25mg-medifarma",
+      "name": "Espironolactona Farmindustria 25 mg",
+      "slug": "espironolactona-25mg-farmindustria",
+      "collection": "cardiovascular",
+      "price": 3.8,
+      "unitPrice": 3.8,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 35,
+      "boxLabel": "Caja x100 tabs",
+      "description": "Diurético antagonista de la aldosterona ahorrador de potasio",
+      "longDescription": "Espironolactona 25 mg de Farmindustria está indicada en insuficiencia cardíaca congestiva, cirrosis con ascitis e hipertensión resistente preservando los niveles de potasio.",
+      "materials": "Espironolactona 25 mg (Farmindustria)",
+      "dimensions": "Caja x 100 tabletas recubiertas (10 blísteres de 10)",
+      "images": [
+        "/media/products/espironolactona-farmindustria-25mg.jpg"
+      ]
+    },
+    {
+      "id": "rosuvastatina-10mg-roemmers",
+      "name": "Rosuvastatina Genfar 10 mg",
+      "slug": "rosuvastatina-10mg-genfar",
+      "collection": "cardiovascular",
+      "price": 16.5,
+      "unitPrice": 16.5,
+      "unitLabel": "Caja x14 comp",
+      "boxPrice": 31.5,
+      "boxLabel": "Pack x28 comp (2 cajas)",
+      "description": "Estatina de alta potencia para reducción intensiva de colesterol LDL y aterosclerosis",
+      "longDescription": "Rosuvastatina 10 mg de Genfar es un potente inhibidor de HMG-CoA reductasa que optimiza el perfil lipídico y previene la progresión de placa ateromatosa.",
+      "materials": "Rosuvastatina Cálcica 10 mg (Genfar)",
+      "dimensions": "Caja x 14 comprimidos recubiertos (1 blíster de 14)",
+      "images": [
+        "/media/products/rosuvastatina-genfar-10mg.jpg"
+      ]
+    },
+    {
+      "id": "januvia-100mg-msd",
+      "name": "Januvia 100 mg (Sitagliptina) MSD",
+      "slug": "januvia-100mg-msd",
+      "collection": "cardiovascular",
+      "price": 56.75,
+      "unitPrice": 56.75,
+      "unitLabel": "Caja x14 comp",
+      "boxPrice": 110,
+      "boxLabel": "Pack x28 comp (2 cajas)",
+      "description": "Inhibidor de DPP-4 que optimiza la liberación natural de insulina postprandial",
+      "longDescription": "Januvia 100 mg de MSD prolonga la acción de las hormonas incretinas activas aumentando la insulina y reduciendo el glucagón postcomida sin causar hipoglucemias.",
+      "materials": "Sitagliptina Fosfato Monohidrato 100 mg (MSD / Merck Sharp & Dohme)",
+      "dimensions": "Caja con 14 comprimidos recubiertos (1 blíster de 14)",
+      "images": [
+        "/media/products/januvia-100mg-msd.jpg"
+      ]
+    },
+    {
+      "id": "aero-om-125mg-capsulas",
+      "name": "Aero OM Forte 125 mg Sabor Anís OM Pharma",
+      "slug": "aero-om-forte-125mg-om-pharma",
+      "collection": "cardiovascular",
+      "price": 11.5,
+      "unitPrice": 11.5,
+      "unitLabel": "Blíster x10 comp",
+      "boxPrice": 22.5,
+      "boxLabel": "Caja x20 comp",
+      "description": "Antiflatulento masticable de acción rápida para gases, pesadez y meteorismo",
+      "longDescription": "Aero OM Forte de OM Pharma contiene Simeticona 125 mg en deliciosos comprimidos masticables sabor anís que disuelven las burbujas de gas estomacales e intestinales al instante.",
+      "materials": "Simeticona 125 mg sabor anís (OM Pharma)",
+      "dimensions": "Caja x 20 comprimidos masticables (2 blísteres de 10)",
+      "images": [
+        "/media/products/aero-om-forte-125mg.jpg"
+      ]
+    },
+    {
+      "id": "glucerna-sr-vainilla-850g",
+      "name": "Glucerna Vainilla Abbott 850 g",
+      "slug": "glucerna-vainilla-abbott-850g",
+      "collection": "cardiovascular",
+      "price": 129.9,
+      "unitPrice": 129.9,
+      "unitLabel": "Lata x 850g",
+      "boxPrice": 249,
+      "boxLabel": "Pack x2 latas",
+      "description": "Alimento para propósitos médicos especiales con carbohidratos de lenta digestión",
+      "longDescription": "Glucerna Sabor Vainilla 850 g de Abbott está formulado específicamente para personas con diabetes o prediabetes, ayudando a controlar los niveles de glucosa en sangre.",
+      "materials": "Carbohidratos de digestión lenta, proteínas, 28 vitaminas y minerales (Abbott)",
+      "dimensions": "Lata x 850 g en polvo (Rinde aprox 15 tomas)",
+      "images": [
+        "/media/products/glucerna-sr-vainilla-850g.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "tiras-accu-chek-active-x50",
+      "name": "Accu-Chek Instant Kit Glucómetro Digital Roche",
+      "slug": "accu-chek-instant-kit-glucometro-roche",
+      "collection": "cardiovascular",
+      "price": 84.9,
+      "unitPrice": 84.9,
+      "unitLabel": "Kit completo",
+      "boxPrice": 129.7,
+      "boxLabel": "Kit + Pack Tiras extra",
+      "description": "Sistema de monitoreo de glucosa en sangre capilar con conexión Bluetooth",
+      "longDescription": "Accu-Chek Instant de Roche brinda resultados precisos de glucosa en menos de 4 segundos con indicador visual de rango objetivo por color y sincronización móvil.",
+      "materials": "Medidor de glucosa Accu-Chek Instant + Dispositivo de punción + Tiras reactivas (Roche)",
+      "dimensions": "Caja Kit completo (Medidor + Lancetero + Estuche)",
+      "images": [
+        "/media/products/accu-chek-instant-kit-roche.jpg"
+      ],
+      "new": true
+    },
+    {
+      "id": "dolo-neurobion-forte-nf",
+      "name": "Dolo Neurobión Forte NF",
+      "slug": "dolo-neurobion-forte-nf",
+      "collection": "bienestar-suplementos",
+      "price": 12,
+      "unitPrice": 12,
+      "unitLabel": "Blíster x4 cáp",
+      "boxPrice": 58,
+      "boxLabel": "Pack x20 cáp (5 blísteres)",
+      "description": "Complejo neurotropo B1, B6, B12 con Diclofenaco sódico para dolor neurítico severo",
+      "longDescription": "Dolo Neurobión Forte NF en cápsulas blandas combina el efecto neuroregenerador de las vitaminas B con la potente acción analgésica y antiinflamatoria del Diclofenaco para ciática, lumbalgia y contracturas.",
+      "materials": "Tiamina B1, Piridoxina B6, Cianocobalamina B12, Diclofenaco sódico (P&G Health)",
+      "dimensions": "Blíster x 4 cápsulas (Caja dispensadora x 200 cápsulas)",
+      "images": [
+        "/media/products/dolo-neurobion-forte-nf.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "neurobion-5000-inyectable-x3",
+      "name": "Neurobión 5000 Vía Oral (60 Tabletas)",
+      "slug": "neurobion-5000-oral-60tabs",
+      "collection": "bienestar-suplementos",
+      "price": 21,
+      "unitPrice": 21,
+      "unitLabel": "Blíster x10 tabs",
+      "boxPrice": 115,
+      "boxLabel": "Caja x60 tabs",
+      "description": "Mega complejo neurotrópico de alta concentración para el sistema nervioso central",
+      "longDescription": "Neurobión 5000 de P&G Health suministra 5000 mcg de vitamina B12 junto a B1 y B6 en tabletas recubiertas para recuperación de neuropatías periféricas, fatiga crónica y regeneración de mielina.",
+      "materials": "Tiamina (Vit. B1) 100 mg, Piridoxina (Vit. B6) 100 mg, Cianocobalamina (Vit. B12) 5000 mcg (P&G Health)",
+      "dimensions": "Caja x 60 tabletas recubiertas (6 blísteres de 10)",
+      "images": [
+        "/media/products/neurobion-5000-inyectable-x3.jpg"
+      ],
+      "new": true
+    },
+    {
+      "id": "ensure-advance-vainilla-850g",
+      "name": "Ensure Advance con HMB Fresa-Plátano 850 g",
+      "slug": "ensure-advance-fresa-platano-850g",
+      "collection": "bienestar-suplementos",
+      "price": 129.9,
+      "unitPrice": 129.9,
+      "unitLabel": "Lata x 850g",
+      "boxPrice": 249,
+      "boxLabel": "Pack x2 latas",
+      "description": "Nutrición especializada con HMB y proteínas para fuerza, masa muscular y vitalidad",
+      "longDescription": "Ensure Advance con HMB de Abbott sabor Fresa-Plátano contiene proteína de alta calidad, 28 vitaminas y minerales para recuperar la masa muscular y energía tras los 40 años.",
+      "materials": "NutriVigor con HMB, Proteínas, Calcio, Vitamina D3 (Abbott)",
+      "dimensions": "Lata x 850 g en polvo (Rinde aprox 16 tomas)",
+      "images": [
+        "/media/products/ensure-advance-fresa-platano-850g.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "redoxon-vitamina-c-1000mg-10tabs",
+      "name": "Redoxon Total Naranja (30 Comprimidos)",
+      "slug": "redoxon-total-naranja-30tabs",
+      "collection": "bienestar-suplementos",
+      "price": 15.5,
+      "unitPrice": 15.5,
+      "unitLabel": "Tubo x10 comp",
+      "boxPrice": 43.9,
+      "boxLabel": "Caja x30 comp (3 tubos)",
+      "description": "Fórmula mejorada de triple acción con Vitamina C 1000mg, Vitamina D y Zinc",
+      "longDescription": "Redoxon Total de Bayer combina la acción antioxidante de la Vitamina C con Vitamina D y Zinc para una triple barrera de defensa inmunológica en comprimidos efervescentes sabor naranja natural.",
+      "materials": "Ácido Ascórbico 1000 mg + Vitamina D 10 mcg + Zinc 10 mg (Bayer)",
+      "dimensions": "Caja x 30 comprimidos efervescentes (3 tubos de 10)",
+      "images": [
+        "/media/products/redoxon-vitamina-c-1000mg-10tabs.jpg"
+      ]
+    },
+    {
+      "id": "calcibon-d-calcio-vitamina-d",
+      "name": "Pack Belleza x3 Mason Natural (Biotin + Colágeno + Vit E)",
+      "slug": "pack-belleza-x3-mason-natural",
+      "collection": "bienestar-suplementos",
+      "price": 45,
+      "unitPrice": 45,
+      "unitLabel": "Frasco individual",
+      "boxPrice": 119.9,
+      "boxLabel": "Pack x3 frascos",
+      "description": "Trío esencial para salud y firmeza de piel, cabello brillante y uñas fuertes",
+      "longDescription": "Pack x 3 frascos de Mason Natural USA incluye Biotin 800 mcg, Collagen 1500 Plus con Vitamina C y Vitamina E 400 IU para un cuidado estético y antioxidante integral desde el interior.",
+      "materials": "Biotina 800 mcg + Colágeno 1500 + Vitamina E 400 IU (Mason Natural USA)",
+      "dimensions": "Pack x 3 frascos sellados",
+      "images": [
+        "/media/products/pack-biotin-vitaminae-colageno-mason.jpg"
+      ]
+    },
+    {
+      "id": "centrum-silver-men-60tabs",
+      "name": "Centrum Silver Men 50+ (200 Tablets)",
+      "slug": "centrum-silver-men-50-200tabs",
+      "collection": "bienestar-suplementos",
+      "price": 149.9,
+      "unitPrice": 149.9,
+      "unitLabel": "Frasco x200 tabs",
+      "boxPrice": 149.9,
+      "boxLabel": "Frasco x200 tabs",
+      "description": "Multivitamínico completo formulado para corazón, cerebro, ojos y músculos del hombre",
+      "longDescription": "Centrum Silver Men 50+ de 200 tabletas aporta micronutrientes esenciales como magnesio, vitaminas B, licopeno y zinc para mantener la vitalidad y resistencia masculina tras los 50 años.",
+      "materials": "Fórmula de 24 micronutrientes bioactivos para hombres 50+ (Haleon / Centrum)",
+      "dimensions": "Frasco grande x 200 tabletas",
+      "images": [
+        "/media/products/centrum-silver-men-50plus-200tabs.jpg"
+      ]
+    },
+    {
+      "id": "centrum-silver-women-60tabs",
+      "name": "Centrum Silver Women 50+ (200 Tablets)",
+      "slug": "centrum-silver-women-50-200tabs",
+      "collection": "bienestar-suplementos",
+      "price": 149.9,
+      "unitPrice": 149.9,
+      "unitLabel": "Frasco x200 tabs",
+      "boxPrice": 149.9,
+      "boxLabel": "Frasco x200 tabs",
+      "description": "Multivitamínico para salud ósea, inmunidad, agudeza mental y energía femenina",
+      "longDescription": "Centrum Silver Women 50+ en presentación rendidora de 200 tabletas refuerza huesos con calcio y vitamina D3, fortalece las defensas y apoya la salud cardiovascular en mujeres maduras.",
+      "materials": "Complejo vitamínico mineral optimizado para mujeres 50+ (Haleon / Centrum)",
+      "dimensions": "Frasco grande x 200 tabletas",
+      "images": [
+        "/media/products/centrum-silver-women-50plus-200tabs.jpg"
+      ]
+    },
+    {
+      "id": "colageno-hidrolizado-mason-natural",
+      "name": "Colágeno Hidrolizado 1500 Plus Mason Natural (60 Cápsulas)",
+      "slug": "colageno-hidrolizado-1500-plus-mason",
+      "collection": "bienestar-suplementos",
+      "price": 69.9,
+      "unitPrice": 69.9,
+      "unitLabel": "Frasco x60 cáp",
+      "boxPrice": 129,
+      "boxLabel": "Pack x2 frascos (120 cáp)",
+      "description": "Péptidos de colágeno potenciados con Biotina y Vitamina C para cabello y piel",
+      "longDescription": "Collagen 1500 Plus de Mason Natural USA estimula la regeneración del tejido conectivo, devolviendo tersura a la piel y flexibilidad a las articulaciones con absorción optimizada por la Vitamina C.",
+      "materials": "Colágeno Hidrolizado 1500 mg + Biotina + Vitamina C (Mason Natural USA)",
+      "dimensions": "Frasco x 60 cápsulas",
+      "images": [
+        "/media/products/colageno-hidrolizado-1500-plus-mason.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "omega-3-sundown-1000mg",
+      "name": "Sunvit Life Fish Oil 1000 mg (100 Softgels)",
+      "slug": "sunvit-fish-oil-1000mg-100softgels",
+      "collection": "bienestar-suplementos",
+      "price": 59.9,
+      "unitPrice": 59.9,
+      "unitLabel": "Frasco x100 softgels",
+      "boxPrice": 109,
+      "boxLabel": "Pack x2 frascos (200 softgels)",
+      "description": "Aceite de pescado destilado rico en ácidos grasos Omega-3 EPA y DHA",
+      "longDescription": "Fish Oil 1000 mg Daily Care de Sunvit Life apoya la salud cardiovascular, colabora en la regulación de triglicéridos y promueve la función cerebral sin regusto a pescado.",
+      "materials": "Aceite puro de pescado 1000 mg (Omega-3 EPA/DHA) (Sunvit Life USA)",
+      "dimensions": "Frasco x 100 cápsulas blandas (softgels)",
+      "images": [
+        "/media/products/omega-3-sundown-1000mg.jpg"
+      ]
+    },
+    {
+      "id": "b-complejo-forte-hersil",
+      "name": "Sunvit Life B-Complex Daily Care (100 Tablets)",
+      "slug": "sunvit-b-complex-100tablets",
+      "collection": "bienestar-suplementos",
+      "price": 49.9,
+      "unitPrice": 49.9,
+      "unitLabel": "Frasco x100 tabs",
+      "boxPrice": 89.9,
+      "boxLabel": "Pack x2 frascos (200 tabs)",
+      "description": "Complejo vitamínico B para control del estrés, energía celular y vitalidad diaria",
+      "longDescription": "B-Complex de Sunvit Life USA combate la fatiga física y mental, apoyando el metabolismo energético de los alimentos y el funcionamiento óptimo del sistema nervioso.",
+      "materials": "Vitaminas del complejo B (B1, B2, B3, B5, B6, B12, Biotina, Ácido Fólico) (Sunvit Life USA)",
+      "dimensions": "Frasco x 100 tabletas",
+      "images": [
+        "/media/products/b-complejo-forte-hersil.jpg"
+      ]
+    },
+    {
+      "id": "citrato-de-magnesio-mason-natural",
+      "name": "Citrato de Magnesio Mujer Aguaje (60 Cápsulas)",
+      "slug": "citrato-de-magnesio-mujer-aguaje-60caps",
+      "collection": "bienestar-suplementos",
+      "price": 49.9,
+      "unitPrice": 49.9,
+      "unitLabel": "Frasco x60 cáp",
+      "boxPrice": 89.9,
+      "boxLabel": "Pack x2 frascos (120 cáp)",
+      "description": "Magnesio altamente biodisponible para relajación muscular, alivio de calambres y sueño",
+      "longDescription": "Citrato de Magnesio de Mujer Aguaje aporta magnesio quelado de rápida asimilación que ayuda a calmar la ansiedad, prevenir calambres nocturnos y favorecer el descanso reparador.",
+      "materials": "Citrato de Magnesio 100% puro en cápsulas vegetales (Mujer Aguaje)",
+      "dimensions": "Frasco x 60 cápsulas",
+      "images": [
+        "/media/products/citrato-de-magnesio-mason-natural.jpg"
+      ],
+      "new": true
+    },
+    {
+      "id": "glucosamina-condroitina-msm-mason",
+      "name": "Sunvit Life Gluc 500 / Chond 400 & MSM (90 Tablets)",
+      "slug": "sunvit-glucosamina-condroitina-msm-90tabs",
+      "collection": "bienestar-suplementos",
+      "price": 89.9,
+      "unitPrice": 89.9,
+      "unitLabel": "Frasco x90 tabs",
+      "boxPrice": 169,
+      "boxLabel": "Pack x2 frascos (180 tabs)",
+      "description": "Fórmula sinérgica triple acción para lubricación articular y regeneración de cartílagos",
+      "longDescription": "Glucosamina 500 mg, Condroitina 400 mg y MSM de Sunvit Life USA alivia la rigidez articular, reduce la inflamación por desgaste de cartílago y mejora la movilidad diaria.",
+      "materials": "Glucosamina Sulfato 500 mg + Condroitina Sulfato 400 mg + MSM (Sunvit Life USA)",
+      "dimensions": "Frasco x 90 tabletas",
+      "images": [
+        "/media/products/glucosamina-condroitina-msm-mason.jpg"
+      ]
+    },
+    {
+      "id": "ginkgo-biloba-60mg-sundown",
+      "name": "Sunvit Life Ginkgo Biloba 60 mg (90 Tablets)",
+      "slug": "sunvit-ginkgo-biloba-60mg-90tabs",
+      "collection": "bienestar-suplementos",
+      "price": 59.9,
+      "unitPrice": 59.9,
+      "unitLabel": "Frasco x90 tabs",
+      "boxPrice": 109,
+      "boxLabel": "Pack x2 frascos (180 tabs)",
+      "description": "Extracto herbal para mejorar la oxigenación cerebral, concentración y memoria",
+      "longDescription": "Ginkgo Biloba 60 mg Daily Care de Sunvit Life estimula la microcirculación cerebral y periférica, ayudando a preservar la agilidad mental, memoria y aliviando mareos y pesadez.",
+      "materials": "Extracto estandarizado de hojas de Ginkgo Biloba 60 mg (Sunvit Life USA)",
+      "dimensions": "Frasco x 90 tabletas",
+      "images": [
+        "/media/products/sunvit-ginkgo-biloba-60mg-90tabs.jpg"
+      ]
+    },
+    {
+      "id": "zinc-50mg-mason-natural",
+      "name": "Nature's Bounty Zinc 50 mg (250 Caplets)",
+      "slug": "natures-bounty-zinc-50mg-250caplets",
+      "collection": "bienestar-suplementos",
+      "price": 79.9,
+      "unitPrice": 79.9,
+      "unitLabel": "Frasco x250 caplets",
+      "boxPrice": 149,
+      "boxLabel": "Pack x2 frascos (500 caplets)",
+      "description": "Mineral esencial inmunoprotector de alta concentración para defensas y cicatrización",
+      "longDescription": "Zinc 50 mg de Nature's Bounty USA en presentación económica de 250 caplets apoya la respuesta inmune, participa en la producción celular de colágeno y previene infecciones respiratorias.",
+      "materials": "Gluconato de Zinc 50 mg (Nature's Bounty USA)",
+      "dimensions": "Frasco grande x 250 caplets",
+      "images": [
+        "/media/products/zinc-50mg-mason-natural.jpg"
+      ]
+    },
+    {
+      "id": "supradyn-pronatal-bayer-30tabs",
+      "name": "Supradyn Multivitamínico Bayer (30 Grageas)",
+      "slug": "supradyn-multivitaminico-bayer-30grageas",
+      "collection": "bienestar-suplementos",
+      "price": 16.5,
+      "unitPrice": 16.5,
+      "unitLabel": "Blíster x10 grageas",
+      "boxPrice": 48,
+      "boxLabel": "Caja x30 grageas",
+      "description": "12 vitaminas + 8 minerales y oligoelementos para recargar energía y vitalidad",
+      "longDescription": "Supradyn de Bayer combate el agotamiento físico e intelectual, reactivando la energía celular en periodos de alto rendimiento, estrés laboral o convalecencia.",
+      "materials": "12 vitaminas esenciales, 8 minerales y oligoelementos (Bayer)",
+      "dimensions": "Caja x 30 grageas (3 blísteres de 10)",
+      "images": [
+        "/media/products/supradyn-pronatal-bayer-30tabs.jpg"
+      ]
+    },
+    {
+      "id": "isoflavonas-soya-sundown",
+      "name": "Naturcol Isoflavonas 100 mg/día (100 Cápsulas)",
+      "slug": "naturcol-isoflavonas-100mg-100caps",
+      "collection": "bienestar-suplementos",
+      "price": 54.9,
+      "unitPrice": 54.9,
+      "unitLabel": "Frasco x100 cáp",
+      "boxPrice": 99,
+      "boxLabel": "Pack x2 frascos (200 cáp)",
+      "description": "Fitoestrógenos de soya enriquecidos con Calcio, Zinc y Vitaminas para el climaterio",
+      "longDescription": "Isoflavonas de Naturcol combina 100 mg/día de extracto de soya con Calcio, Zinc, Vitamina C, D3, B12 y Ácido Fólico para aliviar sofocos, bochornos y proteger la masa ósea femenina.",
+      "materials": "Isoflavonas de Soya 100 mg + Vitaminas C, D3, B12, Hierro, Zinc y Calcio (Naturcol)",
+      "dimensions": "Frasco x 100 cápsulas",
+      "images": [
+        "/media/products/isoflavonas-soya-sundown.jpg"
+      ]
+    },
+    {
+      "id": "cranberry-concentrado-mason",
+      "name": "Nature's Bounty Cranberry 4200 mg with Vitamin C (120 Softgels)",
+      "slug": "natures-bounty-cranberry-4200mg-120softgels",
+      "collection": "bienestar-suplementos",
+      "price": 94.9,
+      "unitPrice": 94.9,
+      "unitLabel": "Frasco x120 softgels",
+      "boxPrice": 179,
+      "boxLabel": "Pack x2 frascos (240 softgels)",
+      "description": "Concentrado de arándano rojo americano para protección y salud de vías urinarias",
+      "longDescription": "Cranberry 4200 mg de Nature's Bounty USA en cápsulas blandas de liberación rápida impide la proliferación bacteriana en la vejiga, previniendo cistitis recurrentes.",
+      "materials": "Concentrado de Vaccinium macrocarpon (Cranberry) equivalente a 4200 mg + Vitamina C (Nature's Bounty USA)",
+      "dimensions": "Frasco x 120 cápsulas blandas (softgels)",
+      "images": [
+        "/media/products/cranberry-concentrado-mason.jpg"
+      ]
+    },
+    {
+      "id": "espirulina-500mg-mason",
+      "name": "Mason Natural Spirulina 500 mg (100 Tablets)",
+      "slug": "mason-natural-spirulina-500mg-100tabs",
+      "collection": "bienestar-suplementos",
+      "price": 52.9,
+      "unitPrice": 52.9,
+      "unitLabel": "Frasco x100 tabs",
+      "boxPrice": 98,
+      "boxLabel": "Pack x2 frascos (200 tabs)",
+      "description": "Superalimento vegetal rico en fitonutrientes, clorofila, proteínas y minerales",
+      "longDescription": "Spirulina 500 mg de Mason Natural USA aporta nutrientes concentrados, antioxidantes y hierro orgánico para reforzar la vitalidad, desintoxicar el cuerpo y apoyar el control de peso.",
+      "materials": "Alga Spirulina platensis micronizada 500 mg (Mason Natural USA)",
+      "dimensions": "Frasco x 100 tabletas",
+      "images": [
+        "/media/products/mason-natural-spirulina-500mg-100tabs.jpg"
+      ]
+    },
+    {
+      "id": "vitamina-e-400ui-sundown",
+      "name": "Mason Natural Vitamina E 400 IU / 180 mg (100 Softgels)",
+      "slug": "mason-natural-vitamina-e-400ui-100softgels",
+      "collection": "bienestar-suplementos",
+      "price": 48.9,
+      "unitPrice": 48.9,
+      "unitLabel": "Frasco x100 softgels",
+      "boxPrice": 89.9,
+      "boxLabel": "Pack x2 frascos (200 softgels)",
+      "description": "Antioxidante celular lipofílico de máxima absorción para piel radiante y defensas",
+      "longDescription": "Vitamina E 400 IU de Mason Natural USA neutraliza los radicales libres causantes del envejecimiento prematuro, mejorando la hidratación dérmica y protegiendo el sistema cardiovascular.",
+      "materials": "Vitamina E (dl-Alfa Tocoferil Acetato) 400 IU / 180 mg (Mason Natural USA)",
+      "dimensions": "Frasco x 100 cápsulas blandas (softgels)",
+      "images": [
+        "/media/products/mason-natural-vitamina-e-400ui-100softgels.jpg"
+      ]
+    },
+    {
+      "id": "enterogermina-2-billones-10viales",
+      "name": "Enterogermina PLUS 4000 Millones Sanofi (5 Frascos)",
+      "slug": "enterogermina-plus-4000-millones-5frascos",
+      "collection": "bienestar-suplementos",
+      "price": 8.6,
+      "unitPrice": 8.6,
+      "unitLabel": "Frasco x 5ml",
+      "boxPrice": 43.1,
+      "boxLabel": "Caja x 5 frascos",
+      "description": "Restaurador de la flora intestinal concentrado con 4 millardos de esporas de Bacillus clausii",
+      "longDescription": "Enterogermina PLUS de Sanofi ofrece una fórmula concentrada de 4000 millones de esporas de Bacillus clausii en 5 mL para tomar solo 1 vez al día, restableciendo la microbiota intestinal dañada por antibióticos.",
+      "materials": "Esporas de Bacillus clausii polifarmacorresistente 4000 millones / 5 mL (Sanofi)",
+      "dimensions": "Caja x 5 frascos bebibles de 5 mL (Toma 1 vez al día)",
+      "images": [
+        "/media/products/enterogermina-2-billones-10viales.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "fotoprotector-isdin-fusion-water-magic-spf50",
+      "name": "Fotoprotector ISDIN Fusion Water Magic SPF 50",
+      "slug": "fotoprotector-isdin-fusion-water-magic-spf50",
+      "collection": "dermocosmetica",
+      "price": 104.9,
+      "unitPrice": 104.9,
+      "unitLabel": "Frasco 50 ml",
+      "boxPrice": 179.9,
+      "boxLabel": "Pack Duplo 2x50 ml",
+      "description": "Protector solar facial ultraligero de absorción inmediata y control de oleosidad",
+      "longDescription": "ISDIN Fusion Water MAGIC SPF 50 ofrece fotoprotección facial diaria de fase acuosa que se funde en la piel sin dejar residuo graso. Formulado con Ácido Hialurónico y extracto de alga mediterránea, proporciona hidratación intensa, acción antioxidante y no pica en los ojos (Safe-Eye Tech). Ideal para todo tipo de pieles, incluso mixtas, grasas y sensibles.",
+      "materials": "Filtros fotoestables UVA/UVB, Ácido Hialurónico, Vitamina E · ISDIN España",
+      "dimensions": "Frasco dosificador x 50 ml / Textura ultraligera al tacto",
+      "images": [
+        "/media/products/fotoprotector-isdin-fusion-water-magic-spf50.jpg"
+      ],
+      "featured": true,
+      "new": true
+    },
+    {
+      "id": "la-roche-posay-anthelios-uvmune-400-spf50-50ml",
+      "name": "La Roche-Posay Anthelios UVMune 400 Fluido Invisible SPF 50+",
+      "slug": "la-roche-posay-anthelios-uvmune-400-spf50-50ml",
+      "collection": "dermocosmetica",
+      "price": 109.9,
+      "unitPrice": 109.9,
+      "unitLabel": "Frasco 50 ml",
+      "boxPrice": 199.9,
+      "boxLabel": "Pack Dúo 2x50 ml",
+      "description": "Máxima protección contra los rayos UVA ultra-largos con acabado invisible no graso",
+      "longDescription": "Anthelios UVMune 400 Fluido Invisible con Mexoryl 400 es la innovación fotoprotectora de La Roche-Posay que protege contra los rayos UV más insidiosos [380-400nm]. Resistente al agua, al sudor y a la arena. No pica en los ojos y ofrece un acabado mate imperceptible apto para pieles altamente fotosensibles y bajo tratamiento dermatológico.",
+      "materials": "Mexoryl 400, Tecnología Netlock, Agua Termal La Roche-Posay · L'Oréal Francia",
+      "dimensions": "Frasco con agitador x 50 ml / Acabado mate invisible",
+      "images": [
+        "/media/products/la-roche-posay-anthelios-uvmune-400-spf50-50ml.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "protector-solar-facial-eucerin-sun-oil-control-tono-medio-fps-50",
+      "name": "Protector Solar Eucerin Sun Oil Control Tono Medio FPS 50+",
+      "slug": "protector-solar-facial-eucerin-sun-oil-control-tono-medio-fps-50",
+      "collection": "dermocosmetica",
+      "price": 99.9,
+      "unitPrice": 99.9,
+      "unitLabel": "Frasco 50 ml",
+      "boxPrice": 174.9,
+      "boxLabel": "Pack Ahorro 2x50 ml",
+      "description": "Gel-crema facial toque seco antibrillo con pigmentos de color para tono uniforme",
+      "longDescription": "Eucerin Sun Gel-Cream Oil Control Toque Seco con Color Tono Medio combina Advanced Spectral Technology para alta protección UV con Ácido Glicirretínico para soporte del ADN celular. Sus pigmentos minerales unifican el tono cutáneo al instante y la L-Carnitina reguladora del sebo ofrece 12 horas de control antibrillo.",
+      "materials": "L-Carnitina, Pigmentos Minerales, Ácido Glicirretínico, Licochalcona A · Beiersdorf Alemania",
+      "dimensions": "Frasco con bomba dispensadora x 50 ml / Toque seco mate",
+      "images": [
+        "/media/products/protector-solar-facial-eucerin-sun-oil-control-tono-medio-fps-50.jpg"
+      ]
+    },
+    {
+      "id": "protector-solar-eryfotona-aknmsc-fluid-fps99",
+      "name": "Protector Solar ISDIN Eryfotona AK-NMSC Fluid FPS 99+",
+      "slug": "protector-solar-eryfotona-aknmsc-fluid-fps99",
+      "collection": "dermocosmetica",
+      "price": 139.9,
+      "unitPrice": 139.9,
+      "unitLabel": "Frasco 50 ml",
+      "boxPrice": 259.9,
+      "boxLabel": "Pack Tratamiento 2x50 ml",
+      "description": "Prevención y reparación del daño actínico celular con enzima ADN Repairsomes",
+      "longDescription": "Eryfotona AK-NMSC Fluid FPS 99+ de ISDIN está indicado para la prevención y tratamiento coadyuvante de queratosis actínicas y daño solar acumulativo. Contiene fotoliasa encapsulada en liposomas (Repairsomes) que repara el ADN celular dañado por la radiación solar y crea una película protectora sobre la piel.",
+      "materials": "Fotoliasa (DNA Repairsomes), Filtros UVA/UVB FPS 99+, Bisabolol · ISDIN",
+      "dimensions": "Frasco dosificador x 50 ml / Fluido reparador de grado dermatológico",
+      "images": [
+        "/media/products/protector-solar-eryfotona-aknmsc-fluid-fps99.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "bruma-facial-refrescante-babaria-con-aloe-y-niacinamida-50-spf",
+      "name": "Bruma Facial Babaria Aloe & Niacinamida FPS 50",
+      "slug": "bruma-facial-refrescante-babaria-con-aloe-y-niacinamida-50-spf",
+      "collection": "dermocosmetica",
+      "price": 32.7,
+      "unitPrice": 32.7,
+      "unitLabel": "Spray 75 ml",
+      "boxPrice": 59.9,
+      "boxLabel": "Dúo Bruma 2x75 ml",
+      "description": "Bruma facial invisible fijadora y fotoprotectora con efecto refrescante",
+      "longDescription": "Bruma facial protectora de absorción inmediata que permite reaplicar el fotoprotector encima del maquillaje sin necesidad de frotar ni dejar sensación pegajosa. El Aloe Vera hidrata y descongestiona la dermis mientras la Niacinamida refuerza la función barrera cutánea frente a la contaminación urbana.",
+      "materials": "Aloe Vera 100% puro, Niacinamida (Vitamina B3), Filtros solares SPF 50 · Babaria España",
+      "dimensions": "Frasco spray aerosol x 75 ml / Aplicación 360° invisible",
+      "images": [
+        "/media/products/bruma-facial-refrescante-babaria-con-aloe-y-niacinamida-50-spf.jpg"
+      ]
+    },
+    {
+      "id": "cerave-gel-limpiador-espumoso-foaming-cleanser-473ml",
+      "name": "CeraVe Gel Limpiador Espumoso Piel Normal a Grasa 473 ml",
+      "slug": "cerave-gel-limpiador-espumoso-foaming-cleanser-473ml",
+      "collection": "dermocosmetica",
+      "price": 84.9,
+      "unitPrice": 84.9,
+      "unitLabel": "Frasco 473 ml",
+      "boxPrice": 149.9,
+      "boxLabel": "Pack Familiar 2x473 ml",
+      "description": "Limpiador diario que remueve impurezas y exceso de sebo sin alterar la barrera cutánea",
+      "longDescription": "Desarrollado con dermatólogos, CeraVe Foaming Facial Cleanser crea una espuma suave que limpia a profundidad los poros y retira el maquillaje sin resecar la piel. Formulado con 3 ceramidas esenciales, ácido hialurónico y niacinamida calmante. No comedogénico y sin perfume.",
+      "materials": "Ceramidas 1, 3, 6-II, Niacinamida, Ácido Hialurónico · L'Oréal CeraVe",
+      "dimensions": "Frasco con válvula pump x 473 ml / Fórmula espumosa",
+      "images": [
+        "/media/products/cerave-gel-limpiador-espumoso-foaming-cleanser-473ml.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "crema-hidratante-cerave-piel-seca-a-muy-seca",
+      "name": "CeraVe Crema Hidratante Piel Seca a Muy Seca 454 g",
+      "slug": "crema-hidratante-cerave-piel-seca-a-muy-seca",
+      "collection": "dermocosmetica",
+      "price": 89.9,
+      "unitPrice": 89.9,
+      "unitLabel": "Pote 454 g",
+      "boxPrice": 159.9,
+      "boxLabel": "Pack Ahorro 2x454 g",
+      "description": "Hidratación continua 24 horas y restauración de la barrera protectora de la piel",
+      "longDescription": "Crema hidratante corporal y facial con tecnología de emulsión multivesicular (MVE) que libera ingredientes hidratantes de forma prolongada durante todo el día. Enriquecida con 3 ceramidas esenciales idénticas a las de la piel y ácido hialurónico. Textura rica y de rápida absorción, sin sensación grasosa.",
+      "materials": "3 Ceramidas Esenciales, Ácido Hialurónico, Tecnología MVE · CeraVe",
+      "dimensions": "Pote sellado x 454 g (16 oz) / Hidratación intensiva 24h",
+      "images": [
+        "/media/products/crema-hidratante-cerave-piel-seca-a-muy-seca.jpg"
+      ]
+    },
+    {
+      "id": "gel-limpiador-la-roche-posay-effaclar",
+      "name": "La Roche-Posay Effaclar Gel Limpiador Purificante 400 ml",
+      "slug": "gel-limpiador-la-roche-posay-effaclar",
+      "collection": "dermocosmetica",
+      "price": 114.9,
+      "unitPrice": 114.9,
+      "unitLabel": "Frasco 400 ml",
+      "boxPrice": 199.9,
+      "boxLabel": "Pack Dúo 2x400 ml",
+      "description": "Purifica suavemente la piel grasa con tendencia acneica eliminando impurezas y sebo",
+      "longDescription": "Effaclar Gel Limpiador Purificante de La Roche-Posay purifica la piel con suavidad gracias a agentes limpiadores seleccionados que respetan la piel sensible. Elimina impurezas y el exceso de sebo dejando la piel limpia y fresca. Con Agua Termal de La Roche-Posay calmante y antiirritante, pH fisiológico 5.5, sin jabón ni alcohol.",
+      "materials": "Zinc PCA seborregulador, Agua Termal de La Roche-Posay · L'Oréal Cosmétique Active",
+      "dimensions": "Frasco dosificador con dispensador x 400 ml",
+      "images": [
+        "/media/products/gel-limpiador-la-roche-posay-effaclar.jpg"
+      ]
+    },
+    {
+      "id": "locion-limpiadora-cetaphil-piel-sensible",
+      "name": "Cetaphil Loción Limpiadora Piel Sensible 473 ml",
+      "slug": "locion-limpiadora-cetaphil-piel-sensible",
+      "collection": "dermocosmetica",
+      "price": 84.9,
+      "unitPrice": 84.9,
+      "unitLabel": "Frasco 473 ml",
+      "boxPrice": 149.9,
+      "boxLabel": "Pack 2x473 ml",
+      "description": "Limpiador facial suave que hidrata mientras limpia, sin irritar la piel delicada",
+      "longDescription": "Fórmula clínicamente probada con niacinamida, pantenol y glicerina hidratante que preserva la barrera cutánea frente a los 5 signos de sensibilidad cutánea: resequedad, irritación, aspereza, tirantez y barrera debilitada. Puede usarse con o sin enjuague con agua.",
+      "materials": "Niacinamida (Vitamina B3), Pantenol (Pro-Vitamina B5), Glicerina · Galderma",
+      "dimensions": "Frasco con bomba dosificadora x 473 ml / Hipoalergénico",
+      "images": [
+        "/media/products/locion-limpiadora-cetaphil-piel-sensible.jpg"
+      ]
+    },
+    {
+      "id": "crema-reparadora-la-roche-posay-cicaplast-baume-b5",
+      "name": "La Roche-Posay Cicaplast Baume B5+ Reparador 100 ml",
+      "slug": "crema-reparadora-la-roche-posay-cicaplast-baume-b5",
+      "collection": "dermocosmetica",
+      "price": 89.9,
+      "unitPrice": 89.9,
+      "unitLabel": "Tubo 100 ml",
+      "boxPrice": 159.9,
+      "boxLabel": "Pack Familiar 2x100 ml",
+      "description": "Bálsamo multi-reparador calmante para irritaciones cutáneas, rozaduras y cicatrices",
+      "longDescription": "Cicaplast Baume B5+ acelera y favorece la reparación óptima de la epidermis gracias al complejo prebiótico Tribioma, Madecasósido al 5%, Pantenol y complejo antibacteriano Cobre-Zinc-Manganeso. Alivia la sensación de quemazón, resequedad severa, descamaciones y piel agredida tras procedimientos dermatológicos.",
+      "materials": "Tribioma prebiótico, Pantenol 5%, Madecasósido, Zinc, Manganeso · La Roche-Posay",
+      "dimensions": "Tubo flexible x 100 ml / Fórmula hipoalergénica para toda la familia",
+      "images": [
+        "/media/products/crema-reparadora-la-roche-posay-cicaplast-baume-b5.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "agua-micelar-sensibio-h2o-bioderma-500ml",
+      "name": "Bioderma Sensibio H2O Solución Micelar 500 ml",
+      "slug": "agua-micelar-sensibio-h2o-bioderma-500ml",
+      "collection": "dermocosmetica",
+      "price": 89.9,
+      "unitPrice": 89.9,
+      "unitLabel": "Frasco 500 ml",
+      "boxPrice": 149.9,
+      "boxLabel": "Pack Duplo 2x500 ml",
+      "description": "Agua micelar dermatológica que desmaquilla, limpia y calma la piel sensible",
+      "longDescription": "Sensibio H2O es la primera y única agua micelar dermatológica que presenta una perfecta analogía biológica con la piel. Sus ésteres de ácidos grasos que componen las micelas limpian eficazmente el 99% del maquillaje, polución y partículas finas, preservando la película hidrolipídica natural. Sin perfume y con pH fisiológico.",
+      "materials": "Tecnología Micelar Ésteres de Glicerol, Extracto de Pepino, Complejo D.A.F. · NAOS Francia",
+      "dimensions": "Frasco x 500 ml / Limpieza sin aclarado",
+      "images": [
+        "/media/products/agua-micelar-sensibio-h2o-bioderma-500ml.jpg"
+      ]
+    },
+    {
+      "id": "aceite-de-ducha-bioderma-atoderm-huile-piel-seca-a-muy-seca",
+      "name": "Bioderma Atoderm Huile de Douche 1 Litro",
+      "slug": "aceite-de-ducha-bioderma-atoderm-huile-piel-seca-a-muy-seca",
+      "collection": "dermocosmetica",
+      "price": 129.9,
+      "unitPrice": 129.9,
+      "unitLabel": "Frasco 1 Litro",
+      "boxPrice": 229.9,
+      "boxLabel": "Pack 2x1 Litro",
+      "description": "Aceite de ducha nutritivo antissequedad para piel sensible, seca a muy seca",
+      "longDescription": "Atoderm Huile de Douche alivia e hidrata intensamente la piel desde la ducha durante 24 horas gracias a sus biolípidos vegetales, la vitamina PP (Niacinamida) y la patente Skin Barrier Therapy™ que limita la proliferación de bacterias como Staphylococcus aureus. Espuma cremosa y no grasa para rostro y cuerpo.",
+      "materials": "Biolípidos vegetales, Niacinamida (Vitamina PP), Skin Barrier Therapy · Bioderma",
+      "dimensions": "Botella dispensadora con dosificador x 1000 ml",
+      "images": [
+        "/media/products/aceite-de-ducha-bioderma-atoderm-huile-piel-seca-a-muy-seca.jpg"
+      ]
+    },
+    {
+      "id": "agua-termal-avene-para-piel-sensible",
+      "name": "Avène Agua Termal Spray Piel Sensible 300 ml",
+      "slug": "agua-termal-avene-para-piel-sensible",
+      "collection": "dermocosmetica",
+      "price": 92.5,
+      "unitPrice": 92.5,
+      "unitLabel": "Spray 300 ml",
+      "boxPrice": 159.9,
+      "boxLabel": "Pack Dúo 2x300 ml",
+      "description": "Calma, suaviza y alivia al instante pieles irritadas, enrojecidas o sensibilizadas",
+      "longDescription": "Extraída directamente del manantial de Avène en Francia, conserva intactas todas sus propiedades calmantes, anti-irritantes y anti-oxidantes. Su composición mineral única baja en sodio y rica en silicatos deja un velo protector suave sobre la piel. Ideal tras afeitado, quemaduras solares, rojeces o tratamientos dermatológicos.",
+      "materials": "100% Agua Termal de Avène bacteriologicamente pura · Pierre Fabre Francia",
+      "dimensions": "Spray estéril presurizado x 300 ml / Pulverización micronizada",
+      "images": [
+        "/media/products/agua-termal-avene-para-piel-sensible.jpg"
+      ]
+    },
+    {
+      "id": "agua-termal-volcanica-vichy",
+      "name": "Vichy Agua Termal Mineralizante Volcánica 300 ml",
+      "slug": "agua-termal-volcanica-vichy",
+      "collection": "dermocosmetica",
+      "price": 84.9,
+      "unitPrice": 84.9,
+      "unitLabel": "Spray 300 ml",
+      "boxPrice": 149.9,
+      "boxLabel": "Pack 2x300 ml",
+      "description": "Agua mineralizante nacida en los volcanes franceses con 15 minerales esenciales",
+      "longDescription": "Rica en 15 minerales únicos y nutrientes esenciales (calcio, hierro, magnesio, potasio, azufre), el Agua Termal de Vichy refuerza las defensas naturales de la piel contra las agresiones externas del exposoma urbano. Reequilibra el pH cutáneo, regenera la dermis y calma las irritaciones.",
+      "materials": "15 Minerales volcánicos naturales puros, Calcio, Manganeso, Silicio · Laboratorios Vichy",
+      "dimensions": "Frasco spray presurizado x 300 ml / 100% pura y natural",
+      "images": [
+        "/media/products/agua-termal-volcanica-vichy.jpg"
+      ]
+    },
+    {
+      "id": "serum-eucerin-hyaluron-filler-3x-effect-epigenetic",
+      "name": "Sérum Eucerin Hyaluron-Filler Epigenetic 30 ml",
+      "slug": "serum-eucerin-hyaluron-filler-3x-effect-epigenetic",
+      "collection": "dermocosmetica",
+      "price": 179.9,
+      "unitPrice": 179.9,
+      "unitLabel": "Frasco 30 ml",
+      "boxPrice": 329.9,
+      "boxLabel": "Pack Dúo Epigenetic 2x30 ml",
+      "description": "Sérum antiedad de tecnología epigenética que reactiva los genes de juventud de la piel",
+      "longDescription": "Con el principio activo patentado Epicelline®, este sérum de alta gama epigenética revierte los patrones de envejecimiento celular reactivando la producción natural de colágeno y elastina. Combinado con Ácido Hialurónico de alto y bajo peso molecular para rellenar arrugas profundas y aportar firmeza visible en 4 semanas.",
+      "materials": "Epicelline® epigenético, Ácido Hialurónico macro y micromolecular · Eucerin Alemania",
+      "dimensions": "Frasco de vidrio premium con gotero de precisión x 30 ml",
+      "images": [
+        "/media/products/serum-eucerin-hyaluron-filler-3x-effect-epigenetic.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "pack-eucerin-dermopure-serum-corrector-gel-limpiador-clinical-triple-accion",
+      "name": "Pack Eucerin DermoPure Sérum Triple Efecto + Gel Limpiador",
+      "slug": "pack-eucerin-dermopure-serum-corrector-gel-limpiador-clinical-triple-accion",
+      "collection": "dermocosmetica",
+      "price": 164.9,
+      "unitPrice": 164.9,
+      "unitLabel": "Pack Dúo Clínico",
+      "boxPrice": 299.9,
+      "boxLabel": "Pack Doble Tratamiento",
+      "description": "Tratamiento dermatológico completo anti-manchas post-acné y control de brillo",
+      "longDescription": "Pack clínico que combina el Sérum Triple Efecto con Thiamidol patentado (reduce manchas oscuras post-inflamatorias) y Ácido Salicílico (combate imperfecciones), más el Gel Limpiador Concentrado con 2% de Ácido Salicílico que desobstruye los poros y elimina células muertas sin irritar.",
+      "materials": "Thiamidol patentado, Ácido Salicílico 2%, Complejo Licochalcona A · Eucerin",
+      "dimensions": "Caja estuche con Sérum 40 ml + Gel Limpiador Clinical 150 ml",
+      "images": [
+        "/media/products/pack-eucerin-dermopure-serum-corrector-gel-limpiador-clinical-triple-accion.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "serum-retinol-cerave-anti-marcas",
+      "name": "CeraVe Sérum Retinol Anti-Marcas Renovador 30 ml",
+      "slug": "serum-retinol-cerave-anti-marcas",
+      "collection": "dermocosmetica",
+      "price": 94.9,
+      "unitPrice": 94.9,
+      "unitLabel": "Frasco 30 ml",
+      "boxPrice": 174.9,
+      "boxLabel": "Pack Dúo 2x30 ml",
+      "description": "Sérum con retinol encapsulado que reduce marcas post-imperfecciones y afina poros",
+      "longDescription": "Desarrollado con dermatólogos para ayudar a atenuar las marcas residuales causadas por el acné y minimizar la apariencia de los poros dilatados. Formulado con Retinol Encapsulado de liberación prolongada, extracto de raíz de regaliz iluminador, niacinamida calmante y las 3 ceramidas esenciales de CeraVe para mantener la barrera cutánea intacta.",
+      "materials": "Retinol encapsulado, Extracto de Regaliz, 3 Ceramidas esenciales, Niacinamida · CeraVe",
+      "dimensions": "Frasco dispensador pump hermético x 30 ml / Textura gel ligera",
+      "images": [
+        "/media/products/serum-retinol-cerave-anti-marcas.jpg"
+      ]
+    },
+    {
+      "id": "serum-liposomado-sesderma-c-vit-5-glowing",
+      "name": "Sesderma C-Vit 5 Glowing Sérum Liposomado 30 ml",
+      "slug": "serum-liposomado-sesderma-c-vit-5-glowing",
+      "collection": "dermocosmetica",
+      "price": 169.9,
+      "unitPrice": 169.9,
+      "unitLabel": "Frasco 30 ml",
+      "boxPrice": 310,
+      "boxLabel": "Pack Duplo 2x30 ml",
+      "description": "Complejo de 5 tipos de vitamina C liposomada para luminosidad y efecto antioxidante",
+      "longDescription": "Sérum antioxidante avanzado que combina 5 formas estables de vitamina C liposomada de máxima biodisponibilidad y penetración dérmica (ascorbil glucósido, ascorbato sódico, ácido etil ascórbico, ascorbil fosfato magnésico y palmitato de ascorbilo). Despierta la luminosidad de pieles apagadas, combate radicales libres y estimula la síntesis de colágeno.",
+      "materials": "5 derivados de Vitamina C liposomada, Ácido Hialurónico, Centella Asiática · Sesderma España",
+      "dimensions": "Frasco de vidrio ámbar con cuentagotas dosificador x 30 ml",
+      "images": [
+        "/media/products/serum-liposomado-sesderma-c-vit-5-glowing.jpg"
+      ]
+    },
+    {
+      "id": "fortalecedor-de-unas-isdin-sinails",
+      "name": "ISDIN Si-Nails Fortalecedor de Uñas 2.5 ml",
+      "slug": "fortalecedor-de-unas-isdin-sinails",
+      "collection": "dermocosmetica",
+      "price": 109.9,
+      "unitPrice": 109.9,
+      "unitLabel": "Lápiz pincel 2.5 ml",
+      "boxPrice": 199.9,
+      "boxLabel": "Pack Dúo 2x2.5 ml",
+      "description": "Tratamiento fortalecedor en pincel con ácido hialurónico catiónico y silicio orgánico",
+      "longDescription": "ISDIN Si-Nails ha sido diseñado específicamente para proteger y mejorar el aspecto de uñas quebradizas, descamadas y débiles. Aporta queratina, silicio y promueve la remineralización ungueal. Acabado invisible y fácil aplicación con brocha aplicadora de un solo clic, con resultados visibles a partir de los 14 días.",
+      "materials": "Ácido Hialurónico catiónico, Silicio orgánico, Aceite de Pistacia lentiscus · ISDIN",
+      "dimensions": "Lápiz aplicador 'one-click' con pincel x 2.5 ml",
+      "images": [
+        "/media/products/fortalecedor-de-unas-isdin-sinails.jpg"
+      ]
+    },
+    {
+      "id": "lipstick-uriage-xemose-moisturizing",
+      "name": "Uriage Xémose Stick Labial Hidratante 4 g",
+      "slug": "lipstick-uriage-xemose-moisturizing",
+      "collection": "dermocosmetica",
+      "price": 43.9,
+      "unitPrice": 43.9,
+      "unitLabel": "Stick 4 g",
+      "boxPrice": 78.9,
+      "boxLabel": "Pack Dúo 2x4 g",
+      "description": "Bálsamo labial reparador intensivo para labios secos, agrietados y dañados",
+      "longDescription": "Barra labial nutritiva enriquecida con Manteca de Karité, Ácido Hialurónico y Vitaminas C y E que protege contra las agresiones climáticas cotidianas (frío, viento, sequedad). Su fórmula hipoalergénica nutre intensamente, restaura el confort labial y repara grietas sin dejar rastro blanco ni sensación pegajosa.",
+      "materials": "Manteca de Karité, Aceite de Borraja, Vitaminas C y E, Ácido Hialurónico · Uriage Francia",
+      "dimensions": "Stick retráctil x 4 g / Cuidado labial hipoalergénico",
+      "images": [
+        "/media/products/lipstick-uriage-xemose-moisturizing.jpg"
+      ]
+    },
+    {
+      "id": "nan-1-optipro-hmo-formula-lactea-infantil-de-inicio-en-polvo",
+      "name": "NAN 1 Optipro HMO Fórmula Infantil de Inicio en Polvo 800 g",
+      "slug": "nan-1-optipro-hmo-formula-lactea-infantil-de-inicio-en-polvo",
+      "collection": "pediatria",
+      "price": 84.9,
+      "unitPrice": 84.9,
+      "unitLabel": "Lata 800 g",
+      "boxPrice": 48.9,
+      "boxLabel": "Lata 400 g",
+      "description": "Fórmula láctea de inicio para lactantes de 0 a 6 meses con HMO y proteína Optipro",
+      "longDescription": "NAN 1 Optipro con oligosacárido 2'-FL (HMO estructuralmente idéntico al de la leche materna), proteína optimizada Optipro, probióticos B. lactis y DHA/ARA. Diseñada para cubrir las necesidades nutricionales de lactantes sanos desde el nacimiento cuando la lactancia materna no es posible.",
+      "materials": "HMO 2'-FL, Proteína Optipro, DHA/ARA, Bífidobacterias B. lactis · Nestlé Suiza",
+      "dimensions": "Lata metálica hermética x 800 g / Incluye cucharilla dosificadora",
+      "images": [
+        "/media/products/nan-1-optipro-hmo-formula-lactea-infantil-de-inicio-en-polvo.jpg"
+      ],
+      "featured": true,
+      "new": true
+    },
+    {
+      "id": "nan-2-optipro-hmo-formula-lactea-de-continuacion-en-polvo",
+      "name": "NAN 2 Optipro HMO Fórmula Láctea de Continuación 800 g",
+      "slug": "nan-2-optipro-hmo-formula-lactea-de-continuacion-en-polvo",
+      "collection": "pediatria",
+      "price": 82.9,
+      "unitPrice": 82.9,
+      "unitLabel": "Lata 800 g",
+      "boxPrice": 46.9,
+      "boxLabel": "Lata 400 g",
+      "description": "Fórmula infantil de continuación para bebés a partir de los 6 meses de edad",
+      "longDescription": "NAN 2 Optipro HMO acompaña el inicio de la alimentación complementaria en lactantes mayores de 6 meses. Formulada con proteína Optipro de alta calidad biológica, oligosacárido 2'-FL HMO, hierro, calcio y vitaminas A, C y D para apoyar el desarrollo cognitivo y el fortalecimiento del sistema inmunológico.",
+      "materials": "Proteína Optipro, HMO 2'-FL, DHA, Hierro quelado, Vitaminas A-C-D · Nestlé",
+      "dimensions": "Lata metálica con sello higiénico x 800 g",
+      "images": [
+        "/media/products/nan-2-optipro-hmo-formula-lactea-de-continuacion-en-polvo.jpg"
+      ]
+    },
+    {
+      "id": "nutramigen-premium-con-lgg",
+      "name": "Nutramigen Premium con LGG Hipoalergénica 357 g",
+      "slug": "nutramigen-premium-con-lgg",
+      "collection": "pediatria",
+      "price": 126.9,
+      "unitPrice": 126.9,
+      "unitLabel": "Lata 357 g",
+      "boxPrice": 239.9,
+      "boxLabel": "Pack Tratamiento 2x357 g",
+      "description": "Fórmula con caseína extensamente hidrolizada y probiótico LGG para alergia a la proteína de leche",
+      "longDescription": "Nutramigen Premium con LGG es una fórmula hipoalergénica para el manejo dietético de lactantes con alergia a la proteína de la leche de vaca (APLV). Su caseína extensamente hidrolizada elimina el potencial alergénico, y el probiótico Lactobacillus rhamnosus GG (LGG) ayuda a acelerar la tolerancia a la leche materna y calma cólicos en 48 horas.",
+      "materials": "Caseína extensamente hidrolizada, Probiótico LGG, DHA y ARA · Mead Johnson Nutrition",
+      "dimensions": "Lata sellada al vacío x 357 g / Grado médico nutricional",
+      "images": [
+        "/media/products/nutramigen-premium-con-lgg.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "similac-total-comfort-kid-alimento-en-polvo",
+      "name": "Similac Total Comfort KID Alimento en Polvo 820 g",
+      "slug": "similac-total-comfort-kid-alimento-en-polvo",
+      "collection": "pediatria",
+      "price": 94.9,
+      "unitPrice": 94.9,
+      "unitLabel": "Lata 820 g",
+      "boxPrice": 52.9,
+      "boxLabel": "Lata 360 g",
+      "description": "Nutrición especializada de fácil digestión para niños de 1 a 3 años de edad",
+      "longDescription": "Similac Total Comfort KID está diseñado para niños pequeños con pancitas sensibles que presentan intolerancia transitoria a la lactosa, gases o evacuaciones duras. Contiene proteína parcialmente hidrolizada, prebióticos FOS, nucleótidos y el sistema Eye-Q Plus (DHA, Luteína y Vitamina E natural) para desarrollo cerebral y visual sin aceite de oleína de palma.",
+      "materials": "Proteína de suero parcialmente hidrolizada, Prebióticos FOS, DHA, Luteína · Abbott Laboratories",
+      "dimensions": "Lata hermética x 820 g con medidor dosificador",
+      "images": [
+        "/media/products/similac-total-comfort-kid-alimento-en-polvo.jpg"
+      ]
+    },
+    {
+      "id": "pentasure-20-sabor-vainilla-polvo-oral",
+      "name": "Pentasure 2.0 Sabor Vainilla Polvo Oral 400 g",
+      "slug": "pentasure-20-sabor-vainilla-polvo-oral",
+      "collection": "pediatria",
+      "price": 95,
+      "unitPrice": 95,
+      "unitLabel": "Lata 400 g",
+      "boxPrice": 182,
+      "boxLabel": "Pack Dúo 2x400 g",
+      "description": "Fórmula nutricional completa hipercalórica e hiperproteica en polvo oral",
+      "longDescription": "Pentasure 2.0 es un soporte nutricional de alta densidad calórica (2 kcal/ml reconstituido) indicado para requerimientos nutricionales elevados, restricción de volumen de líquidos, recuperación ponderal y estados hipercatabólicos. Aporta carbohidratos complejos, proteínas de alto valor biológico, triglicéridos de cadena media (TCM) y 28 vitaminas y minerales esenciales.",
+      "materials": "Proteína de suero de leche, Caseinato, TCM, Maltodextrina, 28 Micronutrientes · Fresenius Kabi",
+      "dimensions": "Lata metálica x 400 g / Sabor suave a Vainilla",
+      "images": [
+        "/media/products/pentasure-20-sabor-vainilla-polvo-oral.jpg"
+      ]
+    },
+    {
+      "id": "pedialyte-max-60-sabor-fresa",
+      "name": "Pedialyte Max 60 Solución Rehidratante Sabor Fresa 500 ml",
+      "slug": "pedialyte-max-60-sabor-fresa",
+      "collection": "pediatria",
+      "price": 10.8,
+      "unitPrice": 10.8,
+      "unitLabel": "Frasco 500 ml",
+      "boxPrice": 39.9,
+      "boxLabel": "Pack x4 botellas",
+      "description": "Solución oral de electrolitos formulada para rehidratación rápida y balanceada",
+      "longDescription": "Pedialyte Max 60 aporta una osmolaridad científicamente calibrada y un balance exacto de zinc, sodio, potasio y glucosa para restaurar los líquidos perdidos durante episodios de diarrea aguda, vómitos, fiebre alta o deshidratación moderada. Aprobado por la OMS para niños y adultos.",
+      "materials": "Sodio 60 mEq/L, Potasio 20 mEq/L, Glucosa, Zinc gluconato · Abbott",
+      "dimensions": "Frasco PET sellado x 500 ml con tapa dosificadora",
+      "images": [
+        "/media/products/pedialyte-max-60-sabor-fresa.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "panadol-ninos-160mg-5ml-jarabe",
+      "name": "Panadol Niños 160 mg / 5 ml Jarabe 118 ml",
+      "slug": "panadol-ninos-160mg-5ml-jarabe",
+      "collection": "pediatria",
+      "price": 17.5,
+      "unitPrice": 17.5,
+      "unitLabel": "Frasco 118 ml",
+      "boxPrice": 32.9,
+      "boxLabel": "Pack Dúo 2x118 ml",
+      "description": "Alivio rápido y eficaz de la fiebre, malestar de vacunación y dolor en niños",
+      "longDescription": "Panadol Niños Jarabe con sabor a fresa proporciona un alivio confiable de la fiebre asociada a gripe, resfriado o reacciones postvacunales, así como dolor de garganta o dolor dental. Formulado con Paracetamol puro sin aspirina, no irrita el estómago de los niños y viene con vasito medidor graduado para dosificación precisa por peso.",
+      "materials": "Paracetamol 160 mg por cada 5 ml, Libre de alcohol y azúcar · Haleon",
+      "dimensions": "Frasco x 118 ml con vasito dosificador ergonómico",
+      "images": [
+        "/media/products/panadol-ninos-160mg-5ml-jarabe.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "panadol-pediatrico-100mg-ml-solucion-oral",
+      "name": "Panadol Pediátrico Gotas 100 mg / ml Frasco 15 ml",
+      "slug": "panadol-pediatrico-100mg-ml-solucion-oral",
+      "collection": "pediatria",
+      "price": 13.9,
+      "unitPrice": 13.9,
+      "unitLabel": "Frasco gotero 15 ml",
+      "boxPrice": 25.9,
+      "boxLabel": "Pack Dúo 2x15 ml",
+      "description": "Gotas orales pediátricas antipiréticas y analgésicas para lactantes y bebés",
+      "longDescription": "Panadol Gotas Pediátricas contiene Paracetamol 100 mg/ml con agradable sabor a frutas para bebés desde los primeros meses de vida. Su gotero de seguridad permite administrar la dosis exacta recomendada por el pediatra según el peso corporal del infante para controlar la fiebre y el dolor de dentición de manera suave y segura.",
+      "materials": "Paracetamol 100 mg/ml, Sin azúcar, sabor frutas · Haleon",
+      "dimensions": "Frasco gotero graduado con bulbo de precisión x 15 ml",
+      "images": [
+        "/media/products/panadol-pediatrico-100mg-ml-solucion-oral.jpg"
+      ]
+    },
+    {
+      "id": "ibuprofeno-100mg-5ml-suspension-oral",
+      "name": "Ibuprofeno Pediátrico 100 mg / 5 ml Suspensión Oral 120 ml",
+      "slug": "ibuprofeno-100mg-5ml-suspension-oral",
+      "collection": "pediatria",
+      "price": 6.9,
+      "unitPrice": 6.9,
+      "unitLabel": "Frasco 120 ml",
+      "boxPrice": 74.9,
+      "boxLabel": "Caja x12 frascos",
+      "description": "Antiinflamatorio, antipirético y analgésico infantil para fiebre rebelde y dolor",
+      "longDescription": "Suspensión oral pediátrica de Ibuprofeno 100 mg en 5 ml indicada para el control rápido de la fiebre alta que no cede con paracetamol, así como para procesos inflamatorios de vías respiratorias (faringitis, otitis), dolor muscular y dental. Su acción analgésica y antipirética se prolonga hasta por 8 horas continuas.",
+      "materials": "Ibuprofeno 100 mg/5 ml, Excipientes sabor naranja c.s.p. · Medifarma",
+      "dimensions": "Frasco sellado x 120 ml con jeringa dosificadora pediátrica",
+      "images": [
+        "/media/products/ibuprofeno-100mg-5ml-suspension-oral.jpg"
+      ]
+    },
+    {
+      "id": "aero-om-100mg-ml-suspension-gotas-sabor-fresa-frasco-15-ml",
+      "name": "Aero-OM Pediátrico Gotas Sabor Fresa 100 mg / ml 15 ml",
+      "slug": "aero-om-100mg-ml-suspension-gotas-sabor-fresa-frasco-15-ml",
+      "collection": "pediatria",
+      "price": 14.6,
+      "unitPrice": 14.6,
+      "unitLabel": "Frasco gotero 15 ml",
+      "boxPrice": 27.9,
+      "boxLabel": "Pack Dúo 2x15 ml",
+      "description": "Antiflatulento pediátrico que elimina cólicos por gases y distensión abdominal en bebés",
+      "longDescription": "Aero-OM Suspensión Gotas contiene Simeticona 100 mg/ml, un agente antiespumante fisiológico que actúa desintegrando las burbujas de aire retenidas en el tracto digestivo del lactante sin absorberse a la sangre. Alivia el llanto inconsolable por cólico infantil, aerofagia del biberón y meteorismo de forma rápida y segura.",
+      "materials": "Simeticona 100 mg/ml, Suspensión homogénea sabor fresa · OM Pharma",
+      "dimensions": "Frasco gotero con cuentagotas integrado x 15 ml",
+      "images": [
+        "/media/products/aero-om-100mg-ml-suspension-gotas-sabor-fresa-frasco-15-ml.jpg"
+      ]
+    },
+    {
+      "id": "biogaia-protectis-baby-gotas-suspension-oral",
+      "name": "BioGaia Protectis Baby Gotas Probióticas 5 ml",
+      "slug": "biogaia-protectis-baby-gotas-suspension-oral",
+      "collection": "pediatria",
+      "price": 58.4,
+      "unitPrice": 58.4,
+      "unitLabel": "Frasco gotero 5 ml",
+      "boxPrice": 109.9,
+      "boxLabel": "Pack Tratamiento 2x5 ml",
+      "description": "Probiótico pediátrico clínicamente comprobado para reducir cólicos y regurgitaciones",
+      "longDescription": "BioGaia Protectis contiene la cepa patentada Limosilactobacillus reuteri Protectis (DSM 17938) aislada originalmente de la leche materna humana. Solo 5 gotas al día ayudan a restaurar y equilibrar la microbiota intestinal del bebé, reduciendo significativamente el tiempo de llanto por cólicos, episodios de diarrea y problemas de estreñimiento funcional.",
+      "materials": "Limosilactobacillus reuteri Protectis 10^8 UFC en 5 gotas · BioGaia Suecia",
+      "dimensions": "Frasco gotero de vidrio ámbar con tira desecante x 5 ml",
+      "images": [
+        "/media/products/biogaia-protectis-baby-gotas-suspension-oral.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "bepanthen-baby-crema-protectora",
+      "name": "Bepanthen Baby Crema Protectora Antirrozaduras 100 g",
+      "slug": "bepanthen-baby-crema-protectora",
+      "collection": "pediatria",
+      "price": 38.5,
+      "unitPrice": 38.5,
+      "unitLabel": "Tubo 100 g",
+      "boxPrice": 16.9,
+      "boxLabel": "Tubo portátil 30 g",
+      "description": "Pomada con provitamina B5 (Dexpantenol) que protege y regenera la piel del bebé",
+      "longDescription": "Bepanthen Baby crea una capa transparente y transpirable que aísla la delicada piel del culito del contacto con la orina y las heces, previniendo la dermatitis del pañal. Su contenido de Dexpantenol (Pro-Vitamina B5) al 5% acelera la regeneración celular natural de la piel irritada. Sin conservantes, perfumes ni colorantes.",
+      "materials": "Dexpantenol (Pro-Vitamina B5) 5%, Lanolina de grado médico · Bayer",
+      "dimensions": "Tubo de aluminio sellado x 100 g / Protección hipoalergénica",
+      "images": [
+        "/media/products/bepanthen-baby-crema-protectora.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "crema-protectora-panal-desitin",
+      "name": "Desitin Máxima Protección Crema para Rozaduras 113 g",
+      "slug": "crema-protectora-panal-desitin",
+      "collection": "pediatria",
+      "price": 39.9,
+      "unitPrice": 39.9,
+      "unitLabel": "Tubo 113 g",
+      "boxPrice": 89.9,
+      "boxLabel": "Pote Gigante 454 g",
+      "description": "Pasta con 40% de óxido de zinc para aliviar y curar la dermatitis del pañal severa",
+      "longDescription": "Desitin Maximum Strength (envase morado) contiene el nivel más alto de Óxido de Zinc disponible sin receta médica (40%). Forma de inmediato una barrera protectora densa y resistente a la humedad que sella la piel contra agresiones ácidas, aliviando el enrojecimiento y ardor desde la primera aplicación nocturna.",
+      "materials": "Óxido de Zinc 40%, Lanolina, Aceite de hígado de bacalao · Johnson & Johnson",
+      "dimensions": "Tubo flexible x 113 g (4 oz) / Máxima eficacia clínica",
+      "images": [
+        "/media/products/crema-protectora-panal-desitin.jpg"
+      ]
+    },
+    {
+      "id": "crema-para-rozaduras-mustela",
+      "name": "Mustela Crema Bálsamo 1 2 3 para Rozaduras 100 ml",
+      "slug": "crema-para-rozaduras-mustela",
+      "collection": "pediatria",
+      "price": 46.9,
+      "unitPrice": 46.9,
+      "unitLabel": "Tubo 100 ml",
+      "boxPrice": 29.9,
+      "boxLabel": "Tubo viaje 50 ml",
+      "description": "Cuidado completo para la zona del pañal: previene, alivia y repara la irritación",
+      "longDescription": "Fórmula francesa con 98% de ingredientes de origen natural probada clínicamente desde el nacimiento. Acción triple efecto: 1. Previene irritaciones con Perseose de Aguacate; 2. Alivia el ardor desde la primera aplicación con Oxeoline de Alcácea; 3. Repara duraderamente la barrera cutánea con Óleo-destilado de Girasol y Óxido de Zinc.",
+      "materials": "Perseose de Aguacate, Óxido de Zinc, Oxeoline de Alcácea · Laboratorios Expanscience",
+      "dimensions": "Tubo higiénico x 100 ml / 0% perfume, hipoalergénico",
+      "images": [
+        "/media/products/crema-para-rozaduras-mustela.jpg"
+      ]
+    },
+    {
+      "id": "gel-de-bano-suave-mustela",
+      "name": "Mustela Gel Limpiador Suave para Bebé 500 ml",
+      "slug": "gel-de-bano-suave-mustela",
+      "collection": "pediatria",
+      "price": 68.9,
+      "unitPrice": 68.9,
+      "unitLabel": "Frasco pump 500 ml",
+      "boxPrice": 124.9,
+      "boxLabel": "Pack Dúo 2x500 ml",
+      "description": "Gel de baño corporal y capilar sin jabón que respeta la piel delicada del recién nacido",
+      "longDescription": "Gel lavante suave para cuerpo y cabello de bebés y niños. Su fórmula biodegradable con Perseose de Aguacate protege la barrera cutánea e hidrata mientras limpia delicadamente sin picar en los ojos ni resecar por efecto del agua calcárea. Deja un aroma inconfundible y reconfortante.",
+      "materials": "Perseose de Aguacate Bio, Vitamina B5, Tensioactivos suaves sin jabón · Mustela",
+      "dimensions": "Frasco con válvula dosificadora ergonómica x 500 ml",
+      "images": [
+        "/media/products/gel-de-bano-suave-mustela.jpg"
+      ]
+    },
+    {
+      "id": "cloruro-de-sodio-9-solucion-para-perfusion",
+      "name": "Cloruro de Sodio 0.9% Solución para Perfusión / Lavado 100 ml",
+      "slug": "cloruro-de-sodio-9-solucion-para-perfusion",
+      "collection": "pediatria",
+      "price": 5,
+      "unitPrice": 5,
+      "unitLabel": "Frasco 100 ml",
+      "boxPrice": 8,
+      "boxLabel": "Frasco 1000 ml",
+      "description": "Suero fisiológico estéril al 0.9% para lavado nasal, ocular y perfusión pediátrica",
+      "longDescription": "Solución isotónica estéril y apirógena de Cloruro de Sodio 9 por mil (0.9 g/100 ml). Muy utilizada en pediatría para descongestión e higiene de fosas nasales en lactantes con jeringa o pera nasal, limpieza de secreciones oculares, hidratación de nebulizaciones y vehículo para administración intravenosa.",
+      "materials": "Cloruro de Sodio 0.9%, Agua para inyección estéril c.s.p. 100 ml · Laboratorios Medifarma / Baxter",
+      "dimensions": "Frasco plástico colapsable VIAFLEX / estéril x 100 ml",
+      "images": [
+        "/media/products/cloruro-de-sodio-9-solucion-para-perfusion.jpg"
+      ]
+    },
+    {
+      "id": "aspirador-nasal-owawa",
+      "name": "Aspirador Nasal Anatómico Owawa con Filtro Protector",
+      "slug": "aspirador-nasal-owawa",
+      "collection": "pediatria",
+      "price": 34.9,
+      "unitPrice": 34.9,
+      "unitLabel": "Estuche 1 unidad",
+      "boxPrice": 59.9,
+      "boxLabel": "Set con repuestos x2",
+      "description": "Aspirador nasal por succión controlada para despejar la mucosidad del bebé sin dolor",
+      "longDescription": "El aspirador nasal ergonómico Owawa permite a los padres succionar suavemente el exceso de mocos y flemas que impiden la respiración o lactancia normal del bebé. Incluye boquilla nasal suave de silicona médica antilesiones, cámara colectora transparente y filtro higiénico que impide el paso de fluidos hacia el tubo de aspiración.",
+      "materials": "Silicona médica grado alimentario libre de BPA, Filtro de algodón · Owawa Baby Care",
+      "dimensions": "Estuche rígido higiénico con aspirador, manguera y boquillas de recambio",
+      "images": [
+        "/media/products/aspirador-nasal-owawa.jpg"
+      ]
+    },
+    {
+      "id": "termometro-digital-punta-rigida",
+      "name": "Termómetro Digital Clínico Punta Rígida de Alta Precisión",
+      "slug": "termometro-digital-punta-rigida",
+      "collection": "pediatria",
+      "price": 16.9,
+      "unitPrice": 16.9,
+      "unitLabel": "Estuche 1 unidad",
+      "boxPrice": 39.9,
+      "boxLabel": "Pack Familiar x3 und",
+      "description": "Medición rápida y exacta de la temperatura corporal en 60 segundos con señal acústica",
+      "longDescription": "Termómetro clínico electrónico de contacto para lectura axilar, oral o rectal de temperatura en bebés, niños y adultos. Pantalla LCD de alto contraste con memoria de última lectura, apagado automático para ahorro de batería y alarma sonora de fiebre que alerta si la temperatura sobrepasa los 37.8°C.",
+      "materials": "Sensor térmico de precisión, Pantalla LCD, Carcasa hermética lavable",
+      "dimensions": "Estuche protector plástico transparente con 1 termómetro digital y pila incluida",
+      "images": [
+        "/media/products/termometro-digital-punta-rigida.jpg"
+      ]
+    },
+    {
+      "id": "panal-huggies-dermacare-talla-p",
+      "name": "Pañal Huggies Dermacare Talla P Paquete x68 Unidades",
+      "slug": "panal-huggies-dermacare-talla-p",
+      "collection": "pediatria",
+      "price": 58.2,
+      "unitPrice": 58.2,
+      "unitLabel": "Paquete x68 und",
+      "boxPrice": 112.9,
+      "boxLabel": "Mega Pack 2x68 und",
+      "description": "Máxima protección dermatológica para recién nacidos con tecnología antirozaduras",
+      "longDescription": "Huggies Dermacare para bebés de 3.5 a 6 kg incorpora cubierta ultra suave y transpirable con extracto de Aloe Vera y Vitamina E. Cuenta con canales de absorción rápida en 'X' que distribuyen la orina uniformemente evitando el contacto prolongado con la piel, cintura elástica anatómica y barreras antifugas reforzadas.",
+      "materials": "Polímeros superabsorbentes, Cubierta transpirable Dermacare, Aloe Vera · Kimberly-Clark",
+      "dimensions": "Paquete sellado hermético con 68 pañales descartables Talla P",
+      "images": [
+        "/media/products/panal-huggies-dermacare-talla-p.jpg"
+      ]
+    },
+    {
+      "id": "panales-desechables-pampers-premium-care-hipoalergenico-talla-m",
+      "name": "Pampers Premium Care Hipoalergénico Talla M x56 Unidades",
+      "slug": "panales-desechables-pampers-premium-care-hipoalergenico-talla-m",
+      "collection": "pediatria",
+      "price": 59.9,
+      "unitPrice": 59.9,
+      "unitLabel": "Paquete x56 und",
+      "boxPrice": 114.9,
+      "boxLabel": "Mega Pack 2x56 und",
+      "description": "El pañal más suave de Pampers con loción hipoalergénica y hasta 12 horas de absorción",
+      "longDescription": "Pampers Premium Care Talla M (para bebés de 6 a 9.5 kg) es el estándar de oro en protección hipoalergénica. Su malla de absorción exclusiva Extra Sec Pods aleja el pis y las heces líquidas de la piel, su loción con aceite de sábila previene irritaciones y su indicador de humedad cambia de color para avisar cuándo cambiar al bebé.",
+      "materials": "Núcleo de gel ultra absorbente, Loción hipoalergénica con Aloe · Procter & Gamble",
+      "dimensions": "Paquete económico con 56 pañales descartables Talla M",
+      "images": [
+        "/media/products/panales-desechables-pampers-premium-care-hipoalergenico-talla-m.jpg"
+      ]
+    },
+    {
+      "id": "agua-oxigenada-10-vol-de-120-ml",
+      "name": "Agua Oxigenada 10 Volúmenes Laboratorios Portugal 120 ml",
+      "slug": "agua-oxigenada-10-vol-de-120-ml",
+      "collection": "botiquin",
+      "price": 2.5,
+      "unitPrice": 2.5,
+      "unitLabel": "Frasco 120 ml",
+      "boxPrice": 6.9,
+      "boxLabel": "Pack Ahorro 3x120 ml",
+      "description": "Antiséptico y desinfectante tópico para limpieza y curación de heridas superficiales",
+      "longDescription": "El Agua Oxigenada de 10 Volúmenes (Peróxido de Hidrógeno al 3%) de Laboratorios Portugal es un antiséptico de uso tópico indispensable en cualquier botiquín. Al contacto con los tejidos libera oxígeno efervescente que desinfecta mecánicamente, limpia residuos, detiene pequeños sangrados y previene infecciones en heridas superficiales, cortes y escoriaciones.",
+      "materials": "Peróxido de Hidrógeno 3% (10 Volúmenes) · Laboratorios Portugal",
+      "dimensions": "Frasco con tapa dosificadora x 120 ml / Uso externo",
+      "images": [
+        "/media/products/agua-oxigenada-10-vol-de-120-ml.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "alcohol-medicinal-70-con-atomizador",
+      "name": "Alcohol Medicinal 70% con Atomizador Spray 500 ml",
+      "slug": "alcohol-medicinal-70-con-atomizador",
+      "collection": "botiquin",
+      "price": 8.9,
+      "unitPrice": 8.9,
+      "unitLabel": "Frasco Atomizador 500 ml",
+      "boxPrice": 13.5,
+      "boxLabel": "Frasco 1 Litro Recarga",
+      "description": "Alcohol etílico al 70% con válvula pulverizadora para desinfección rápida de piel y superficies",
+      "longDescription": "Alcohol medicinal rectificado al 70% en presentación con práctico gatillo pulverizador atomizador. Su concentración hidroalcohólica al 70% es la más eficaz para la destrucción de bacterias, hongos y virus encapsulados por desnaturalización proteica, permitiendo una aplicación uniforme e higiénica sin desperdicio tanto en piel sana como en instrumental y áreas de curación.",
+      "materials": "Alcohol Etílico 70° GL, Agua Desmineralizada · Registro Sanitario DIGEMID",
+      "dimensions": "Frasco ergonómico con gatillo spray atomizador x 500 ml",
+      "images": [
+        "/media/products/alcohol-medicinal-70-con-atomizador.jpg"
+      ],
+      "featured": true,
+      "new": true
+    },
+    {
+      "id": "alcohol-en-gel-de-70-fco-500-ml",
+      "name": "Alcohol en Gel Antibacterial 70° Frasco con Dosificador 500 ml",
+      "slug": "alcohol-en-gel-de-70-fco-500-ml",
+      "collection": "botiquin",
+      "price": 10.9,
+      "unitPrice": 10.9,
+      "unitLabel": "Frasco Pump 500 ml",
+      "boxPrice": 19.9,
+      "boxLabel": "Pack Dúo 2x500 ml",
+      "description": "Gel antiséptico para manos con glicerina humectante que elimina el 99.9% de gérmenes sin resecar",
+      "longDescription": "Gel antibacterial a base de alcohol etílico al 70° especialmente formulado para la desinfección instantánea de manos sin necesidad de agua ni enjuague. Enriquecido con agentes humectantes y glicerina de grado cosmético que protegen la barrera lipídica cutánea y evitan la resequedad provocada por el uso frecuente en entornos sanitarios y domésticos.",
+      "materials": "Etanol 70%, Glicerina vegetal humectante, Carbómero, Emolientes dérmicos",
+      "dimensions": "Frasco con bomba dosificadora (pump) x 500 ml",
+      "images": [
+        "/media/products/alcohol-en-gel-de-70-fco-500-ml.jpg"
+      ]
+    },
+    {
+      "id": "bolsa-frio-calor-nexcare",
+      "name": "Bolsa Térmica de Gel Frío / Calor Nexcare ColdHot 3M Reutilizable",
+      "slug": "bolsa-frio-calor-nexcare",
+      "collection": "botiquin",
+      "price": 35.3,
+      "unitPrice": 35.3,
+      "unitLabel": "Unidad con Funda",
+      "boxPrice": 64.9,
+      "boxLabel": "Pack Dúo 2 Unidades",
+      "description": "Compresa de gel reutilizable para termoterapia y crioterapia en contusiones, dolores e inflamación",
+      "longDescription": "La compresa fría/caliente Nexcare ColdHot de 3M proporciona alivio térmico natural y terapéutico sin medicamentos. Usada en frío (congelador) reduce hinchazón, inflamación, hematomas, esguinces y dolor agudo. Usada en calor (microondas o baño maría) alivia dolores musculares, contracturas, lumbalgias y rigidez articular. Incluye funda textil de protección cutánea.",
+      "materials": "Gel térmico atóxico y biodegradable encapsulado, Funda protectora lavable · 3M Healthcare",
+      "dimensions": "Bolsa flexible reutilizable 10 x 26 cm / Con funda protectora",
+      "images": [
+        "/media/products/bolsa-frio-calor-nexcare.jpg"
+      ]
+    },
+    {
+      "id": "botiquin-de-tela-portatil-tipo-maletin-rojo-sin-equipar",
+      "name": "Botiquín de Primeros Auxilios Tipo Maletín Portátil Rojo",
+      "slug": "botiquin-de-tela-portatil-tipo-maletin-rojo-sin-equipar",
+      "collection": "botiquin",
+      "price": 42.9,
+      "unitPrice": 42.9,
+      "unitLabel": "Maletín Vacío",
+      "boxPrice": 79.9,
+      "boxLabel": "Pack x2 Maletines",
+      "description": "Maletín de tela impermeable de alta resistencia con divisiones organizadoras para emergencias",
+      "longDescription": "Maletín de primeros auxilios confeccionado en lona plastificada impermeable de alta densidad (Ripstop) color rojo cruz blanca, diseñado para transportar y proteger insumos médicos en el hogar, vehículos, oficinas o paseos. Cuenta con compartimentos internos con malla y elásticos organizadores para sujetar frascos, vendas, jeringas y apósitos de forma rápida y segura.",
+      "materials": "Lona Oxford 600D impermeable, Cierres reforzados dobles, Asa ergonómica",
+      "dimensions": "28 cm x 20 cm x 12 cm / Capacidad expandible para kit de emergencia",
+      "images": [
+        "/media/products/botiquin-de-tela-portatil-tipo-maletin-rojo-sin-equipar.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "curitas-transpiel-hansaplast-tamanos-diversos",
+      "name": "Apósitos Curitas Hansaplast Transpiel Surtidas Caja x 20 unidades",
+      "slug": "curitas-transpiel-hansaplast-tamanos-diversos",
+      "collection": "botiquin",
+      "price": 6.5,
+      "unitPrice": 6.5,
+      "unitLabel": "Caja x 20 unidades",
+      "boxPrice": 11.9,
+      "boxLabel": "Caja x 40 unidades",
+      "description": "Tiras adhesivas invisibles y transpirables para protección discreta de cortes y raspaduras",
+      "longDescription": "Curitas Hansaplast Transpiel cuentan con un soporte transparente ultra discreto que se mimetiza con el tono de la piel. Su almohadilla central no adherente protege la herida amortiguando impactos sin pegarse a la lesión, permitiendo una remoción indolora. Adhesivo hipoalergénico resistente al agua y a la fricción diaria.",
+      "materials": "Película de poliuretano transparente microperforada, Compresa no adherente · Beiersdorf",
+      "dimensions": "Caja x 20 apósitos en 4 tamaños anatómicos surtidos",
+      "images": [
+        "/media/products/curitas-transpiel-hansaplast-tamanos-diversos.jpg"
+      ]
+    },
+    {
+      "id": "esparadrapo-de-papel-de-5-cm-x-91-m-3m-micropore-1530-2-caja-6-und",
+      "name": "Esparadrapo de Papel 3M Micropore 1530-2 (5 cm x 9.1 m) x 1 Rollo",
+      "slug": "esparadrapo-de-papel-de-5-cm-x-91-m-3m-micropore-1530-2-caja-6-und",
+      "collection": "botiquin",
+      "price": 19.9,
+      "unitPrice": 19.9,
+      "unitLabel": "Rollo 5 cm x 9.1 m",
+      "boxPrice": 98.9,
+      "boxLabel": "Caja x 6 Rollos",
+      "description": "Cinta adhesiva médica de papel hipoalergénica y microporosa para fijación segura en piel sensible",
+      "longDescription": "La cinta quirúrgica 3M Micropore 1530-2 de 5 cm (2 pulgadas) es la referencia hospitalaria para la fijación de apósitos y dispositivos médicos sobre piel frágil o sensible. Su respaldo no tejido de rayón permite que la piel respire sin acumular humedad, y su adhesivo de acrilato hipoalergénico se retira suavemente minimizando el trauma dérmico y sin dejar residuos pegajosos.",
+      "materials": "Fibras de rayón microporoso, Adhesivo acrilato hipoalergénico libre de látex · 3M",
+      "dimensions": "Rollo 5 cm de ancho x 9.14 metros de largo (2 pulg x 10 yd)",
+      "images": [
+        "/media/products/esparadrapo-de-papel-de-5-cm-x-91-m-3m-micropore-1530-2-caja-6-und.jpg"
+      ]
+    },
+    {
+      "id": "esponja-de-gasa-absorbente-alfymedix",
+      "name": "Esponja de Gasa Quirúrgica Absorbente Alfymedix Sobre x 5 unidades",
+      "slug": "esponja-de-gasa-absorbente-alfymedix",
+      "collection": "botiquin",
+      "price": 2.4,
+      "unitPrice": 2.4,
+      "unitLabel": "Sobre x 5 unidades",
+      "boxPrice": 42.9,
+      "boxLabel": "Caja x 20 Sobres",
+      "description": "Gasas hidrófilas 100% algodón de alto poder de absorción para curaciones y procedimientos estériles",
+      "longDescription": "Esponjas de gasa quirúrgica Alfymedix fabricadas con 100% algodón hidrófilo purificado de tejido tupido. Especialmente tratadas para lograr una absorción ultra rápida de fluidos, exudados y sangre. Con bordes doblados hacia adentro para evitar el desprendimiento de hilos y pelusas en el lecho de la herida. Esterilizadas por óxido de etileno.",
+      "materials": "100% Algodón puro hidrófilo, Esterilización ETO · Alfymedix",
+      "dimensions": "Sobre sellado de grado médico x 5 unidades (7.5 x 7.5 cm / 8 pliegues)",
+      "images": [
+        "/media/products/esponja-de-gasa-absorbente-alfymedix.jpg"
+      ]
+    },
+    {
+      "id": "finger-pulse-oximeter-oximetro-de-pulso",
+      "name": "Oxímetro de Pulso Digital para Dedo Finger Pulse Oximeter OLED",
+      "slug": "finger-pulse-oximeter-oximetro-de-pulso",
+      "collection": "botiquin",
+      "price": 81.9,
+      "unitPrice": 81.9,
+      "unitLabel": "Equipo Digital con Pilas",
+      "boxPrice": 154.9,
+      "boxLabel": "Pack Dúo 2 Unidades",
+      "description": "Medidor portátil de saturación de oxígeno (SpO2) y frecuencia cardíaca de alta precisión",
+      "longDescription": "Oxímetro de pulso digital portátil para monitoreo no invasivo e instantáneo de la saturación de oxígeno en sangre arterial (SpO2) y la frecuencia de pulso (PR bpm). Cuenta con pantalla OLED multidireccional con curva pletismográfica, indicador de batería baja, apagado automático y diseño ergonómico con sensor fotoeléctrico de alta sensibilidad apto para uso doméstico y clínico.",
+      "materials": "Carcasa ABS médica, Sensor óptico infrarrojo, Pantalla OLED bicolor",
+      "dimensions": "6 x 3.5 x 3.2 cm / Incluye cordón colgador y manual de usuario",
+      "images": [
+        "/media/products/finger-pulse-oximeter-oximetro-de-pulso.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "gasa-esteril-10x10cm",
+      "name": "Gasa Estéril Fraccionada 10 cm x 10 cm Sobre x 5 unidades",
+      "slug": "gasa-esteril-10x10cm",
+      "collection": "botiquin",
+      "price": 1.8,
+      "unitPrice": 1.8,
+      "unitLabel": "Sobre x 5 unidades",
+      "boxPrice": 15.9,
+      "boxLabel": "Caja x 10 Sobres",
+      "description": "Apósito de gasa estéril de algodón puro para limpieza, desinfección y cobertura de heridas",
+      "longDescription": "Gasas estériles de 10 x 10 cm de algodón de grado hospitalario, indispensables en cualquier botiquín básico o especializado. Indicadas para la aplicación de soluciones antisépticas, absorción de secreciones y protección directa de quemaduras, laceraciones y heridas quirúrgicas. Empaque individual estéril de apertura rápida peal-open.",
+      "materials": "100% Algodón hidrófilo esterilizado, Tejido regular 20x12 hilos/cm²",
+      "dimensions": "Sobre estéril x 5 gasas (10 x 10 cm desplegable)",
+      "images": [
+        "/media/products/gasa-esteril-10x10cm.jpg"
+      ]
+    },
+    {
+      "id": "glucometro-accu-chek-guide-kit-con-bluetooth",
+      "name": "Glucómetro Digital Accu-Chek Guide Kit Completo con Bluetooth",
+      "slug": "glucometro-accu-chek-guide-kit-con-bluetooth",
+      "collection": "botiquin",
+      "price": 155.5,
+      "unitPrice": 155.5,
+      "unitLabel": "Kit Completo",
+      "boxPrice": 219.9,
+      "boxLabel": "Kit + 50 Tiras Reactivas",
+      "description": "Sistema de monitoreo de glucemia con puerto iluminado, frasco antiquiebre y sincronización móvil",
+      "longDescription": "El sistema Accu-Chek Guide de Roche Diabetes Care ofrece una precisión 10/10 superior a los estándares ISO. Incorpora un área de dosificación ultra amplia en el borde de la tira que absorbe una diminuta gota de sangre (0.6 µl) en solo 4 segundos. Cuenta con pantalla retroiluminada, luz en la ranura de tira, eyector higiénico y conexión inalámbrica Bluetooth a la app mySugr.",
+      "materials": "Unidad electrónica de biosensor electroquímico, Lancetero FastClix/Softclix · Roche Diabetes Care",
+      "dimensions": "Kit incluye: Glucómetro Guide, Dispositivo de punción, 10 lancetas, estuche rígido",
+      "images": [
+        "/media/products/glucometro-accu-chek-guide-kit-con-bluetooth.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "guantes-de-nitrilo-cranberry-talla-s-100-unidades",
+      "name": "Guantes de Examen de Nitrilo Cranberry Celeste Talla S Caja x 100 unidades",
+      "slug": "guantes-de-nitrilo-cranberry-talla-s-100-unidades",
+      "collection": "botiquin",
+      "price": 37,
+      "unitPrice": 37,
+      "unitLabel": "Caja x 100 unidades",
+      "boxPrice": 69.9,
+      "boxLabel": "Pack x2 Cajas (200 und)",
+      "description": "Guantes descartables libres de polvo y látex con excelente resistencia química y tacto sensible",
+      "longDescription": "Guantes médicos de examen elaborados en nitrilo sintético de primera calidad, libres de polvo y de proteínas de látex natural, eliminando el riesgo de alergias tipo I. Su textura microrugosa en las yemas de los dedos garantiza un agarre firme en condiciones secas o húmedas. Alta resistencia mecánica a punciones y desgarros para procedimientos clínicos y de laboratorio.",
+      "materials": "100% Nitrilo sintético sin talco, Libre de látex · Cranberry",
+      "dimensions": "Caja dispensadora x 100 guantes ambidiestros / Talla S (Small)",
+      "images": [
+        "/media/products/guantes-de-nitrilo-cranberry-talla-s-100-unidades.png"
+      ],
+      "new": true
+    },
+    {
+      "id": "jeringa-descartable-5ml-c-a-21g-x1-12-und",
+      "name": "Jeringa Descartable 5 ml con Aguja 21G x 1 1/2 Pulgada Nipro / Bbraun",
+      "slug": "jeringa-descartable-5ml-c-a-21g-x1-12-und",
+      "collection": "botiquin",
+      "price": 0.5,
+      "unitPrice": 0.5,
+      "unitLabel": "Unidad Blíster",
+      "boxPrice": 38,
+      "boxLabel": "Caja x 100 unidades",
+      "description": "Jeringa hipodérmica de 3 cuerpos estéril y apirogénica para administración parenteral intramuscular",
+      "longDescription": "Jeringa descartable de 5 ml de tres piezas (émbolo, cilindro transparente con escala milimétrica nítida y anillo de retención) con aguja de calibre 21G x 1 1/2 pulgada de bisel trifacetado siliconado para una penetración indolora y suave. Apta para administración de antibióticos, analgésicos o extracción de muestras. Empaque blíster individual estéril.",
+      "materials": "Polipropileno de grado médico, Aguja de acero inoxidable quirúrgico siliconada",
+      "dimensions": "Capacidad 5 ml / Aguja 21G x 1 1/2 pulg (0.8 x 38 mm)",
+      "images": [
+        "/media/products/jeringa-descartable-5ml-c-a-21g-x1-12-und.jpg"
+      ]
+    },
+    {
+      "id": "jeringa-descartable-de-insulina-bd-03ml-aguja31-bolsa-10-un",
+      "name": "Jeringas para Insulina BD Ultra-Fine 0.3 ml con Aguja 31G x 6 mm Bolsa x 10 unidades",
+      "slug": "jeringa-descartable-de-insulina-bd-03ml-aguja31-bolsa-10-un",
+      "collection": "botiquin",
+      "price": 7.5,
+      "unitPrice": 7.5,
+      "unitLabel": "Bolsa x 10 unidades",
+      "boxPrice": 69.9,
+      "boxLabel": "Caja x 100 unidades",
+      "description": "Microjeringas de máxima precisión para dosificación de hasta 30 unidades de insulina con mínimo dolor",
+      "longDescription": "Las jeringas para insulina BD Ultra-Fine de 0.3 ml están diseñadas con la tecnología más avanzada para personas con diabetes. Su aguja ultrafina 31G (0.25 mm) de 6 mm de longitud evita inyecciones intramusculares accidentales en el tejido graso subcutáneo. Cilindro con marcas de media unidad de fácil lectura para dosificaciones pediátricas o dosis bajas exactas.",
+      "materials": "Polipropileno médico transparente, Aguja quirúrgica 31G ultrafina · BD (Becton Dickinson)",
+      "dimensions": "Bolsa x 10 jeringas individuales estériles de 0.3 ml (escala U-100)",
+      "images": [
+        "/media/products/jeringa-descartable-de-insulina-bd-03ml-aguja31-bolsa-10-un.jpg"
+      ]
+    },
+    {
+      "id": "mascarilla-quirurgica-mayfield-3-capas-3-pliegues-celeste-caja-50und",
+      "name": "Mascarilla Quirúrgica Mayfield 3 Pliegues con Filtro Meltblown Celeste Caja x 50 unidades",
+      "slug": "mascarilla-quirurgica-mayfield-3-capas-3-pliegues-celeste-caja-50und",
+      "collection": "botiquin",
+      "price": 25,
+      "unitPrice": 25,
+      "unitLabel": "Caja x 50 unidades",
+      "boxPrice": 46.9,
+      "boxLabel": "Pack x2 Cajas (100 und)",
+      "description": "Mascarilla médica descartable de triple capa con eficiencia de filtración bacteriana >98% (BFE)",
+      "longDescription": "Mascarilla quirúrgica Mayfield de 3 capas termoselladas que incluye capa intermedia de filtro Meltblown de alta densidad. Diseñada para proteger las vías respiratorias frente a gotas, aerosoles, partículas y patógenos en el aire. Posee ajuste nasal anatómico maleable y elásticos suaves termosellados que no irritan las orejas durante jornadas prolongadas.",
+      "materials": "Polipropileno no tejido (Spunbond) + Filtro Meltblown electrostático · Mayfield",
+      "dimensions": "Caja sellada x 50 unidades / Medidas estándar 17.5 x 9.5 cm",
+      "images": [
+        "/media/products/mascarilla-quirurgica-mayfield-3-capas-3-pliegues-celeste-caja-50und.jpg"
+      ]
+    },
+    {
+      "id": "neomicina-bacitracina-0500g-25-000-ui-unguento",
+      "name": "Neomicina Sulfato 0.5 g + Bacitracina Zinc 25 000 UI Ungüento Tópico Tubo 15 g",
+      "slug": "neomicina-bacitracina-0500g-25-000-ui-unguento",
+      "collection": "botiquin",
+      "price": 15.6,
+      "unitPrice": 15.6,
+      "unitLabel": "Tubo 15 g",
+      "boxPrice": 28.9,
+      "boxLabel": "Pack Dúo 2x15 g",
+      "description": "Pomada antibiótica combinada de amplio espectro para prevención y cura de infecciones cutáneas",
+      "longDescription": "Ungüento antibacteriano de acción combinada que asocia Neomicina (aminoglucósido activo contra bacterias gramnegativas) y Bacitracina (polipéptido bactericida contra gérmenes grampositivos). Indicado para el tratamiento y profilaxis de infecciones bacterianas superficiales de la piel provocadas por heridas, quemaduras leves, abrasiones, foliculitis y cortes accidentales.",
+      "materials": "Neomicina Sulfato 5 mg/g, Bacitracina de Zinc 500 UI/g · Genfar / Medifarma",
+      "dimensions": "Tubo de aluminio colapsible sellado herméticamente x 15 g",
+      "images": [
+        "/media/products/neomicina-bacitracina-0500g-25-000-ui-unguento.jpg"
+      ]
+    },
+    {
+      "id": "plasyodine-bucal-10-soucion-topica",
+      "name": "Plasyodine Bucal 10% Solución Tópica y Enjuague Antiséptico Frasco 120 ml",
+      "slug": "plasyodine-bucal-10-soucion-topica",
+      "collection": "botiquin",
+      "price": 43.1,
+      "unitPrice": 43.1,
+      "unitLabel": "Frasco 120 ml",
+      "boxPrice": 79.9,
+      "boxLabel": "Pack Dúo 2x120 ml",
+      "description": "Yodopovidona bucofaríngea al 10% para asepsia pre y postquirúrgica oral y afecciones bucales",
+      "longDescription": "Plasyodine Bucal contiene polividona yodada al 10% (1% de yodo disponible) formulada especialmente para su uso en la cavidad oral y faríngea. Posee acción microbicida inmediata frente a una extensa gama de bacterias grampositivas y gramnegativas, hongos, virus y esporas. Se emplea en gargarismos diluidos para desinfección bucal, aftas, gingivitis y extracciones dentales.",
+      "materials": "Povidona Yodada 10 g / 100 ml (1% Yodo activo) · Laboratorio Bagó / Farmaindustria",
+      "dimensions": "Frasco con vaso dosificador x 120 ml / Vía tópica bucal",
+      "images": [
+        "/media/products/plasyodine-bucal-10-soucion-topica.jpg"
+      ]
+    },
+    {
+      "id": "sulfadiazina-de-plata-1-crema-genfar-tubo-30-g",
+      "name": "Sulfadiazina de Plata 1% Crema Dérmica Genfar Tubo 30 g",
+      "slug": "sulfadiazina-de-plata-1-crema-genfar-tubo-30-g",
+      "collection": "botiquin",
+      "price": 10.5,
+      "unitPrice": 10.5,
+      "unitLabel": "Tubo 30 g",
+      "boxPrice": 19.9,
+      "boxLabel": "Pack Dúo 2x30 g",
+      "description": "Antibacteriano tópico de elección para prevención y tratamiento de infecciones en quemaduras",
+      "longDescription": "Crema antibacteriana de aplicación dérmica que libera lentamente iones de plata y sulfadiazina en la superficie de la lesión lesionada, produciendo un efecto bactericida y bacteriostático de amplio espectro, incluyendo Pseudomonas aeruginosa. Es el estándar de oro en curaciones de quemaduras de segundo y tercer grado, úlceras por presión y escaras infectadas.",
+      "materials": "Sulfadiazina de Plata Micronizada 10 mg/g (1%) · Genfar / Sanofi",
+      "dimensions": "Tubo colapsible de aluminio x 30 g / Aplicación tópica",
+      "images": [
+        "/media/products/sulfadiazina-de-plata-1-crema-genfar-tubo-30-g.jpg"
+      ]
+    },
+    {
+      "id": "tensiometro-digital-de-brazo-omron-m3-hem-7154e",
+      "name": "Tensiómetro Digital de Brazo Omron M3 Comfort HEM-7154-E con Manguito Intelli Wrap",
+      "slug": "tensiometro-digital-de-brazo-omron-m3-hem-7154e",
+      "collection": "botiquin",
+      "price": 506,
+      "unitPrice": 506,
+      "unitLabel": "Monitor Digital Completo",
+      "boxPrice": 506,
+      "boxLabel": "Monitor Digital Completo",
+      "description": "Monitor arterial de precisión clínica europea con manguito inteligente Intelli Wrap 360°",
+      "longDescription": "El tensiómetro digital Omron M3 HEM-7154-E cuenta con el manguito patentado Intelli Wrap preformado (22-42 cm) que mide la presión arterial con exactitud en cualquier posición alrededor del brazo. Valorado clínicamente según las pautas de la Sociedad Europea de Hipertensión (ESH). Detecta latidos cardíacos irregulares (arritmias), indicador de correcta colocación del manguito y memoria para 2 usuarios x 60 lecturas.",
+      "materials": "Sensor oscilométrico Omron Intellisense, Manguito preformado Intelli Wrap · Omron Healthcare Japón",
+      "dimensions": "Kit incluye: Monitor digital, Manguito 22-42 cm, 4 pilas AA, estuche y manual",
+      "images": [
+        "/media/products/tensiometro-digital-de-brazo-omron-m3-hem-7154e.jpg"
+      ],
+      "featured": true
+    },
+    {
+      "id": "venda-elastica-4-x-5-yardas",
+      "name": "Venda Elástica de Compresión 4 Pulgadas x 5 Yardas con Ganchos de Sujeción",
+      "slug": "venda-elastica-4-x-5-yardas",
+      "collection": "botiquin",
+      "price": 4.5,
+      "unitPrice": 4.5,
+      "unitLabel": "Rollo 4 pulg x 5 yd",
+      "boxPrice": 22,
+      "boxLabel": "Pack x 6 Rollos",
+      "description": "Venda elástica compresiva de algodón y poliéster para inmovilización de esguinces y soporte articular",
+      "longDescription": "Venda elástica de compresión media de 4 pulgadas de ancho (10 cm) por 5 yardas de extensión elástica (4.5 metros). Confeccionada con mezcla de fibras de algodón suave e hilos elásticos de alta resistencia que otorgan tensión uniforme y firmeza sin estrangular la circulación. Incluye dos broches metálicos para una fijación rápida en tobillos, rodillas o muñecas.",
+      "materials": "65% Algodón, 35% Fibras elásticas de poliamida hipoalergénicas · Laboratorios Portugal",
+      "dimensions": "Rollo envuelto en celofán 4 pulg x 5 yardas (10 cm x 4.5 m estirada)",
+      "images": [
+        "/media/products/venda-elastica-4-x-5-yardas.jpg"
+      ]
+    }
+  ]
+}

@@ -3,7 +3,8 @@ import * as catalogoController from '../controllers/catalogoController.js';
 
 const router = Router();
 
-// Endpoint 100% público para la Landing Page y Catálogo Web (sin token)
+// Endpoints 100% públicos para la Tienda Web y Checkout de Clientes (sin token)
 router.get('/', catalogoController.obtenerCatalogo);
+router.post('/pedido-web', catalogoController.registrarPedidoWeb);
 
 export default router;

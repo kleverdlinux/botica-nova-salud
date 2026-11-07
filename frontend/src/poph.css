@@ -1,0 +1,1700 @@
+:root {
+  --orange: #FF6B1A;
+  --pink: #FF2D78;
+  --lime: #BFFF00;
+  --blue: #0057FF;
+  --off-white: #F5F0E8;
+  --black: #0D0D0D;
+}
+
+/* Ocultar barra de desplazamiento en todo momento preservando scroll funcional con mouse / touch */
+.poph-page,
+.poph-page * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.poph-page::-webkit-scrollbar,
+.poph-page *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.poph-page {
+  position: relative;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden !important;
+  background-color: var(--black);
+  color: var(--off-white);
+  box-sizing: border-box;
+}
+
+/* ── NAV ──────────────────────────────────── */
+.poph-page .main-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.75rem 3.5rem;
+  background: transparent;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  border-bottom: 1px solid transparent;
+  transition: background 0.4s ease, backdrop-filter 0.4s ease,
+    -webkit-backdrop-filter 0.4s ease,
+    border-color 0.4s ease, padding 0.4s ease;
+}
+
+.poph-page .main-nav.scrolled {
+  background: rgba(13, 13, 13, 0.45);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-bottom: 1px solid rgba(245, 240, 232, 0.08);
+  padding: 1rem 3.5rem;
+}
+
+.poph-page .main-nav.scrolled .nav-logo,
+.poph-page .main-nav.scrolled .nav-links a {
+  color: var(--off-white) !important;
+}
+
+.poph-page .nav-logo,
+.poph-page .nav-links a {
+  pointer-events: all;
+}
+
+.poph-page .nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.75rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  color: var(--off-white);
+  transition: color 0.35s ease;
+}
+
+.poph-page .nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.poph-page .nav-links a {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--off-white);
+  transition: color 0.35s ease;
+}
+
+/* ── HERO ─────────────────────────────────── */
+.poph-page #hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.poph-page .hero-slide {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.poph-page .hero-slide:nth-child(1) {
+  background: var(--orange);
+  color: var(--black);
+  z-index: 1;
+}
+
+.poph-page .hero-slide:nth-child(2) {
+  background: var(--pink);
+  color: var(--off-white);
+  z-index: 2;
+}
+
+.poph-page .hero-slide:nth-child(3) {
+  background: var(--lime);
+  color: var(--black);
+  z-index: 3;
+}
+
+.poph-page .hero-slide:nth-child(4) {
+  background: var(--blue);
+  color: var(--off-white);
+  z-index: 4;
+}
+
+.poph-page .slide-image {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.poph-page .slide-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 85% center;
+  display: block;
+  will-change: transform;
+}
+
+.poph-page .slide-text {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 7rem 3rem 4rem 5vw;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.poph-page .slide-text a,
+.poph-page .slide-text button {
+  pointer-events: all;
+}
+
+.poph-page .text-reveal {
+  overflow: hidden;
+}
+
+.poph-page .text-reveal + .text-reveal {
+  margin-top: 0.1em;
+}
+
+.poph-page .slide-eyebrow {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  padding-bottom: 1.25rem;
+}
+
+.poph-page .slide-brand {
+  display: block;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(8rem, 19vw, 19rem);
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+  padding-bottom: 1.75rem;
+}
+
+.poph-page .slide-tagline {
+  display: block;
+  font-size: clamp(0.95rem, 1.5vw, 1.3rem);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  padding-bottom: 3rem;
+}
+
+.poph-page .slide-ctas {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.poph-page .btn-primary {
+  display: inline-block;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+  padding: 1.1rem 2.6rem;
+  border: 2px solid currentColor;
+  background: transparent;
+  transition: background 0.22s ease, color 0.22s ease;
+}
+
+.poph-page .hero-slide:nth-child(1) .btn-primary:hover,
+.poph-page .hero-slide:nth-child(3) .btn-primary:hover {
+  background: var(--black);
+  color: var(--off-white);
+  border-color: var(--black);
+}
+
+.poph-page .hero-slide:nth-child(2) .btn-primary:hover,
+.poph-page .hero-slide:nth-child(4) .btn-primary:hover {
+  background: var(--off-white);
+  color: var(--black);
+  border-color: var(--off-white);
+}
+
+.poph-page .btn-secondary {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+  border-bottom: 1.5px solid currentColor;
+  padding-bottom: 3px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.poph-page .btn-secondary:hover {
+  opacity: 1;
+}
+
+.poph-page .slide-num {
+  position: absolute;
+  bottom: 2.75rem;
+  left: 5vw;
+  z-index: 3;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  color: inherit;
+}
+
+.poph-page .scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  right: 5vw;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  opacity: 0.4;
+  color: inherit;
+}
+
+.poph-page .scroll-hint span {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+}
+
+.poph-page .scroll-hint-line {
+  width: 1px;
+  height: 3.5rem;
+  background: currentColor;
+  transform-origin: top center;
+  animation: scrollDrop 1.6s ease-in-out infinite;
+}
+
+@keyframes scrollDrop {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+    transform-origin: top center;
+  }
+  40% {
+    transform: scaleY(1);
+    opacity: 1;
+    transform-origin: top center;
+  }
+  60% {
+    transform: scaleY(1);
+    opacity: 1;
+    transform-origin: bottom center;
+  }
+  100% {
+    transform: scaleY(0);
+    opacity: 0;
+    transform-origin: bottom center;
+  }
+}
+
+.poph-page .hero-dots {
+  position: fixed;
+  right: 2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.poph-page .hero-dots.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.poph-page .hero-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  color: var(--off-white);
+  opacity: 0.25;
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.3s ease, color 0.35s ease;
+}
+
+.poph-page .hero-dot.active {
+  opacity: 1;
+  transform: scale(1.5);
+}
+
+/* ── MARQUEE STRIP ────────────────────────── */
+.poph-page .marquee-strip {
+  background: var(--black);
+  overflow: hidden;
+  padding: 1.75rem 0;
+  border-top: 1px solid rgba(245, 240, 232, 0.07);
+}
+
+.poph-page .marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  width: max-content;
+  animation: marqueeScroll 24s linear infinite;
+  will-change: transform;
+}
+
+.poph-page .marquee-track span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  letter-spacing: 0.1em;
+  color: var(--off-white);
+  white-space: nowrap;
+}
+
+.poph-page .m-sep {
+  font-size: 0.9rem !important;
+}
+
+.poph-page .m-sep.orange {
+  color: var(--orange) !important;
+}
+
+.poph-page .m-sep.pink {
+  color: var(--pink) !important;
+}
+
+.poph-page .m-sep.lime {
+  color: var(--lime) !important;
+}
+
+.poph-page .m-sep.blue {
+  color: var(--blue) !important;
+}
+
+@keyframes marqueeScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ── COLLECTIONS — DROP SHEET ─────────────── */
+.poph-page #collections {
+  background: var(--black);
+  padding: 8rem 0 0;
+  position: relative;
+  overflow: hidden !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.poph-page .collections-header {
+  padding: 0 5vw 5rem;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  gap: 2rem;
+  align-items: end;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.poph-page .collections-eyebrow {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--lime);
+}
+
+.poph-page .collections-eyebrow::before {
+  content: "✦  ";
+  color: var(--pink);
+}
+
+.poph-page .collections-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(4.5rem, 10vw, 12rem);
+  color: var(--off-white);
+  line-height: 0.86;
+  letter-spacing: -0.005em;
+}
+
+.poph-page .collections-meta {
+  text-align: right;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 1.25rem;
+}
+
+.poph-page .collections-meta-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.5rem, 7vw, 8rem);
+  color: var(--orange);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+
+.poph-page .collections-meta-sub {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--off-white);
+  opacity: 0.55;
+  line-height: 1.5;
+  max-width: 6.5rem;
+}
+
+/* Strips */
+.poph-page .strips {
+  padding: 0 0 7rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.poph-page .strip {
+  position: relative;
+  display: grid;
+  grid-template-columns: 60px 1fr 360px;
+  height: 340px;
+  overflow: hidden !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-decoration: none;
+  background: var(--black);
+  border-top: 1px solid rgba(245, 240, 232, 0.08);
+  transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.poph-page .strip:last-child {
+  border-bottom: 1px solid rgba(245, 240, 232, 0.08);
+}
+
+.poph-page .strip:nth-child(even) {
+  width: calc(100% - 4vw);
+  margin-left: 4vw;
+}
+
+.poph-page .strip:hover {
+  transform: translateX(1.5vw);
+}
+
+.poph-page .strip:nth-child(even):hover {
+  transform: translateX(2vw);
+}
+
+.poph-page .strip-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--strip-color);
+  z-index: 5;
+  transform-origin: left center;
+  transform: scaleX(1);
+  transition: height 0.4s ease;
+}
+
+.poph-page .strip:hover .strip-bar {
+  height: 12px;
+}
+
+.poph-page .strip-rail {
+  grid-column: 1;
+  align-self: center;
+  justify-self: center;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--off-white);
+  opacity: 0.4;
+  white-space: nowrap;
+}
+
+.poph-page .strip-num {
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  transform: translateY(-50%);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(18rem, 28vw, 28rem);
+  line-height: 0.78;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--strip-color);
+  pointer-events: none;
+  z-index: 1;
+  white-space: nowrap;
+  user-select: none;
+  opacity: 0.9;
+}
+
+.poph-page .strip-image {
+  grid-column: 2;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  margin-left: auto;
+  width: 92%;
+  max-width: 580px;
+  background: var(--strip-color);
+}
+
+.poph-page .strip-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.poph-page .strip:hover .strip-image img {
+  transform: scale(1.05);
+}
+
+.poph-page .strip-info {
+  grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.5rem 2.5rem 2.25rem;
+  background: var(--strip-color);
+  color: var(--black);
+  position: relative;
+  z-index: 3;
+}
+
+.poph-page .strip--pink .strip-info,
+.poph-page .strip--blue .strip-info {
+  color: var(--off-white);
+}
+
+.poph-page .strip-info-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.poph-page .strip-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.4rem, 3.5vw, 3.6rem);
+  letter-spacing: 0.02em;
+  line-height: 0.88;
+}
+
+.poph-page .strip-tag {
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  border: 1.5px solid currentColor;
+  padding: 0.35rem 0.7rem;
+  align-self: flex-start;
+  margin-top: 0.4rem;
+}
+
+.poph-page .strip-spec {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 1.25rem;
+}
+
+.poph-page .strip-spec li {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  position: relative;
+  padding-left: 1.4rem;
+}
+
+.poph-page .strip-spec li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  opacity: 0.6;
+}
+
+.poph-page .strip-foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.poph-page .strip-price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.4rem;
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+}
+
+.poph-page .strip-cta {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  border-bottom: 1.5px solid currentColor;
+  padding-bottom: 2px;
+  transform: translateX(-6px);
+  opacity: 0.7;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.poph-page .strip:hover .strip-cta {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.poph-page .collections-footer {
+  padding: 3.5rem 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(245, 240, 232, 0.07);
+}
+
+.poph-page .collections-footer-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--off-white);
+  opacity: 0.45;
+}
+
+.poph-page .collections-footer-link {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.1em;
+  color: var(--off-white);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: gap 0.3s ease, color 0.3s ease;
+}
+
+.poph-page .collections-footer-link:hover {
+  gap: 1.8rem;
+  color: var(--lime);
+}
+
+/* ── THE CRAFT ────────────────────────────── */
+.poph-page #craft {
+  position: relative;
+  background: var(--black);
+  overflow: hidden !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.poph-page .craft-frame {
+  position: relative;
+  height: 100vh;
+  overflow: hidden !important;
+  background: var(--black);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.poph-page .craft-overlay-top {
+  position: absolute;
+  top: 4.5rem;
+  left: 5vw;
+  right: 5vw;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  color: var(--off-white);
+}
+
+.poph-page .craft-eyebrow {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+}
+
+.poph-page .craft-eyebrow::before {
+  content: "✦  ";
+}
+
+.poph-page .craft-overlay-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.12em;
+}
+
+.poph-page .craft-progress {
+  position: absolute;
+  top: 50%;
+  right: 3vw;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  color: var(--off-white);
+}
+
+.poph-page .craft-progress-dot {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.16em;
+  opacity: 0.35;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  position: relative;
+  padding-right: 2.2rem;
+}
+
+.poph-page .craft-progress-dot::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 1.5rem;
+  height: 1.5px;
+  background: currentColor;
+  transform: translateY(-50%) scaleX(0.3);
+  transform-origin: right center;
+  transition: transform 0.35s ease;
+}
+
+.poph-page .craft-progress-dot.active {
+  opacity: 1;
+  transform: translateX(-6px);
+}
+
+.poph-page .craft-progress-dot.active::after {
+  transform: translateY(-50%) scaleX(1);
+}
+
+.poph-page .craft-stages {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.poph-page .craft-stage {
+  position: absolute;
+  inset: 0;
+  padding: 9rem 5vw 6rem;
+  will-change: transform;
+  overflow: hidden;
+}
+
+.poph-page .stage-01 {
+  background: var(--lime);
+  color: var(--black);
+}
+
+.poph-page .stage-02 {
+  background: var(--orange);
+  color: var(--black);
+}
+
+.poph-page .stage-03 {
+  background: var(--blue);
+  color: var(--off-white);
+}
+
+.poph-page .stage-no {
+  position: absolute;
+  top: 8vh;
+  left: 4vw;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(10rem, 26vw, 30rem);
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.poph-page .stage-no .of {
+  font-size: 0.18em;
+  vertical-align: top;
+  margin-left: 0.25em;
+  opacity: 0.55;
+  letter-spacing: 0.05em;
+}
+
+.poph-page .stage-03 .stage-no {
+  color: transparent;
+  -webkit-text-stroke: 2.5px var(--off-white);
+}
+
+.poph-page .stage-body {
+  position: absolute;
+  right: 8vw;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 38ch;
+  z-index: 3;
+}
+
+.poph-page .stage-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 6.5vw, 7rem);
+  line-height: 0.86;
+  letter-spacing: 0.01em;
+  margin-bottom: 1.5rem;
+}
+
+.poph-page .stage-desc {
+  font-size: clamp(1rem, 1.15vw, 1.2rem);
+  line-height: 1.55;
+  margin-bottom: 2rem;
+  max-width: 32ch;
+}
+
+.poph-page .stage-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  border: 1.5px solid currentColor;
+  padding: 0.6rem 1.1rem;
+}
+
+/* Wavelength bars */
+.poph-page .graphic-wavelength {
+  position: absolute;
+  bottom: 8rem;
+  left: 4vw;
+  width: 40vw;
+  max-width: 540px;
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  height: 110px;
+  z-index: 2;
+}
+
+.poph-page .graphic-wavelength span {
+  flex: 1;
+  background: var(--black);
+  transform-origin: bottom;
+  transform: scaleY(0.12);
+  transition: transform 0.5s cubic-bezier(0.22, 0.8, 0.36, 1);
+}
+
+.poph-page .craft-stage.stage-active .graphic-wavelength span:nth-child(1) { transform: scaleY(0.42); transition-delay: 0.10s; }
+.poph-page .craft-stage.stage-active .graphic-wavelength span:nth-child(2) { transform: scaleY(0.68); transition-delay: 0.18s; }
+.poph-page .craft-stage.stage-active .graphic-wavelength span:nth-child(3) { transform: scaleY(0.52); transition-delay: 0.26s; }
+.poph-page .craft-stage.stage-active .graphic-wavelength span:nth-child(4) { transform: scaleY(0.94); transition-delay: 0.34s; }
+.poph-page .craft-stage.stage-active .graphic-wavelength span:nth-child(5) { transform: scaleY(0.58); transition-delay: 0.42s; }
+.poph-page .craft-stage.stage-active .graphic-wavelength span:nth-child(6) { transform: scaleY(0.78); transition-delay: 0.50s; }
+.poph-page .craft-stage.stage-active .graphic-wavelength span:nth-child(7) { transform: scaleY(0.48); transition-delay: 0.58s; }
+.poph-page .craft-stage.stage-active .graphic-wavelength span:nth-child(8) { transform: scaleY(0.85); transition-delay: 0.66s; }
+
+/* SVG Arc Gauge */
+.poph-page .graphic-gauge {
+  position: absolute;
+  left: 4vw;
+  bottom: 7rem;
+  width: 240px;
+  height: 240px;
+  z-index: 2;
+}
+
+.poph-page .gauge-arc-bg,
+.poph-page .gauge-arc-fg {
+  fill: none;
+  stroke-width: 12;
+}
+
+.poph-page .gauge-arc-bg {
+  stroke: rgba(13, 13, 13, 0.18);
+}
+
+.poph-page .gauge-arc-fg {
+  stroke: var(--black);
+  stroke-dasharray: 264;
+  stroke-dashoffset: 264;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.22, 0.8, 0.36, 1);
+}
+
+.poph-page .craft-stage.stage-active .gauge-arc-fg {
+  stroke-dashoffset: 26;
+}
+
+.poph-page .gauge-label {
+  font-family: 'Bebas Neue', sans-serif;
+  fill: var(--black);
+}
+
+.poph-page .gauge-label-num {
+  font-size: 24px;
+  letter-spacing: 0.02em;
+}
+
+.poph-page .gauge-label-unit {
+  font-size: 12px;
+  opacity: 0.6;
+  letter-spacing: 0.18em;
+}
+
+/* Graphic List */
+.poph-page .graphic-list {
+  position: absolute;
+  left: 4vw;
+  bottom: 7rem;
+  width: 340px;
+  max-width: 38vw;
+  z-index: 2;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.poph-page .graphic-list li {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid rgba(245, 240, 232, 0.22);
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.22, 0.8, 0.36, 1);
+}
+
+.poph-page .graphic-list li strong {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+}
+
+.poph-page .craft-stage.stage-active .graphic-list li {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.poph-page .craft-stage.stage-active .graphic-list li:nth-child(1) { transition-delay: 0.18s; }
+.poph-page .craft-stage.stage-active .graphic-list li:nth-child(2) { transition-delay: 0.30s; }
+.poph-page .craft-stage.stage-active .graphic-list li:nth-child(3) { transition-delay: 0.42s; }
+.poph-page .craft-stage.stage-active .graphic-list li:nth-child(4) { transition-delay: 0.54s; }
+
+/* Craft Pink Ticker */
+.poph-page .craft-ticker {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--pink);
+  color: var(--off-white);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  z-index: 5;
+}
+
+.poph-page .craft-ticker-track {
+  display: flex;
+  gap: 2.5rem;
+  width: max-content;
+  animation: marqueeScroll 22s linear infinite;
+  white-space: nowrap;
+}
+
+.poph-page .craft-ticker-track span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.12em;
+}
+
+.poph-page .craft-ticker-track .dot {
+  font-size: 0.7rem;
+  align-self: center;
+  opacity: 0.7;
+}
+
+/* ── CTA — TYPE COLLISION ─────────────────── */
+.poph-page #cta {
+  position: relative;
+  background: var(--black);
+  min-height: 100vh;
+  overflow: hidden !important;
+  padding: 6rem 5vw;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.poph-page .cta-word {
+  position: absolute;
+  font-family: 'Bebas Neue', sans-serif;
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.poph-page .cta-word--1 {
+  top: 10vh;
+  left: 6vw;
+  font-size: clamp(3.5rem, 9vw, 10rem);
+  color: var(--off-white);
+  transform: rotate(-4deg);
+}
+
+.poph-page .cta-word--2 {
+  top: 20vh;
+  right: 6vw;
+  font-size: clamp(4.5rem, 11vw, 12.5rem);
+  color: var(--pink);
+  transform: rotate(3deg);
+}
+
+.poph-page .cta-word--3 {
+  top: 46vh;
+  left: 4vw;
+  font-size: clamp(6rem, 16vw, 18rem);
+  color: transparent;
+  -webkit-text-stroke: 2.5px var(--lime);
+  transform: rotate(-2deg);
+}
+
+.poph-page .cta-word--4 {
+  bottom: 4vh;
+  left: 50%;
+  font-size: clamp(7rem, 20vw, 24rem);
+  color: var(--orange);
+  transform: translateX(-50%) rotate(1deg);
+}
+
+.poph-page .cta-star {
+  position: absolute;
+  bottom: -16vw;
+  right: 0;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32vw;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(245, 240, 232, 0.12);
+  pointer-events: none;
+  user-select: none;
+  animation: starSpin 30s linear infinite;
+  max-width: 45vw;
+  overflow: hidden;
+}
+
+@keyframes starSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.poph-page .cta-eyebrow {
+  position: absolute;
+  top: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--off-white);
+  opacity: 0.5;
+}
+
+.poph-page .cta-eyebrow::before {
+  content: "✦  ";
+  color: var(--lime);
+}
+
+.poph-page .cta-eyebrow::after {
+  content: "  ✦";
+  color: var(--pink);
+}
+
+.poph-page .cta-sticker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: inline-block;
+  padding: 1.4rem 3.2rem;
+  background: var(--lime);
+  color: var(--black);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  text-decoration: none;
+  z-index: 20;
+  animation: stickerWobble 4s ease-in-out infinite;
+  box-shadow: 0 8px 0 var(--black);
+  clip-path: polygon(2% 12%, 8% 0%, 18% 10%, 28% 0%, 40% 8%, 52% 0%, 64% 10%, 76% 0%, 88% 8%, 100% 6%,
+      96% 22%, 100% 40%, 94% 58%, 100% 72%, 96% 90%, 90% 100%, 76% 92%, 62% 100%, 48% 90%, 34% 100%, 20% 92%, 8% 100%, 0% 86%,
+      4% 68%, 0% 50%, 6% 32%, 0% 18%);
+}
+
+@keyframes stickerWobble {
+  0% { transform: translate(-50%, -50%) rotate(-6deg); }
+  50% { transform: translate(-50%, -50%) rotate(-3deg); }
+  100% { transform: translate(-50%, -50%) rotate(-6deg); }
+}
+
+.poph-page .cta-sticker .arrow {
+  display: inline-block;
+  margin-left: 0.7rem;
+  transform: translateY(-1px);
+}
+
+.poph-page .cta-foot {
+  position: absolute;
+  bottom: 1.75rem;
+  left: 5vw;
+  right: 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--off-white);
+  opacity: 0.4;
+  z-index: 5;
+}
+
+/* ── FOOTER ───────────────────────────────── */
+.poph-page #footer {
+  background: var(--black);
+  position: relative;
+  overflow: hidden !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.poph-page .footer-colophon {
+  padding: 1.4rem 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(245, 240, 232, 0.1);
+  border-bottom: 1px solid rgba(245, 240, 232, 0.1);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--off-white);
+  opacity: 0.55;
+}
+
+.poph-page .footer-colophon .dot {
+  color: var(--lime);
+  margin: 0 0.6em;
+}
+
+.poph-page .footer-colophon .dot.pink {
+  color: var(--pink);
+}
+
+.poph-page .footer-colophon .dot.orange {
+  color: var(--orange);
+}
+
+.poph-page .footer-coupon-wrap {
+  padding: 5rem 5vw 4rem;
+}
+
+.poph-page .footer-coupon {
+  position: relative;
+  background: var(--off-white);
+  color: var(--black);
+  padding: 3rem 3.5rem 2.5rem;
+  transform: rotate(-0.7deg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  box-shadow: 0 12px 0 rgba(13, 13, 13, 0.85);
+}
+
+.poph-page .footer-coupon::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-image: repeating-linear-gradient(to right,
+      var(--black) 0 14px,
+      transparent 14px 24px);
+}
+
+.poph-page .footer-coupon::after {
+  content: "✂";
+  position: absolute;
+  top: -14px;
+  left: 36px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--off-white);
+  color: var(--black);
+  font-size: 1rem;
+  transform: rotate(-12deg);
+}
+
+.poph-page .footer-coupon-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.2rem, 4.5vw, 4.5rem);
+  line-height: 0.9;
+  letter-spacing: 0.005em;
+}
+
+.poph-page .footer-coupon-label em {
+  font-style: normal;
+  color: var(--pink);
+}
+
+.poph-page .footer-coupon-sub {
+  display: block;
+  margin-top: 0.85rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--black);
+  opacity: 0.55;
+}
+
+.poph-page .footer-coupon-form {
+  display: flex;
+  flex: 0 0 46%;
+  max-width: 480px;
+}
+
+.poph-page .footer-coupon-input {
+  flex: 1;
+  background: transparent;
+  border: 1.5px solid var(--black);
+  border-right: none;
+  padding: 1rem 1.5rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.82rem;
+  color: var(--black);
+  outline: none;
+  transition: background 0.2s ease;
+}
+
+.poph-page .footer-coupon-input::placeholder {
+  color: rgba(13, 13, 13, 0.4);
+}
+
+.poph-page .footer-coupon-input:focus {
+  background: rgba(13, 13, 13, 0.05);
+}
+
+.poph-page .footer-coupon-btn {
+  background: var(--black);
+  color: var(--off-white);
+  border: 1.5px solid var(--black);
+  padding: 1rem 1.75rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.poph-page .footer-coupon-btn:hover {
+  background: var(--lime);
+  color: var(--black);
+  border-color: var(--lime);
+}
+
+.poph-page .footer-nav-row {
+  padding: 4rem 5vw 4rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
+  border-bottom: 1px solid rgba(245, 240, 232, 0.08);
+}
+
+.poph-page .footer-col-head {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+.poph-page .footer-col-head[data-c="orange"] { color: var(--orange); }
+.poph-page .footer-col-head[data-c="pink"] { color: var(--pink); }
+.poph-page .footer-col-head[data-c="lime"] { color: var(--lime); }
+.poph-page .footer-col-head[data-c="blue"] { color: var(--blue); }
+
+.poph-page .footer-col-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.poph-page .footer-col-list a {
+  font-size: 0.86rem;
+  color: var(--off-white);
+  text-decoration: none;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.poph-page .footer-col-list a:hover {
+  opacity: 1;
+  color: var(--lime);
+}
+
+.poph-page .footer-mark {
+  position: relative;
+  overflow: hidden !important;
+  padding: 2rem 0 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.poph-page .footer-mark-word {
+  display: block;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(8rem, 20vw, 24rem);
+  line-height: 0.82;
+  letter-spacing: -0.01em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(245, 240, 232, 0.55);
+  text-align: center;
+  white-space: nowrap;
+  margin-bottom: -2vw;
+  will-change: transform;
+  user-select: none;
+  pointer-events: none;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.poph-page .footer-mark-row {
+  position: relative;
+  z-index: 2;
+  padding: 0 5vw 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.poph-page .footer-copy {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--off-white);
+  opacity: 0.5;
+}
+
+.poph-page .footer-socials {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.poph-page .footer-social {
+  display: inline-block;
+  padding: 0.5rem 0.95rem;
+  background: var(--off-white);
+  color: var(--black);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 0.25s ease;
+}
+
+.poph-page .footer-social:nth-child(1) {
+  background: var(--orange);
+  color: var(--black);
+  transform: rotate(-3deg);
+}
+
+.poph-page .footer-social:nth-child(2) {
+  background: var(--pink);
+  color: var(--off-white);
+  transform: rotate(2deg);
+}
+
+.poph-page .footer-social:nth-child(3) {
+  background: var(--lime);
+  color: var(--black);
+  transform: rotate(-1.5deg);
+}
+
+.poph-page .footer-social:hover {
+  transform: rotate(0) scale(1.06);
+}
+
+/* ── RESPONSIVE ───────────────────────────── */
+@media (max-width: 1024px) {
+  .poph-page .strip {
+    grid-template-columns: 40px 1fr 280px;
+    height: 280px;
+  }
+  .poph-page .strip-num {
+    font-size: 26vw;
+  }
+  .poph-page .stage-name {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .poph-page .main-nav {
+    padding: 1.25rem 1.5rem;
+  }
+  .poph-page .main-nav.scrolled {
+    padding: 0.85rem 1.5rem;
+  }
+  .poph-page .slide-image img {
+    object-position: center 22%;
+  }
+  .poph-page .slide-text {
+    width: 100%;
+    justify-content: flex-end;
+    padding: 1.5rem 1.5rem 9rem;
+  }
+  .poph-page .slide-brand {
+    font-size: clamp(6.5rem, 26vw, 13rem);
+  }
+  .poph-page .slide-ctas {
+    gap: 1.5rem;
+  }
+  .poph-page .btn-primary {
+    padding: 0.95rem 1.8rem;
+  }
+  .poph-page .collections-header {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0 1.5rem 3rem;
+  }
+  .poph-page .collections-meta {
+    justify-content: flex-start;
+  }
+  .poph-page .strip {
+    grid-template-columns: 1fr;
+    grid-template-rows: 240px auto;
+    height: auto;
+    margin-left: 0 !important;
+  }
+  .poph-page .strip-rail {
+    display: none;
+  }
+  .poph-page .strip-num {
+    top: 1.5rem;
+    left: 1.5rem;
+    transform: none;
+    font-size: 56vw;
+    line-height: 0.75;
+    z-index: 0;
+    -webkit-text-stroke-width: 1.5px;
+  }
+  .poph-page .strip-image {
+    grid-column: 1;
+    grid-row: 1;
+    width: 88%;
+    margin: 0 auto;
+  }
+  .poph-page .strip-info {
+    grid-column: 1;
+    grid-row: 2;
+    padding: 1.75rem 1.5rem;
+  }
+  .poph-page .strip:hover,
+  .poph-page .strip:nth-child(even):hover {
+    transform: translateX(2vw);
+  }
+  .poph-page #craft,
+  .poph-page .craft-frame {
+    height: auto;
+    overflow: visible;
+  }
+  .poph-page .craft-stages {
+    position: relative;
+    inset: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .poph-page .craft-stage {
+    position: relative;
+    inset: auto;
+    height: auto;
+    min-height: 95vh;
+    transform: none !important;
+    padding: 7rem 1.5rem 9rem;
+  }
+  .poph-page .stage-no {
+    font-size: 50vw;
+    top: 6vh;
+    left: 1.5rem;
+  }
+  .poph-page .stage-body {
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    margin-top: 38vh;
+  }
+  .poph-page .craft-overlay-top {
+    position: sticky;
+    top: 1rem;
+    padding: 0.5rem 1.5rem;
+  }
+  .poph-page .craft-progress {
+    display: none;
+  }
+  .poph-page .craft-ticker {
+    position: sticky;
+    bottom: 0;
+  }
+  .poph-page .graphic-wavelength {
+    width: 80vw;
+    bottom: 4rem;
+    left: 1.5rem;
+    height: 80px;
+  }
+  .poph-page .graphic-gauge {
+    width: 180px;
+    height: 180px;
+    bottom: 4rem;
+    left: 1.5rem;
+  }
+  .poph-page .graphic-list {
+    width: auto;
+    max-width: none;
+    left: 1.5rem;
+    right: 1.5rem;
+    bottom: 4rem;
+  }
+  .poph-page .cta-word--1 {
+    top: 14vh;
+    left: 4vw;
+    font-size: 16vw;
+  }
+  .poph-page .cta-word--2 {
+    top: 24vh;
+    right: 4vw;
+    font-size: 18vw;
+  }
+  .poph-page .cta-word--3 {
+    top: 46vh;
+    left: 3vw;
+    font-size: 22vw;
+  }
+  .poph-page .cta-word--4 {
+    bottom: 8vh;
+    font-size: 28vw;
+  }
+  .poph-page .cta-sticker {
+    padding: 1.1rem 2.2rem;
+    font-size: 0.75rem;
+  }
+  .poph-page .cta-eyebrow {
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+  }
+  .poph-page .footer-coupon {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+    padding: 2.25rem 1.75rem 2rem;
+  }
+  .poph-page .footer-coupon-form {
+    max-width: none;
+    flex: none;
+  }
+  .poph-page .footer-nav-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+  .poph-page .footer-mark-word {
+    font-size: 22vw;
+    margin-bottom: -2vw;
+  }
+  .poph-page .footer-mark-row {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}

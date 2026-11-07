@@ -10,6 +10,7 @@ generator client {
 enum Rol {
   ADMIN
   CAJERO
+  ALMACEN
 }
 
 enum TipoMovimiento {
@@ -30,6 +31,8 @@ model Usuario {
   email       String       @unique
   password    String
   rol         Rol          @default(CAJERO)
+  avatar      String?
+  telefono    String?
   activo      Boolean      @default(true)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt

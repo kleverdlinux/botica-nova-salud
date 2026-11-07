@@ -22,3 +22,8 @@ export async function obtenerKardexApi(productoId) {
   const { data } = await clienteAxios.get(`/inventario/kardex/${productoId}`);
   return data;
 }
+
+export async function obtenerKardexGlobalApi(params = {}) {
+  const { data } = await clienteAxios.get('/inventario/kardex', { params });
+  return data;
+}

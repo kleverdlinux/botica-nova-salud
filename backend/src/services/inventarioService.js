@@ -1,7 +1,7 @@
 import prisma from '../lib/prisma.js';
 import { ErrorNegocio } from '../utils/errores.js';
 
-export async function registrarEntrada({ productoId, cantidad, motivo, usuarioId }) {
+export async function registrarEntrada({ productoId, cantidad, motivo, lote, fechaVencimiento, usuarioId }) {
   const pId = parseInt(productoId, 10);
   const cant = parseInt(cantidad, 10);
 
@@ -9,24 +9,56 @@ export async function registrarEntrada({ productoId, cantidad, motivo, usuarioId
   if (isNaN(cant) || cant <= 0) throw new ErrorNegocio('La cantidad a ingresar debe ser mayor a 0.', 400);
 
   return await prisma.$transaction(async (tx) => {
-    // 1. Incremento atómico directo (elimina cualquier condición de carrera)
+    // 1. Obtener producto existente (permitiendo entradas incluso si estaba inactivo por caducidad previa)
+    const prod = await tx.producto.findUnique({
+      where: { id: pId }
+    });
+    if (!prod) throw new ErrorNegocio('Producto no encontrado.', 404);
+
+    const updateData = {
+      stock: { increment: cant }
+    };
+
+    if (lote && lote.trim()) {
+      updateData.lote = lote.trim();
+    }
+
+    if (fechaVencimiento) {
+      updateData.fechaVencimiento = new Date(fechaVencimiento);
+      const hoyLima = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Lima' }));
+      hoyLima.setHours(0, 0, 0, 0);
+
+      // Si el nuevo lote tiene fecha de expiración vigente (> hoy), reactivar automáticamente
+      if (updateData.fechaVencimiento >= hoyLima) {
+        updateData.activo = true;
+      }
+    } else if (!prod.activo && prod.fechaVencimiento) {
+      // Si ya tenía fecha vigente y solo estaba inactivo, reactivar al reponer existencias
+      const hoyLima = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Lima' }));
+      hoyLima.setHours(0, 0, 0, 0);
+      if (new Date(prod.fechaVencimiento) >= hoyLima) {
+        updateData.activo = true;
+      }
+    }
+
     const actualizado = await tx.producto.update({
-      where: { id: pId, activo: true },
-      data: { stock: { increment: cant } },
-      select: { id: true, stock: true, nombre: true }
+      where: { id: pId },
+      data: updateData,
+      select: { id: true, stock: true, nombre: true, lote: true, fechaVencimiento: true, activo: true }
     });
 
     const stockNuevo = actualizado.stock;
     const stockAnterior = stockNuevo - cant;
 
     // 2. Registro obligatorio en el Kardex
+    const detalleMotivo = updateData.lote ? `${motivo} (Lote: ${updateData.lote})` : motivo;
     const kardex = await tx.movimientoInventario.create({
       data: {
         productoId: pId,
         usuarioId,
         tipo: 'ENTRADA',
         cantidad: cant,
-        motivo,
+        motivo: detalleMotivo,
         stockAnterior,
         stockNuevo
       }
@@ -38,6 +70,9 @@ export async function registrarEntrada({ productoId, cantidad, motivo, usuarioId
       cantidadIngresada: cant,
       stockAnterior,
       stockNuevo,
+      lote: actualizado.lote,
+      fechaVencimiento: actualizado.fechaVencimiento,
+      activo: actualizado.activo,
       kardexId: kardex.id
     };
   });
@@ -138,6 +173,57 @@ export async function obtenerKardexPorProducto(productoId, { page = 1, limit = 2
 
   return {
     producto: prod,
+    total,
+    paginaActual: p,
+    totalPaginas: Math.ceil(total / l),
+    movimientos
+  };
+}
+
+export async function obtenerKardexGlobal({ page = 1, limit = 40, tipo, busqueda }) {
+  const p = Math.max(1, parseInt(page, 10) || 1);
+  const l = Math.max(1, Math.min(100, parseInt(limit, 10) || 40));
+  const skip = (p - 1) * l;
+
+  const where = {};
+  if (tipo && ['ENTRADA', 'SALIDA', 'AJUSTE'].includes(tipo)) {
+    where.tipo = tipo;
+  }
+  if (busqueda && busqueda.trim()) {
+    const q = busqueda.trim();
+    where.producto = {
+      OR: [
+        { nombre: { contains: q, mode: 'insensitive' } },
+        { codigoBarras: { equals: q } }
+      ]
+    };
+  }
+
+  const [total, movimientos] = await Promise.all([
+    prisma.movimientoInventario.count({ where }),
+    prisma.movimientoInventario.findMany({
+      where,
+      skip,
+      take: l,
+      include: {
+        producto: {
+          select: {
+            id: true,
+            nombre: true,
+            codigoBarras: true,
+            imagen: true,
+            laboratorio: true,
+            lote: true,
+            fechaVencimiento: true
+          }
+        },
+        usuario: { select: { id: true, nombre: true, rol: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    })
+  ]);
+
+  return {
     total,
     paginaActual: p,
     totalPaginas: Math.ceil(total / l),

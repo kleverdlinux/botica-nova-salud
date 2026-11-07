@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 810 540" width="810" height="540" role="img" aria-labelledby="eu-flag-title">
+  <title id="eu-flag-title">Flag of the European Union</title>
+  <defs>
+    <path id="eu-star" d="M0.000 -30.000 L6.735 -9.271 L28.532 -9.271 L10.898 3.541 L17.634 24.271 L0.000 11.459 L-17.634 24.271 L-10.898 3.541 L-28.532 -9.271 L-6.735 -9.271 Z" fill="#FFCC00"/>
+  </defs>
+  <rect width="810" height="540" fill="#003399"/>
+  <g>
+    <use href="#eu-star" x="585.000" y="270.000"/>
+    <use href="#eu-star" x="560.885" y="360.000"/>
+    <use href="#eu-star" x="495.000" y="425.885"/>
+    <use href="#eu-star" x="405.000" y="450.000"/>
+    <use href="#eu-star" x="315.000" y="425.885"/>
+    <use href="#eu-star" x="249.115" y="360.000"/>
+    <use href="#eu-star" x="225.000" y="270.000"/>
+    <use href="#eu-star" x="249.115" y="180.000"/>
+    <use href="#eu-star" x="315.000" y="114.115"/>
+    <use href="#eu-star" x="405.000" y="90.000"/>
+    <use href="#eu-star" x="495.000" y="114.115"/>
+    <use href="#eu-star" x="560.885" y="180.000"/>
+  </g>
+</svg>

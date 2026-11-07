@@ -1,9 +1,23 @@
 import axios from 'axios';
 
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+const getBaseURL = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  if (typeof window !== 'undefined') {
+    const { hostname } = window.location;
+    // Dominio en la nube (Render, Railway, Vercel, producción)
+    if (!hostname.includes('localhost') && !hostname.includes('127.0.0.1') && !hostname.startsWith('192.168.') && !hostname.startsWith('10.')) {
+      return '/api';
+    }
+    // Red local Wi-Fi en desarrollo
+    if (hostname.startsWith('192.168.') || hostname.startsWith('10.')) {
+      return `http://${hostname}:4000/api`;
+    }
+  }
+  return 'http://localhost:4000/api';
+};
 
 const clienteAxios = axios.create({
-  baseURL,
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json'
   }

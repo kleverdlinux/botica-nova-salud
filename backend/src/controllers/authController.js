@@ -8,5 +8,10 @@ export const login = asyncHandler(async (req, res) => {
 
 export const perfil = asyncHandler(async (req, res) => {
   const usuario = await authService.obtenerPerfil(req.usuario.id);
-  return res.status(200).json(usuario);
+  return res.status(200).json({ usuario, ...usuario });
+});
+
+export const actualizarPerfil = asyncHandler(async (req, res) => {
+  const actualizado = await authService.actualizarPerfil(req.usuario.id, req.body);
+  return res.status(200).json({ usuario: actualizado, ...actualizado });
 });
