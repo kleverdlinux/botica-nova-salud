@@ -988,7 +988,7 @@ export default function ClientPortal() {
   return (
     <Layout hideFooter>
       {/* Contenedor Principal: Calibrado para encajar perfectamente tanto en PC como en móviles */}
-      <div className="container-full py-3.5 lg:py-4 min-h-[calc(100vh-76px)] flex flex-col justify-start">
+      <div className="w-full max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-12 py-3 lg:py-4 min-h-[calc(100vh-76px)] flex flex-col justify-start">
         {/* =========================================================================
             VISTA DESKTOP / PC: SIDEBAR LATERAL + PANE PRINCIPAL (INTACTO COMO ANTES)
             ========================================================================= */}
@@ -1229,10 +1229,10 @@ export default function ClientPortal() {
         {/* =========================================================================
             VISTA MÓVIL: RESUMEN DEL PACIENTE + OPCIONES CENTRADAS EN EL MEDIO (SIN SCROLL)
             ========================================================================= */}
-        <div className="block lg:hidden w-full max-w-md mx-auto py-1 space-y-3">
+        <div className="block lg:hidden w-full max-w-sm sm:max-w-md mx-auto py-1 space-y-2.5">
           {/* 1. Tarjeta de Perfil Compacta */}
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-3.5 shadow-xs">
-            <div className="flex items-center justify-between gap-2.5">
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-3 shadow-xs">
+            <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200/80 dark:border-teal-800 text-[#0d9488] dark:text-teal-400 flex items-center justify-center font-black text-base shadow-2xs shrink-0">
                   {activeClient.name.charAt(0).toUpperCase()}
@@ -1255,7 +1255,7 @@ export default function ClientPortal() {
 
               <div className="flex items-center gap-1.5 shrink-0">
                 <div className="text-right">
-                  <span className="text-[8.5px] uppercase font-bold text-neutral-400 block leading-tight">
+                  <span className="text-[8px] uppercase font-bold text-neutral-400 block leading-tight">
                     Puntos
                   </span>
                   <span className="text-xs font-black font-mono text-[#0d9488] leading-tight block">
@@ -1266,36 +1266,36 @@ export default function ClientPortal() {
             </div>
 
             {/* Micro-pills de información rápida */}
-            <div className="grid grid-cols-3 gap-1.5 pt-2.5 mt-2.5 border-t border-neutral-100 dark:border-neutral-800 text-center text-[10px]">
-              <div className="bg-neutral-50 dark:bg-neutral-800/60 px-2 py-1 rounded-lg border border-neutral-200/60 dark:border-neutral-800">
-                <span className="text-neutral-400 block text-[8px] uppercase font-bold">Sangre</span>
-                <span className="font-mono font-black text-neutral-900 dark:text-white">{fichaSalud?.grupoSanguineo || 'O+'}</span>
+            <div className="grid grid-cols-3 gap-1.5 pt-2 mt-2 border-t border-neutral-100 dark:border-neutral-800 text-center text-[10px]">
+              <div className="bg-neutral-50 dark:bg-neutral-800/60 px-1.5 py-1 rounded-lg border border-neutral-200/60 dark:border-neutral-800 min-w-0">
+                <span className="text-neutral-400 block text-[7.5px] uppercase font-bold">Sangre</span>
+                <span className="font-mono font-black text-neutral-900 dark:text-white truncate block">{fichaSalud?.grupoSanguineo || 'O+'}</span>
               </div>
-              <div className="bg-neutral-50 dark:bg-neutral-800/60 px-2 py-1 rounded-lg border border-neutral-200/60 dark:border-neutral-800">
-                <span className="text-neutral-400 block text-[8px] uppercase font-bold">Alergias</span>
-                <span className={`font-bold ${(fichaSalud?.alergias || []).length > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+              <div className="bg-neutral-50 dark:bg-neutral-800/60 px-1.5 py-1 rounded-lg border border-neutral-200/60 dark:border-neutral-800 min-w-0">
+                <span className="text-neutral-400 block text-[7.5px] uppercase font-bold">Alergias</span>
+                <span className={`font-bold truncate block ${(fichaSalud?.alergias || []).length > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
                   {(fichaSalud?.alergias || []).length > 0 ? `${(fichaSalud?.alergias || []).length} reg.` : 'Sin alergias'}
                 </span>
               </div>
-              <div className="bg-neutral-50 dark:bg-neutral-800/60 px-2 py-1 rounded-lg border border-neutral-200/60 dark:border-neutral-800">
-                <span className="text-neutral-400 block text-[8px] uppercase font-bold">Entrega</span>
-                <span className="font-bold text-neutral-900 dark:text-white truncate block">{activeClient.district || 'Lima'}</span>
+              <div className="bg-neutral-50 dark:bg-neutral-800/60 px-1.5 py-1 rounded-lg border border-neutral-200/60 dark:border-neutral-800 min-w-0">
+                <span className="text-neutral-400 block text-[7.5px] uppercase font-bold">Entrega</span>
+                <span className="font-bold text-neutral-900 dark:text-white truncate block">{activeClient.district || 'Lima Cercado'}</span>
               </div>
             </div>
           </div>
 
           {/* 2. MENÚ DE OPCIONES EN EL MEDIO (CENTRADAS, SIN SCROLL) */}
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-3.5 shadow-xs space-y-2.5">
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-3 shadow-xs space-y-2">
             <div className="flex items-center justify-between px-1">
               <span className="text-[10px] font-black uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
                 Opciones del Portal
               </span>
               <span className="text-[10px] font-bold text-[#0d9488] dark:text-teal-400">
-                Modal en pantalla
+                Toca para abrir
               </span>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -1307,19 +1307,19 @@ export default function ClientPortal() {
                       setActiveTab(item.id);
                       setMobileModalTab(item.id);
                     }}
-                    className="w-full p-3 rounded-2xl bg-neutral-50/80 dark:bg-neutral-800/60 hover:bg-teal-50/60 dark:hover:bg-teal-950/40 border border-neutral-200/80 dark:border-neutral-700/80 hover:border-teal-300 dark:hover:border-teal-700 transition-all flex items-center justify-between gap-3 text-left cursor-pointer active:scale-[0.99] group shadow-2xs"
+                    className="w-full p-2.5 rounded-2xl bg-neutral-50/80 dark:bg-neutral-800/60 hover:bg-teal-50/60 dark:hover:bg-teal-950/40 border border-neutral-200/80 dark:border-neutral-700/80 hover:border-teal-300 dark:hover:border-teal-700 transition-all flex items-center justify-between gap-2.5 text-left cursor-pointer active:scale-[0.99] group shadow-2xs"
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${item.accentColor} group-hover:scale-105 transition-transform`}>
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${item.accentColor} group-hover:scale-105 transition-transform`}>
                         <Icon className="w-4 h-4 stroke-[2]" />
                       </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-xs sm:text-sm font-black text-neutral-900 dark:text-white truncate">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <h3 className="text-xs font-black text-neutral-900 dark:text-white truncate">
                             {item.label}
                           </h3>
                           {item.badgeText && (
-                            <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded-md bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300">
+                            <span className="text-[8.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 shrink-0">
                               {item.badgeText}
                             </span>
                           )}
@@ -1327,7 +1327,7 @@ export default function ClientPortal() {
                             <span className="w-1.5 h-1.5 rounded-full bg-rose-500 ring-2 ring-rose-200 dark:ring-rose-950 shrink-0"></span>
                           )}
                         </div>
-                        <p className="text-[10.5px] text-neutral-500 dark:text-neutral-400 truncate mt-0.5">
+                        <p className="text-[10px] text-neutral-400 dark:text-neutral-500 truncate mt-0.5">
                           {item.description}
                         </p>
                       </div>
@@ -1347,18 +1347,18 @@ export default function ClientPortal() {
               href="https://wa.me/51955545561?text=Hola%20Botica%20Nova%20Salud,%20deseo%20orientaci%C3%B3n%20farmac%C3%A9utica"
               target="_blank"
               rel="noopener noreferrer"
-              className="py-2 px-3 rounded-2xl text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+              className="py-2 px-2.5 rounded-2xl text-[11px] font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs min-w-0"
             >
               <MessageCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-              <span className="truncate">Asistencia WhatsApp</span>
+              <span className="truncate">WhatsApp</span>
             </a>
 
             <button
               onClick={handleLogout}
-              className="py-2 px-3 rounded-2xl text-xs font-bold text-neutral-600 dark:text-neutral-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-neutral-200 dark:border-neutral-800 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+              className="py-2 px-2.5 rounded-2xl text-[11px] font-bold text-neutral-600 dark:text-neutral-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-neutral-200 dark:border-neutral-800 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs min-w-0"
             >
               <LogOut className="w-3.5 h-3.5 shrink-0" />
-              <span>Cerrar Sesión</span>
+              <span className="truncate">Cerrar Sesión</span>
             </button>
           </div>
         </div>
