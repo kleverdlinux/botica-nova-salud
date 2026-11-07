@@ -22,7 +22,6 @@ import { ArticleModal } from '@/components/inspirate/ArticleModal';
 import { BrandModal } from '@/components/inspirate/BrandModal';
 import { CookieBanner } from '@/components/inspirate/CookieBanner';
 import { ARTICLES } from '@/data/inspirateData';
-import { products } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 import { toast } from '../utils/alertaSweet.js';
@@ -105,8 +104,9 @@ export default function Inicio() {
     };
   }, []);
 
-  // Toggle wishlist for products
-  const handleToggleFavorite = (slugOrId) => {
+  // Toggle wishlist for products (carga diferida de catálogo completo)
+  const handleToggleFavorite = async (slugOrId) => {
+    const { products } = await import('@/data/products');
     const prod = products.find((p) => p.slug === slugOrId || p.id === slugOrId);
     if (prod) {
       if (isInWishlist(prod.id)) {
