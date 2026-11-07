@@ -39,7 +39,7 @@ export const ProductCard = ({ product, index = 0, variant = "default", onQuickVi
       <Link
         to={`/product/${product.slug}`}
         onClick={(e) => {
-          if (onQuickView) {
+          if (typeof window !== 'undefined' && window.innerWidth >= 768 && onQuickView) {
             e.preventDefault();
             onQuickView(product);
           }
@@ -138,7 +138,7 @@ export const ProductCard = ({ product, index = 0, variant = "default", onQuickVi
           <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center pb-6 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-100">
             <span
               onClick={(e) => {
-                if (onQuickView) {
+                if (typeof window !== 'undefined' && window.innerWidth >= 768 && onQuickView) {
                   e.preventDefault();
                   e.stopPropagation();
                   onQuickView(product);
