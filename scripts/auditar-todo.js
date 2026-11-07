@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-const BASE_URL = process.env.AUDIT_URL || 'http://localhost:5173';
+const BASE_URL = 'https://botica-nova-salud-khs4.onrender.com';
 const OUTPUT_DIR = path.resolve('reportes');
 const SCREENSHOTS_DIR = path.join(OUTPUT_DIR, 'screenshots');
 

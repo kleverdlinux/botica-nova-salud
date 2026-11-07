@@ -9,10 +9,9 @@ interface ProductCardProps {
   product: Product;
   index?: number;
   variant?: "default" | "large";
-  onQuickView?: (product: Product) => void;
 }
 
-export const ProductCard = ({ product, index = 0, variant = "default", onQuickView }: ProductCardProps) => {
+export const ProductCard = ({ product, index = 0, variant = "default" }: ProductCardProps) => {
   const { addItem, removeItem, isInWishlist } = useWishlist();
   const inWishlist = isInWishlist(product.id);
   const collection = collections.find((c) => c.id === product.collection);
@@ -36,16 +35,7 @@ export const ProductCard = ({ product, index = 0, variant = "default", onQuickVi
       transition={{ duration: 0.7, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
       className="group"
     >
-      <Link
-        to={`/product/${product.slug}`}
-        onClick={(e) => {
-          if (typeof window !== 'undefined' && window.innerWidth >= 768 && onQuickView) {
-            e.preventDefault();
-            onQuickView(product);
-          }
-        }}
-        className="block"
-      >
+      <Link to={`/product/${product.slug}`} className="block">
         {/* Image Container */}
         <div
           className={cn(
@@ -136,16 +126,7 @@ export const ProductCard = ({ product, index = 0, variant = "default", onQuickVi
 
           {/* Quick View Indicator */}
           <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center pb-6 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-100">
-            <span
-              onClick={(e) => {
-                if (typeof window !== 'undefined' && window.innerWidth >= 768 && onQuickView) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onQuickView(product);
-                }
-              }}
-              className="px-6 py-2.5 text-xs font-bold tracking-[0.15em] uppercase bg-background/95 backdrop-blur-md text-foreground shadow-lg border border-border/40 hover:bg-emerald-600 hover:text-white transition-colors cursor-pointer"
-            >
+            <span className="px-6 py-2.5 text-xs font-semibold tracking-[0.15em] uppercase bg-background/95 backdrop-blur-md text-foreground shadow-lg border border-border/40">
               Ver Detalle
             </span>
           </div>

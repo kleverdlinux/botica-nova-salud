@@ -23,7 +23,6 @@ const ServicesModal = React.lazy(() => import('@/components/inspirate/ServicesMo
 const ReclamacionesModal = React.lazy(() => import('@/components/inspirate/ReclamacionesModal').then(m => ({ default: m.ReclamacionesModal })));
 const ArticleModal = React.lazy(() => import('@/components/inspirate/ArticleModal').then(m => ({ default: m.ArticleModal })));
 const BrandModal = React.lazy(() => import('@/components/inspirate/BrandModal').then(m => ({ default: m.BrandModal })));
-const ProductDetailModal = React.lazy(() => import('@/components/ProductDetailModal').then(m => ({ default: m.ProductDetailModal })));
 import { ARTICLES } from '@/data/inspirateData';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -57,7 +56,6 @@ export default function Inicio() {
   const [isBrandOpen, setIsBrandOpen] = useState(false);
   const [brandDefaultTab, setBrandDefaultTab] = useState('historia');
   const [selectedArticle, setSelectedArticle] = useState(null);
-  const [selectedProductModal, setSelectedProductModal] = useState(null);
 
   // Asegurar que la página principal de la tienda web sea siempre en modo claro
   useEffect(() => {
@@ -123,17 +121,6 @@ export default function Inicio() {
     }
   };
 
-  // Open product detail in modal
-  const handleOpenProductModal = async (slugOrId) => {
-    const { products } = await import('@/data/products');
-    const prod = products.find((p) => p.slug === slugOrId || p.id === slugOrId);
-    if (prod) {
-      setSelectedProductModal(prod);
-    } else {
-      navigate('/product/' + slugOrId);
-    }
-  };
-
   // Open Catalog with category -> Navigate directly to /catalogo
   const handleOpenCatalog = (category) => {
     if (!category || category === 'ALL' || category === 'NATURE') {
@@ -167,7 +154,6 @@ export default function Inicio() {
       <main>
         {/* Hero Section */}
         <Hero
-          onOpenProductModal={handleOpenProductModal}
           onOpenQuotation={() => setIsQuotationOpen(true)}
           onOpenCatalog={() => handleOpenCatalog('ALL')}
           onOpenBrand={() => {
@@ -181,7 +167,6 @@ export default function Inicio() {
 
         {/* 3. Most Chosen Pieces with Hotspots linking directly to product pages */}
         <HitsShowcase
-          onOpenProductModal={handleOpenProductModal}
           favorites={wishlistItems.map((item) => item.id)}
           onToggleFavorite={handleToggleFavorite}
           onOpenCatalog={() => handleOpenCatalog('ALL')}
@@ -322,17 +307,6 @@ export default function Inicio() {
             onClose={() => setIsBrandOpen(false)}
             onOpenQuotation={() => setIsQuotationOpen(true)}
             defaultTab={brandDefaultTab}
-          />
-        </React.Suspense>
-      )}
-
-      {/* Interactive Product Detail Modal */}
-      {selectedProductModal && (
-        <React.Suspense fallback={null}>
-          <ProductDetailModal
-            product={selectedProductModal}
-            isOpen={Boolean(selectedProductModal)}
-            onClose={() => setSelectedProductModal(null)}
           />
         </React.Suspense>
       )}

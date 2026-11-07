@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, ArrowDown } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Layout } from "@/components/Layout";
 import { ProductCard } from "@/components/ProductCard";
-import { ProductDetailModal } from "@/components/ProductDetailModal";
 import { CollectionCard } from "@/components/CollectionCard";
-import { collections, getNewProducts, products, Product } from "@/data/products";
+import { collections, getNewProducts, products } from "@/data/products";
 import { Button } from "@/components/ui/button";
 
 const Instagram = ({ className }: { className?: string }) => (
@@ -28,7 +27,6 @@ const Instagram = ({ className }: { className?: string }) => (
 );
 
 const Index = () => {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const newProducts = getNewProducts();
   const latestProducts = products.slice(0, 4);
   const displayedCollections = collections.slice(0, 6);
@@ -208,7 +206,7 @@ const Index = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
             {latestProducts.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} onQuickView={(p) => setSelectedProduct(p)} />
+              <ProductCard key={product.id} product={product} index={index} />
             ))}
           </div>
 
@@ -376,7 +374,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-      <ProductDetailModal product={selectedProduct} isOpen={Boolean(selectedProduct)} onClose={() => setSelectedProduct(null)} />
     </Layout>
   );
 };
