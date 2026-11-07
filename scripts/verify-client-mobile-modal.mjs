@@ -141,6 +141,8 @@ async function main() {
           const hasDatosCard = bodyText.includes('Direcciones & Facturación');
           const docScrollWidth = document.documentElement.scrollWidth;
           const docClientWidth = document.documentElement.clientWidth;
+          const bodyScrollHeight = document.body.scrollHeight;
+          const windowHeight = window.innerHeight;
           const hasHorizontalOverflow = docScrollWidth > docClientWidth;
 
           return {
@@ -152,6 +154,8 @@ async function main() {
             hasDatosCard,
             docScrollWidth,
             docClientWidth,
+            bodyScrollHeight,
+            windowHeight,
             hasHorizontalOverflow
           };
         })()
@@ -163,10 +167,10 @@ async function main() {
 
     // Capturar screenshot móvil inicial
     const ss1 = await send('Page.captureScreenshot', { format: 'png' });
-    fs.writeFileSync('scripts/test-mobile-client-hub.png', Buffer.from(ss1.data, 'base64'));
-    console.log('Screenshot guardado: scripts/test-mobile-client-hub.png');
+    fs.writeFileSync('scripts/test-mobile-client-hub-centered.png', Buffer.from(ss1.data, 'base64'));
+    console.log('Screenshot guardado: scripts/test-mobile-client-hub-centered.png');
 
-    // 3. Probar clic en "Mis Pedidos & Boletas" para abrir el modal
+    // 3. Probar clic en "Mis Pedidos & Boletas" para abrir el modal centrado
     console.log('Haciendo clic en "Mis Pedidos & Boletas"...');
     await send('Runtime.evaluate', {
       expression: `
@@ -187,7 +191,20 @@ async function main() {
           const boletaSerie = bodyText.includes('B001-000452');
           const hasCloseBtn = Array.from(document.querySelectorAll('button')).some(b => b.innerText.includes('Cerrar Ventana'));
 
-          return { modalHeader, orderCode, boletaSerie, hasCloseBtn };
+          // Verificar si el modal está centrado en la pantalla
+          const modalDialog = document.querySelector('.max-w-lg');
+          let isCentered = false;
+          let rect = null;
+          if (modalDialog) {
+            rect = modalDialog.getBoundingClientRect();
+            const viewportH = window.innerHeight;
+            const topMargin = rect.top;
+            const bottomMargin = viewportH - rect.bottom;
+            // Está centrado si topMargin > 20 y bottomMargin > 20 (no pegado al fondo)
+            isCentered = topMargin > 20 && bottomMargin > 20;
+          }
+
+          return { modalHeader, orderCode, boletaSerie, hasCloseBtn, isCentered, rect };
         })()
       `,
       returnByValue: true
@@ -195,8 +212,8 @@ async function main() {
     console.log('Resultados Modal Mis Pedidos:', evalModalPedidos.result.value);
 
     const ssModalPedidos = await send('Page.captureScreenshot', { format: 'png' });
-    fs.writeFileSync('scripts/test-mobile-modal-pedidos.png', Buffer.from(ssModalPedidos.data, 'base64'));
-    console.log('Screenshot guardado: scripts/test-mobile-modal-pedidos.png');
+    fs.writeFileSync('scripts/test-mobile-modal-pedidos-centered.png', Buffer.from(ssModalPedidos.data, 'base64'));
+    console.log('Screenshot guardado: scripts/test-mobile-modal-pedidos-centered.png');
 
     // Cerrar el modal
     console.log('Cerrando modal pedidos...');

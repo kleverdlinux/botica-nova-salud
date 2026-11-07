@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface LayoutProps {
   children: ReactNode;
+  hideFooter?: boolean;
 }
 
 const pageVariants = {
@@ -27,7 +28,7 @@ const pageVariants = {
   },
 };
 
-export const Layout = ({ children }: LayoutProps) => {
+export const Layout = ({ children, hideFooter = false }: LayoutProps) => {
   useEffect(() => {
     // La tienda y web pública de la botica es siempre modo claro
     document.documentElement.classList.remove('dark');
@@ -37,7 +38,7 @@ export const Layout = ({ children }: LayoutProps) => {
       <div className="min-h-screen flex flex-col bg-background text-foreground relative pt-[70px] lg:pt-[76px] overflow-x-clip max-w-full">
         <Header />
         <motion.main
-          className="flex-1 w-full min-w-0 overflow-x-clip"
+          className="flex-1 w-full min-w-0 overflow-x-clip flex flex-col"
           variants={pageVariants}
           initial="initial"
           animate="animate"
@@ -45,7 +46,7 @@ export const Layout = ({ children }: LayoutProps) => {
         >
           {children}
         </motion.main>
-        <Footer />
+        {!hideFooter && <Footer />}
       </div>
     </TooltipProvider>
   );
