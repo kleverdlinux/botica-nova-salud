@@ -15,6 +15,15 @@ export const Hero: React.FC<HeroProps> = ({
 }) => {
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [slidesMounted, setSlidesMounted] = useState(false);
+
+  useEffect(() => {
+    // Retrasar montaje de slides secundarios para liberar ancho de banda al LCP
+    const mountTimer = setTimeout(() => {
+      setSlidesMounted(true);
+    }, 2500);
+    return () => clearTimeout(mountTimer);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -29,38 +38,44 @@ export const Hero: React.FC<HeroProps> = ({
       className="relative w-full min-h-[840px] lg:h-[920px] bg-[#959492] overflow-hidden select-none"
     >
       {/* Background Slideshow */}
-      {ASSETS.heroSlides.map((src, idx) => (
-        <div
-          key={src}
-          className={`absolute inset-0 ${
-            idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-          } ${currentSlide === 0 && idx === 0 ? '' : 'transition-opacity duration-700 ease-out'}`}
-        >
-          {idx === 0 ? (
-            <picture className="w-full h-full block">
-              <source media="(max-width: 640px)" srcSet="/media/home/hero-slide-1-mobile.webp" type="image/webp" />
-              <source srcSet="/media/home/hero-slide-1.webp" type="image/webp" />
+      {ASSETS.heroSlides.map((src, idx) => {
+        // En la carga inicial solo se renderiza el slide 0 para que no compitan en red
+        if (idx !== 0 && !slidesMounted && idx !== currentSlide) {
+          return null;
+        }
+        return (
+          <div
+            key={src}
+            className={`absolute inset-0 ${
+              idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            } ${currentSlide === 0 && idx === 0 ? '' : 'transition-opacity duration-700 ease-out'}`}
+          >
+            {idx === 0 ? (
+              <picture className="w-full h-full block">
+                <source media="(max-width: 640px)" srcSet="/media/home/hero-slide-1-mobile.webp" type="image/webp" />
+                <source srcSet="/media/home/hero-slide-1.webp" type="image/webp" />
+                <img
+                  src={src}
+                  alt="Botica Nova Salud - Salud & Confianza Cerca de tu Familia"
+                  loading="eager"
+                  decoding="sync"
+                  fetchPriority="high"
+                  className="w-full h-full object-cover object-center"
+                />
+              </picture>
+            ) : (
               <img
                 src={src}
-                alt="Botica Nova Salud - Salud & Confianza Cerca de tu Familia"
-                loading="eager"
-                decoding="sync"
-                fetchPriority="high"
+                alt={`Botica Nova Salud ${idx + 1}`}
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
                 className="w-full h-full object-cover object-center"
               />
-            </picture>
-          ) : (
-            <img
-              src={src}
-              alt={`Botica Nova Salud ${idx + 1}`}
-              loading="lazy"
-              decoding="async"
-              fetchPriority="low"
-              className="w-full h-full object-cover object-center"
-            />
-          )}
-        </div>
-      ))}
+            )}
+          </div>
+        );
+      })}
 
       {/* Degradado suave y sutil solo en el lado izquierdo para lectura limpia */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent z-[15] pointer-events-none" />
@@ -147,7 +162,7 @@ export const Hero: React.FC<HeroProps> = ({
             <img
               src={ASSETS.heroCardRing}
               alt="Fotoprotector ISDIN Fusion Water Magic SPF 50"
-              loading="eager"
+              loading="lazy"
               decoding="async"
               width={240}
               height={240}

@@ -4,7 +4,10 @@ let cssLoaded = false;
 const ensureCss = () => {
   if (!cssLoaded && typeof document !== 'undefined') {
     cssLoaded = true;
-    import('sweetalert2/dist/sweetalert2.min.css');
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '/vendor/sweetalert2.min.css';
+    document.head.appendChild(link);
   }
 };
 
