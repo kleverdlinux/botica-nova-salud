@@ -67,11 +67,27 @@ app.use('/api', (req, res) => {
 
 // Servir frontend compilado en producción (Single Page Application Fallback)
 if (fs.existsSync(rutaFrontendDist)) {
-  app.use(express.static(rutaFrontendDist));
+  // Caché inmutable para archivos estáticos con hash de Vite
+  app.use('/assets', express.static(path.join(rutaFrontendDist, 'assets'), {
+    maxAge: '1y',
+    immutable: true
+  }));
+
+  // Servir archivos estáticos con control de caché
+  app.use(express.static(rutaFrontendDist, {
+    maxAge: '1d',
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      }
+    }
+  }));
+
   app.use((req, res, next) => {
     if (req.path.startsWith('/api')) {
       return next();
     }
+    res.setHeader('Cache-Control', 'no-cache');
     res.sendFile('index.html', { root: rutaFrontendDist }, (err) => {
       if (err) {
         try {

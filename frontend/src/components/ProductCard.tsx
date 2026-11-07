@@ -46,6 +46,10 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
           {/* Primary Image */}
           <img
             src={product.images[0]}
+            loading={index < 4 ? "eager" : "lazy"}
+            decoding="async"
+            width={320}
+            height={320}
             alt={product.name}
             onError={(e) => {
               const target = e.currentTarget;
@@ -66,6 +70,10 @@ export const ProductCard = ({ product, index = 0, variant = "default" }: Product
           {hasSecondImage && (
             <img
               src={product.images[1]}
+              loading="lazy"
+              decoding="async"
+              width={320}
+              height={320}
               alt={`${product.name} - alternate view`}
               className="absolute inset-0 w-full h-full object-contain p-6 opacity-0 scale-105 transition-all duration-700 ease-out group-hover:opacity-100 group-hover:scale-100"
             />

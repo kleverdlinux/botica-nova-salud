@@ -1,38 +1,47 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { CarritoProvider } from './context/CarritoContext.jsx';
 import { ThemeProvider } from './hooks/useTheme.tsx';
 import RutaProtegida from './components/RutaProtegida.jsx';
 import LayoutPrivado from './components/LayoutPrivado.jsx';
-import Login from './pages/Login.jsx';
-import Pos from './pages/Pos.jsx';
-import Inventario from './pages/Inventario.jsx';
-import Alertas from './pages/Alertas.jsx';
-import Ventas from './pages/Ventas.jsx';
-import Dashboard from './pages/Dashboard.jsx';
-import Usuarios from './pages/Usuarios.jsx';
-import Reportes from './pages/Reportes.jsx';
-import LandingCatalogo from './pages/LandingCatalogo.jsx';
-import Inicio from './pages/Inicio.jsx';
-import ProjectDetail from './pages/ProjectDetail';
-import Products from './pages/Products';
-import ProductDetail from './pages/ProductDetail';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
-import About from './pages/About';
-import StoreIndex from './pages/StoreIndex';
-import ClientPortal from './pages/ClientPortal';
 import { TooltipProvider } from './components/ui/tooltip';
 import { PageLoader } from './components/ui/page-loader';
-import RibbonFoldLoaderDemo from './components/ui/demo';
 import { ScrollToTop } from './components/ScrollToTop';
 import { useAuth } from './context/AuthContext.jsx';
-import VisorCliente from './pages/VisorCliente.jsx';
-import PagoMovilQR from './pages/PagoMovilQR.jsx';
-import EscanerMovil from './pages/EscanerMovil.jsx';
-import TerminalMovil from './pages/TerminalMovil.jsx';
 import GestorInactividadSeguridad from './components/GestorInactividadSeguridad.jsx';
+
+// Carga diferida inteligente (Code Splitting con React.lazy)
+const Login = React.lazy(() => import('./pages/Login.jsx'));
+const Pos = React.lazy(() => import('./pages/Pos.jsx'));
+const Inventario = React.lazy(() => import('./pages/Inventario.jsx'));
+const Alertas = React.lazy(() => import('./pages/Alertas.jsx'));
+const Ventas = React.lazy(() => import('./pages/Ventas.jsx'));
+const Dashboard = React.lazy(() => import('./pages/Dashboard.jsx'));
+const Usuarios = React.lazy(() => import('./pages/Usuarios.jsx'));
+const Reportes = React.lazy(() => import('./pages/Reportes.jsx'));
+const Inicio = React.lazy(() => import('./pages/Inicio.jsx'));
+const ProjectDetail = React.lazy(() => import('./pages/ProjectDetail'));
+const Products = React.lazy(() => import('./pages/Products'));
+const ProductDetail = React.lazy(() => import('./pages/ProductDetail'));
+const Cart = React.lazy(() => import('./pages/Cart'));
+const Checkout = React.lazy(() => import('./pages/Checkout'));
+const About = React.lazy(() => import('./pages/About'));
+const StoreIndex = React.lazy(() => import('./pages/StoreIndex'));
+const ClientPortal = React.lazy(() => import('./pages/ClientPortal'));
+const VisorCliente = React.lazy(() => import('./pages/VisorCliente.jsx'));
+const PagoMovilQR = React.lazy(() => import('./pages/PagoMovilQR.jsx'));
+const EscanerMovil = React.lazy(() => import('./pages/EscanerMovil.jsx'));
+const TerminalMovil = React.lazy(() => import('./pages/TerminalMovil.jsx'));
+const RibbonFoldLoaderDemo = React.lazy(() => import('./components/ui/demo'));
+
+function LazyFallback() {
+  return (
+    <div className="min-h-[50vh] flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
 
 function GestorModoWeb() {
   const location = useLocation();
@@ -70,6 +79,7 @@ export default function App() {
             <TooltipProvider>
               <PageLoader />
 
+              <Suspense fallback={<LazyFallback />}>
                 <Routes>
                   {/* Ruta de Demo de Ribbon Fold Loader */}
                   <Route path="/demo/loading" element={<RibbonFoldLoaderDemo />} />
@@ -179,6 +189,7 @@ export default function App() {
                   <Route path="/admin/pos" element={<Navigate to="/app/pos" replace />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
+              </Suspense>
             </TooltipProvider>
           </CarritoProvider>
       </AuthProvider>

@@ -42,6 +42,12 @@ const Products = () => {
   const activeSort = (searchParams.get("sort") as SortOption) || "featured";
 
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(24);
+
+  // Al cambiar de categoría o filtro, resetear visibleCount a 24
+  useEffect(() => {
+    setVisibleCount(24);
+  }, [activeCollection, activeSort]);
 
   const currentCollection = activeCollection !== "all"
     ? getCollectionBySlug(activeCollection)
@@ -103,6 +109,10 @@ const Products = () => {
     return result;
   }, [activeCollection, activeSort]);
 
+  const visibleProducts = useMemo(() => {
+    return filteredAndSortedProducts.slice(0, visibleCount);
+  }, [filteredAndSortedProducts, visibleCount]);
+
   const handleFilterChange = (slug: string) => {
     const newParams = new URLSearchParams(searchParams);
     if (slug === "all") {
@@ -137,6 +147,9 @@ const Products = () => {
               key={`${imgSrc}-${idx}`}
               src={imgSrc}
               alt={currentCollection?.name || "Catálogo Nova Salud"}
+              loading={idx === 0 ? "eager" : "lazy"}
+              decoding={idx === 0 ? "sync" : "async"}
+              fetchPriority={idx === 0 ? "high" : "low"}
               className={cn(
                 "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out",
                 currentSlide === idx ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -245,15 +258,33 @@ const Products = () => {
       <section className="py-10 md:py-16">
         <div className="container-full">
           {filteredAndSortedProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10">
-              {filteredAndSortedProducts.map((product, index) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  index={index}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10">
+                {visibleProducts.map((product, index) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    index={index}
+                  />
+                ))}
+              </div>
+
+              {filteredAndSortedProducts.length > visibleCount && (
+                <div className="mt-12 text-center">
+                  <p className="text-xs text-muted-foreground mb-3 font-medium">
+                    Mostrando {visibleProducts.length} de {filteredAndSortedProducts.length} medicamentos y productos
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => setVisibleCount((prev) => prev + 24)}
+                    className="rounded-full px-8 py-2.5 text-xs font-semibold tracking-wider uppercase border-border/80 hover:bg-emerald-50 hover:text-emerald-800 dark:hover:bg-emerald-950/30 transition-all shadow-sm"
+                  >
+                    Cargar más medicamentos ({filteredAndSortedProducts.length - visibleCount} restantes)
+                  </Button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-28">
               <p className="font-sans font-semibold text-2xl text-muted-foreground mb-4">
