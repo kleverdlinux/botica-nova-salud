@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Check } from 'lucide-react';
+import { X, Check, MessageCircle } from 'lucide-react';
 
 interface QuotationModalProps {
   isOpen: boolean;
@@ -45,13 +45,57 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({ isOpen, onClose 
 
   const deliveryOptions = ['Delivery a domicilio', 'Retiro presencial en Botica'];
 
+  // Generador de mensaje detallado para WhatsApp
+  const buildWhatsAppMessage = () => {
+    const lines = [
+      '*SOLICITUD DE COTIZACIÓN DE RECETA MÉDICA*',
+      '*Botica Nova Salud - Atención Farmacéutica*',
+      '',
+      '👤 *DATOS DEL PACIENTE:*',
+      `• *Nombre:* ${fullName.trim() || 'No especificado'}`,
+      `• *Teléfono/WhatsApp:* ${contactValue.trim() || 'Indicado en este chat'}`,
+      '',
+      '💊 *DETALLE DE MEDICAMENTOS / RECETA:*',
+      `${medicines.trim() || 'Consulta médica general'}`,
+      '',
+      '📋 *PREFERENCIAS DEL PEDIDO:*',
+      `• *Requerimiento:* ${reqType}`,
+      `• *Preferencia:* ${preference}`,
+      `• *Modalidad de entrega:* ${deliveryType}`,
+      '',
+      '_Por favor confirmar disponibilidad en stock, precios oficiales y fecha de vencimiento. ¡Muchas gracias!_',
+    ];
+    return encodeURIComponent(lines.join('\n'));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!contactValue.trim()) {
       setError('Por favor indica tu número de WhatsApp o teléfono.');
       return;
     }
+    if (!medicines.trim()) {
+      setError('Por favor indica los medicamentos o texto de la receta médica.');
+      return;
+    }
     setError('');
+
+    // Guardar en almacenamiento para registro del sistema
+    try {
+      const historial = JSON.parse(localStorage.getItem('botica_cotizaciones_recibidas') || '[]');
+      historial.unshift({
+        id: 'COT-' + Date.now(),
+        fecha: new Date().toISOString(),
+        fullName: fullName.trim(),
+        contactValue: contactValue.trim(),
+        medicines: medicines.trim(),
+        reqType,
+        preference,
+        deliveryType,
+      });
+      localStorage.setItem('botica_cotizaciones_recibidas', JSON.stringify(historial.slice(0, 50)));
+    } catch (e) {}
+
     setSubmitted(true);
   };
 
@@ -63,7 +107,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({ isOpen, onClose 
       }}
     >
       <div className="relative w-full max-w-2xl bg-white shadow-2xl rounded-lg my-auto text-[#222222] border border-gray-100 flex flex-col max-h-[92vh] overflow-hidden animate-fade-in">
-        {/* Sticky / Fixed Header with Prominent Close Button */}
+        {/* Sticky Header with Close Button */}
         <div className="px-6 sm:px-8 py-5 border-b border-gray-100 flex items-start justify-between bg-white shrink-0">
           <div>
             <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#0d9488] block mb-1">
@@ -91,26 +135,43 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({ isOpen, onClose 
         {/* Scrollable Modal Body */}
         <div className="p-6 sm:p-8 overflow-y-auto flex-1">
           {submitted ? (
-            <div className="text-center py-10 animate-fade-in">
-              <div className="w-16 h-16 bg-emerald-100 text-[#0d9488] rounded-full flex items-center justify-center mx-auto mb-5">
-                <Check className="w-8 h-8" />
+            <div className="text-center py-6 sm:py-8 animate-fade-in space-y-4">
+              <div className="w-16 h-16 bg-emerald-100 text-[#0d9488] rounded-full flex items-center justify-center mx-auto mb-2">
+                <Check className="w-8 h-8 stroke-[3]" />
               </div>
-              <h3 className="text-2xl font-black uppercase text-[#222222] mb-3">
-                ¡Receta y Solicitud Recibida!
+              <h3 className="text-xl sm:text-2xl font-black uppercase text-[#222222]">
+                ¡Receta y Solicitud Registrada!
               </h3>
-              <p className="text-sm text-[#555555] max-w-md mx-auto leading-relaxed mb-6">
-                Gracias, <span className="font-bold text-[#222222]">{fullName || 'estimado paciente'}</span>. Nuestro Químico Farmacéutico verificará la disponibilidad en stock de los medicamentos solicitados y te enviará la cotización detallada vía WhatsApp ({contactValue}).
+              <p className="text-xs sm:text-sm text-[#555555] max-w-md mx-auto leading-relaxed">
+                Gracias, <span className="font-bold text-[#222222]">{fullName || 'estimado paciente'}</span>. Tu solicitud ha quedado guardada con éxito en el sistema.
               </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setSubmitted(false);
-                  onClose();
-                }}
-                className="btn-corner-accent btn-corner-dark py-3 px-8 text-xs font-black uppercase cursor-pointer"
-              >
-                Cerrar y Continuar
-              </button>
+              <p className="text-xs text-zinc-500 max-w-md mx-auto">
+                Para recibir la cotización con precios oficiales y disponibilidad en tiempo real, puedes enviar el resumen directo al WhatsApp del Químico Farmacéutico:
+              </p>
+
+              {/* Acciones de la pantalla de confirmación */}
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <a
+                  href={`https://wa.me/51955545561?text=${buildWhatsAppMessage()}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20b859] text-white py-3.5 px-6 rounded-lg text-xs font-black uppercase tracking-wider transition-colors shadow-md cursor-pointer"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Enviar resumen a WhatsApp (+51 955 545 561)</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubmitted(false);
+                    onClose();
+                  }}
+                  className="w-full sm:w-auto py-3.5 px-6 text-xs font-bold uppercase tracking-wider border border-gray-300 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors"
+                >
+                  Cerrar y Continuar
+                </button>
+              </div>
             </div>
           ) : (
             <div>
@@ -237,7 +298,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({ isOpen, onClose 
                     Enviar y Recibir Cotización
                   </button>
                   <a
-                    href={`https://wa.me/51955545561?text=Hola%20Botica%20Nova%20Salud,%20deseo%20cotizar%20la%20siguiente%20receta%20o%20tratamiento:%20${encodeURIComponent(medicines || 'Consulta médica')}`}
+                    href={`https://wa.me/51955545561?text=${buildWhatsAppMessage()}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-[#25D366] hover:bg-[#20b859] text-white py-4 px-6 text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer transition-colors"
