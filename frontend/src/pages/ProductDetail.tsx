@@ -170,13 +170,13 @@ const ProductDetail = () => {
       {/* Main Product Section */}
       <section className="pt-4 pb-12 sm:pt-6 sm:pb-16 md:pb-20">
         <div className="container-full">
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start w-full min-w-0">
             
             {/* Left Column: Image Container with Zoom & Thumbnails (5 cols) */}
-            <div className="lg:col-span-5 space-y-4">
+            <div className="w-full min-w-0 max-w-full lg:col-span-5 space-y-4">
               {/* Main Image Box */}
               <div
-                className="relative aspect-square max-h-[440px] md:max-h-[480px] w-full bg-white dark:bg-card/50 border border-border/80 rounded-xl overflow-hidden p-6 flex items-center justify-center cursor-crosshair group shadow-sm select-none"
+                className="relative aspect-square max-h-[340px] sm:max-h-[440px] md:max-h-[480px] w-full max-w-full bg-white dark:bg-card/50 border border-border/80 rounded-xl overflow-hidden p-6 flex items-center justify-center cursor-crosshair group shadow-sm select-none"
                 onMouseEnter={() => setIsZoomed(true)}
                 onMouseLeave={() => {
                   setIsZoomed(false);
@@ -298,7 +298,7 @@ const ProductDetail = () => {
             </div>
 
             {/* Right Column: Clinical Details, Presentations, Pricing & Actions (7 cols) */}
-            <div className="lg:col-span-7 space-y-5">
+            <div className="w-full min-w-0 max-w-full lg:col-span-7 space-y-5">
               {/* Category & Badge */}
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 {collection && (

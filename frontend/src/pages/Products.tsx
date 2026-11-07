@@ -278,7 +278,7 @@ const Products = () => {
                     variant="outline"
                     size="lg"
                     onClick={() => setVisibleCount((prev) => prev + 24)}
-                    className="rounded-full px-8 py-2.5 text-xs font-semibold tracking-wider uppercase border-border/80 hover:bg-emerald-50 hover:text-emerald-800 dark:hover:bg-emerald-950/30 transition-all shadow-sm"
+                    className="w-full sm:w-auto max-w-full whitespace-normal h-auto rounded-full px-6 py-3 text-xs font-semibold tracking-wider uppercase border-border/80 hover:bg-emerald-50 hover:text-emerald-800 dark:hover:bg-emerald-950/30 transition-all shadow-sm"
                   >
                     Cargar más medicamentos ({filteredAndSortedProducts.length - visibleCount} restantes)
                   </Button>
