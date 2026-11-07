@@ -129,7 +129,7 @@ const Index = () => {
       </section>
 
       {/* Featured Collection */}
-      <section className="py-20 md:py-28">
+      <section className="py-20 md:py-28 overflow-hidden">
         <div className="container-full">
           <div className="grid md:grid-cols-2 gap-8 lg:gap-16 items-center">
             <motion.div
@@ -157,7 +157,7 @@ const Index = () => {
               <p className="text-[11px] font-semibold tracking-[0.3em] uppercase text-primary mb-4">
                 Colección Destacada
               </p>
-              <h2 className="font-sans font-bold text-4xl md:text-5xl lg:text-6xl text-foreground mb-6 leading-[1] tracking-tight">
+              <h2 className="font-sans font-bold text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-foreground mb-6 leading-[1] tracking-tight break-words">
                 {featuredCollection.name}
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-8 max-w-md">
@@ -179,7 +179,7 @@ const Index = () => {
       </section>
 
       {/* Latest Products */}
-      <section className="py-20 md:py-28 bg-linen">
+      <section className="py-20 md:py-28 bg-linen overflow-hidden">
         <div className="container-full">
           <div className="flex items-end justify-between mb-14">
             <motion.div
@@ -223,7 +223,7 @@ const Index = () => {
       </section>
 
       {/* Collections Grid */}
-      <section className="py-24 md:py-32">
+      <section className="py-24 md:py-32 overflow-hidden">
         <div className="container-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -290,7 +290,7 @@ const Index = () => {
       </section>
 
       {/* About Us Section */}
-      <section className="py-24 md:py-32 bg-linen">
+      <section className="py-24 md:py-32 bg-linen overflow-hidden">
         <div className="container-narrow text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -301,7 +301,7 @@ const Index = () => {
             <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-primary mb-6">
               Compromiso & Vocación
             </p>
-            <h2 className="font-sans font-bold text-3xl md:text-4xl lg:text-5xl text-foreground leading-[1.2] mb-8 tracking-tight">
+            <h2 className="font-sans font-bold text-2xl sm:text-4xl lg:text-5xl text-foreground leading-[1.2] mb-8 tracking-tight break-words">
               Creemos que la salud de tu familia merece cercanía, calidez humana y medicamentos certificados con{" "}
               <span className="text-primary font-bold">garantía total</span>.
             </h2>
@@ -324,7 +324,7 @@ const Index = () => {
       </section>
 
       {/* Follow Us / Redes Sociales Section */}
-      <section className="py-20 md:py-28">
+      <section className="py-20 md:py-28 overflow-hidden">
         <div className="container-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

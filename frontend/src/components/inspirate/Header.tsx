@@ -214,7 +214,7 @@ export const Header: React.FC<HeaderProps> = ({
       </Link>
 
       {/* Right Navigation & Action Icons */}
-      <div className="flex items-center gap-2 lg:gap-3">
+      <div className="flex items-center gap-1 sm:gap-2 lg:gap-3 shrink-0">
         {/* ICONO 1: Acceso Cliente / Mi Cuenta & Pedidos */}
         <Link
           to="/mi-cuenta"
@@ -225,9 +225,9 @@ export const Header: React.FC<HeaderProps> = ({
               : 'Iniciar Sesión / Crear Cuenta de Cliente'
           }
           aria-label="Área de Cliente"
-          className="relative w-[36px] h-[36px] flex items-center justify-center text-[#18181b] hover:text-[#0d9488] hover:bg-zinc-100/70 rounded-full transition-all duration-200 cursor-pointer"
+          className="relative w-[32px] sm:w-[36px] h-[32px] sm:h-[36px] flex items-center justify-center text-[#18181b] hover:text-[#0d9488] hover:bg-zinc-100/70 rounded-full transition-all duration-200 cursor-pointer"
         >
-          <User className="w-[18px] h-[18px]" strokeWidth={1.8} />
+          <User className="w-[17px] sm:w-[18px] h-[17px] sm:h-[18px]" strokeWidth={1.8} />
           {activeClient && (
             <span
               className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#0d9488] ring-2 ring-white"
@@ -242,9 +242,9 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={closeDropdown}
           title="Ingreso al Sistema de Inventario & POS"
           aria-label="Sistema de Inventario"
-          className="w-[36px] h-[36px] flex items-center justify-center text-[#18181b] hover:text-[#0d9488] hover:bg-zinc-100/70 rounded-full transition-all duration-200 cursor-pointer"
+          className="w-[32px] sm:w-[36px] h-[32px] sm:h-[36px] flex items-center justify-center text-[#18181b] hover:text-[#0d9488] hover:bg-zinc-100/70 rounded-full transition-all duration-200 cursor-pointer"
         >
-          <LogIn className="w-[18px] h-[18px]" strokeWidth={1.8} />
+          <LogIn className="w-[17px] sm:w-[18px] h-[17px] sm:h-[18px]" strokeWidth={1.8} />
         </Link>
 
         <span className="h-[18px] w-[1px] bg-zinc-200 hidden sm:block" />
@@ -258,11 +258,11 @@ export const Header: React.FC<HeaderProps> = ({
           }}
           aria-label="Favoritos"
           title="Mis Favoritos"
-          className="relative w-[36px] h-[36px] flex items-center justify-center text-[#18181b] hover:text-[#0d9488] hover:bg-zinc-100/70 rounded-full transition-all duration-200 cursor-pointer"
+          className="relative w-[32px] sm:w-[36px] h-[32px] sm:h-[36px] flex items-center justify-center text-[#18181b] hover:text-[#0d9488] hover:bg-zinc-100/70 rounded-full transition-all duration-200 cursor-pointer"
         >
           <svg
-            width="18"
-            height="18"
+            width="17"
+            height="17"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -291,11 +291,11 @@ export const Header: React.FC<HeaderProps> = ({
           }}
           aria-label="Bolsa de Compras"
           title="Bolsa de Compras"
-          className="relative w-[36px] h-[36px] flex items-center justify-center text-[#18181b] hover:text-[#0d9488] hover:bg-zinc-100/70 rounded-full transition-all duration-200 cursor-pointer"
+          className="relative w-[32px] sm:w-[36px] h-[32px] sm:h-[36px] flex items-center justify-center text-[#18181b] hover:text-[#0d9488] hover:bg-zinc-100/70 rounded-full transition-all duration-200 cursor-pointer"
         >
           <svg
-            width="18"
-            height="18"
+            width="17"
+            height="17"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"

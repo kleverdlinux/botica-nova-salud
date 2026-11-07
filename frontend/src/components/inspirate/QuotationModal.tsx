@@ -181,7 +181,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({ isOpen, onClose 
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form id="quotation-form" onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                 {/* Request Type */}
                 <div>
                   <label className="block text-xs font-extrabold uppercase tracking-wider text-[#222222] mb-2">
@@ -193,7 +193,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({ isOpen, onClose 
                         type="button"
                         key={type}
                         onClick={() => setReqType(type)}
-                        className={`py-2 px-3 text-xs font-bold uppercase tracking-wider border transition-all text-left cursor-pointer ${
+                        className={`py-2 px-3 text-xs font-bold uppercase tracking-wider border transition-all text-left cursor-pointer rounded-xs ${
                           reqType === type
                             ? 'border-[#0d9488] bg-[#0d9488] text-white shadow-sm'
                             : 'border-gray-200 hover:border-gray-400 text-[#444444]'
@@ -216,7 +216,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({ isOpen, onClose 
                         type="button"
                         key={p}
                         onClick={() => setPreference(p)}
-                        className={`py-2 px-3 text-xs font-bold uppercase tracking-wider border transition-all text-center cursor-pointer ${
+                        className={`py-2 px-3 text-xs font-bold uppercase tracking-wider border transition-all text-center cursor-pointer rounded-xs ${
                           preference === p
                             ? 'border-[#0d9488] bg-[#0d9488] text-white shadow-sm'
                             : 'border-gray-200 hover:border-gray-400 text-[#444444]'
@@ -239,7 +239,7 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({ isOpen, onClose 
                         type="button"
                         key={opt}
                         onClick={() => setDeliveryType(opt)}
-                        className={`py-2.5 px-3 text-xs font-extrabold uppercase tracking-wider border transition-all text-center cursor-pointer ${
+                        className={`py-2.5 px-3 text-xs font-extrabold uppercase tracking-wider border transition-all text-center cursor-pointer rounded-xs ${
                           deliveryType === opt
                             ? 'border-[#18181b] bg-[#18181b] text-white shadow-sm'
                             : 'border-gray-200 hover:border-gray-400 text-[#444444]'
@@ -289,27 +289,32 @@ export const QuotationModal: React.FC<QuotationModalProps> = ({ isOpen, onClose 
                     />
                   </div>
                 </div>
-
-                <div className="pt-2 flex flex-col sm:flex-row gap-3">
-                  <button
-                    type="submit"
-                    className="btn-corner-accent btn-corner-dark flex-1 py-4 text-xs font-black uppercase tracking-widest cursor-pointer"
-                  >
-                    Enviar y Recibir Cotización
-                  </button>
-                  <a
-                    href={`https://wa.me/51955545561?text=${buildWhatsAppMessage()}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-[#25D366] hover:bg-[#20b859] text-white py-4 px-6 text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer transition-colors"
-                  >
-                    Pedir por WhatsApp
-                  </a>
-                </div>
               </form>
             </div>
           )}
         </div>
+
+        {/* Sticky Action Footer - Siempre visible en PC y Móvil sin cortarse */}
+        {!submitted && (
+          <div className="p-4 sm:p-5 bg-zinc-50 border-t border-gray-100 shrink-0 flex flex-col sm:flex-row gap-2.5 sm:gap-3">
+            <button
+              type="submit"
+              form="quotation-form"
+              className="btn-corner-accent btn-corner-dark flex-1 py-3.5 sm:py-4 text-xs font-black uppercase tracking-widest cursor-pointer shadow-sm hover:opacity-95 transition-opacity"
+            >
+              Enviar y Recibir Cotización
+            </button>
+            <a
+              href={`https://wa.me/51955545561?text=${buildWhatsAppMessage()}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#25D366] hover:bg-[#20b859] text-white py-3.5 sm:py-4 px-6 text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-sm rounded-sm"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>Pedir por WhatsApp</span>
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -31,29 +31,40 @@ export const BrandModal: React.FC<BrandModalProps> = ({
       }}
     >
       <div className="relative w-full max-w-4xl bg-white shadow-2xl rounded-xl border border-zinc-200 my-auto max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        {/* Cabecera Fija */}
-        <div className="sticky top-0 z-20 bg-white border-b border-zinc-200 px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center text-[#0d9488]">
-              <MapPin className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#0d9488]">
-                Botica Nova Salud • Sede Lima
+        {/* Cabecera Fija Responsiva */}
+        <div className="sticky top-0 z-20 bg-white border-b border-zinc-200 px-4 sm:px-6 py-3.5 sm:py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center justify-between w-full sm:w-auto">
+            <div className="flex items-center gap-3">
+              <div className="w-9 sm:w-10 h-9 sm:h-10 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center text-[#0d9488] shrink-0">
+                <MapPin className="w-4 sm:w-5 h-4 sm:h-5" />
               </div>
-              <h2 className="text-lg sm:text-xl font-black text-zinc-900 leading-tight">
-                Nosotros & Dónde Ubicarnos
-              </h2>
+              <div className="min-w-0">
+                <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#0d9488] truncate">
+                  Botica Nova Salud • Sede Lima
+                </div>
+                <h2 className="text-base sm:text-xl font-black text-zinc-900 leading-tight truncate">
+                  Nosotros & Dónde Ubicarnos
+                </h2>
+              </div>
             </div>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="sm:hidden w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-950 flex items-center justify-center transition-colors cursor-pointer shrink-0 ml-2"
+              aria-label="Cerrar modal"
+            >
+              <X className="w-4 h-4 stroke-[2.2]" />
+            </button>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
             {/* Selector de Pestaña */}
-            <div className="flex bg-zinc-100 p-1 rounded-lg border border-zinc-200 text-xs font-bold">
+            <div className="flex flex-1 sm:flex-none bg-zinc-100 p-1 rounded-lg border border-zinc-200 text-xs font-bold">
               <button
                 type="button"
                 onClick={() => setActiveTab('historia')}
-                className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
+                className={`flex-1 sm:flex-none px-3 py-1.5 rounded-md transition-all cursor-pointer text-center ${
                   activeTab === 'historia'
                     ? 'bg-white text-zinc-950 shadow-xs'
                     : 'text-zinc-600 hover:text-zinc-950'
@@ -64,21 +75,21 @@ export const BrandModal: React.FC<BrandModalProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('mapa')}
-                className={`px-3 py-1.5 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                className={`flex-1 sm:flex-none px-3 py-1.5 rounded-md transition-all cursor-pointer flex items-center justify-center gap-1 ${
                   activeTab === 'mapa'
                     ? 'bg-white text-zinc-950 shadow-xs'
                     : 'text-zinc-600 hover:text-zinc-950'
                 }`}
               >
                 <MapPin className="w-3.5 h-3.5 text-[#0d9488]" />
-                Dónde Ubicarnos (Mapa)
+                <span>Dónde Ubicarnos</span>
               </button>
             </div>
 
             <button
               type="button"
               onClick={onClose}
-              className="w-9 h-9 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-950 flex items-center justify-center transition-colors cursor-pointer ml-1"
+              className="hidden sm:flex w-9 h-9 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-950 items-center justify-center transition-colors cursor-pointer ml-1 shrink-0"
               aria-label="Cerrar modal"
             >
               <X className="w-5 h-5 stroke-[2.2]" />

@@ -49,16 +49,16 @@ export const ReclamacionesModal: React.FC<ReclamacionesModalProps> = ({ isOpen, 
     >
       <div className="relative w-full max-w-3xl bg-white shadow-2xl rounded-xl border border-zinc-200 overflow-hidden my-auto max-h-[92vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
         {/* Cabecera Fija */}
-        <div className="sticky top-0 z-20 bg-white border-b border-zinc-200 px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center text-[#0d9488]">
-              <FileText className="w-5 h-5" />
+        <div className="sticky top-0 z-20 bg-white border-b border-zinc-200 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-9 sm:w-10 h-9 sm:h-10 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center text-[#0d9488] shrink-0">
+              <FileText className="w-4 sm:w-5 h-4 sm:h-5" />
             </div>
-            <div>
-              <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#0d9488]">
+            <div className="min-w-0">
+              <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#0d9488] truncate">
                 Conforme a Ley N° 29571 • INDECOPI
               </div>
-              <h2 className="text-lg sm:text-xl font-black text-zinc-900 leading-tight">
+              <h2 className="text-base sm:text-xl font-black text-zinc-900 leading-tight truncate">
                 Libro de Reclamaciones Virtual
               </h2>
             </div>
@@ -66,15 +66,15 @@ export const ReclamacionesModal: React.FC<ReclamacionesModalProps> = ({ isOpen, 
           <button
             type="button"
             onClick={onClose}
-            className="w-9 h-9 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-950 flex items-center justify-center transition-colors cursor-pointer"
+            className="w-8 sm:w-9 h-8 sm:h-9 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-950 flex items-center justify-center transition-colors cursor-pointer shrink-0 ml-2"
             aria-label="Cerrar libro de reclamaciones"
           >
-            <X className="w-5 h-5 stroke-[2.2]" />
+            <X className="w-4 sm:w-5 h-4 sm:h-5 stroke-[2.2]" />
           </button>
         </div>
 
         {/* Cuerpo del Modal con Scroll */}
-        <div className="p-6 sm:p-8 overflow-y-auto space-y-6 text-zinc-800 text-sm">
+        <div className="p-4 sm:p-8 overflow-y-auto space-y-6 text-zinc-800 text-sm">
           {submitted ? (
             <div className="text-center py-10 space-y-5">
               <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">

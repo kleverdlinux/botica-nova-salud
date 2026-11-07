@@ -74,6 +74,9 @@ export function getCustomerOrders(clientIdentifier?: string | { dni?: string; em
     let orders: CustomerOrder[] = JSON.parse(raw);
     if (!Array.isArray(orders)) return [];
 
+    // Filtrar entradas corruptas o nulas
+    orders = orders.filter((o) => o && typeof o === 'object');
+
     // Si se pasa un objeto de cliente o un identificador en string
     if (clientIdentifier) {
       if (typeof clientIdentifier === 'string') {
@@ -81,10 +84,10 @@ export function getCustomerOrders(clientIdentifier?: string | { dni?: string; em
         if (!idf) return orders;
         return orders.filter(
           (o) =>
-            o.customer.dni?.trim().toLowerCase() === idf ||
-            o.customer.email?.trim().toLowerCase() === idf ||
-            (o.customer.ruc && o.customer.ruc?.trim().toLowerCase() === idf) ||
-            (o.customer.phone && o.customer.phone?.trim().replace(/\D/g, '') === idf.replace(/\D/g, ''))
+            o.customer?.dni?.trim().toLowerCase() === idf ||
+            o.customer?.email?.trim().toLowerCase() === idf ||
+            (o.customer?.ruc && o.customer.ruc.trim().toLowerCase() === idf) ||
+            (o.customer?.phone && o.customer.phone.trim().replace(/\D/g, '') === idf.replace(/\D/g, ''))
         );
       } else {
         const dni = clientIdentifier.dni?.trim().toLowerCase();
@@ -93,10 +96,11 @@ export function getCustomerOrders(clientIdentifier?: string | { dni?: string; em
         const id = clientIdentifier.id?.trim().toLowerCase();
 
         return orders.filter((o) => {
-          const cDni = o.customer.dni?.trim().toLowerCase();
-          const cEmail = o.customer.email?.trim().toLowerCase();
-          const cRuc = o.customer.ruc?.trim().toLowerCase();
-          const cPhone = o.customer.phone?.trim().replace(/\D/g, '');
+          if (!o.customer) return false;
+          const cDni = o.customer.dni?.trim().toLowerCase() || '';
+          const cEmail = o.customer.email?.trim().toLowerCase() || '';
+          const cRuc = o.customer.ruc?.trim().toLowerCase() || '';
+          const cPhone = o.customer.phone?.trim().replace(/\D/g, '') || '';
 
           if (dni && (cDni === dni || cRuc === dni)) return true;
           if (email && cEmail === email) return true;

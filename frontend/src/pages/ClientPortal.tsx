@@ -148,7 +148,15 @@ export default function ClientPortal() {
       try {
         const fichaGuardada = localStorage.getItem(`novasalud_ficha_${client.dni}`);
         if (fichaGuardada) {
-          setFichaSalud(JSON.parse(fichaGuardada));
+          const parsed = JSON.parse(fichaGuardada);
+          setFichaSalud({
+            alergias: Array.isArray(parsed?.alergias) ? parsed.alergias : [],
+            condiciones: Array.isArray(parsed?.condiciones) ? parsed.condiciones : [],
+            grupoSanguineo: parsed?.grupoSanguineo || 'O+',
+            contactoEmergenciaNombre: parsed?.contactoEmergenciaNombre || '',
+            contactoEmergenciaTelefono: parsed?.contactoEmergenciaTelefono || '',
+            observaciones: parsed?.observaciones || '',
+          });
         }
       } catch (e) {
         console.warn('Error al leer ficha de salud:', e);
@@ -319,11 +327,10 @@ export default function ClientPortal() {
   const pedidosFiltrados = orders.filter((o) => {
     if (!filtroPedidos.trim()) return true;
     const term = filtroPedidos.toLowerCase();
-    return (
-      o.id.toLowerCase().includes(term) ||
-      o.serieNumero.toLowerCase().includes(term) ||
-      o.items.some((i) => i.name.toLowerCase().includes(term))
-    );
+    const matchId = (o?.id || '').toLowerCase().includes(term);
+    const matchSerie = (o?.serieNumero || '').toLowerCase().includes(term);
+    const matchItems = Array.isArray(o?.items) && o.items.some((i) => (i?.name || '').toLowerCase().includes(term));
+    return matchId || matchSerie || matchItems;
   });
 
   // Si el usuario no ha iniciado sesión, mostrar la pantalla de acceso oficial
@@ -352,7 +359,7 @@ export default function ClientPortal() {
       id: 'salud' as const,
       label: 'Ficha Médica & Alergias',
       icon: HeartPulse,
-      hasAlert: fichaSalud.alergias.length > 0,
+      hasAlert: (fichaSalud?.alergias || []).length > 0,
     },
     {
       id: 'datos' as const,
@@ -401,12 +408,12 @@ export default function ClientPortal() {
                   <div className="flex items-center gap-1.5">
                     <HeartPulse className="w-3.5 h-3.5 text-[#0d9488] dark:text-teal-400" />
                     <span className="text-[11px] font-bold text-neutral-700 dark:text-neutral-300">
-                      Grupo <span className="font-mono font-black text-neutral-900 dark:text-white">{fichaSalud.grupoSanguineo || 'O+'}</span>
+                      Grupo <span className="font-mono font-black text-neutral-900 dark:text-white">{fichaSalud?.grupoSanguineo || 'O+'}</span>
                     </span>
                   </div>
-                  {fichaSalud.alergias.length > 0 ? (
+                  {(fichaSalud?.alergias || []).length > 0 ? (
                     <span className="text-[9px] font-bold text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-1.5 py-0.2 rounded border border-rose-200 dark:border-rose-800">
-                      {fichaSalud.alergias.length} Alergia{fichaSalud.alergias.length > 1 ? 's' : ''}
+                      {(fichaSalud?.alergias || []).length} Alergia{(fichaSalud?.alergias || []).length > 1 ? 's' : ''}
                     </span>
                   ) : (
                     <span className="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-200 dark:border-emerald-800">
@@ -901,7 +908,7 @@ export default function ClientPortal() {
                           'Cefalosporinas',
                           'Ninguna conocida',
                         ].map((alergia) => {
-                          const seleccionada = fichaSalud.alergias.includes(alergia);
+                          const seleccionada = (fichaSalud?.alergias || []).includes(alergia);
                           return (
                             <button
                               type="button"
@@ -939,7 +946,7 @@ export default function ClientPortal() {
                           'Enfermedad Renal',
                           'Ninguna condición',
                         ].map((cond) => {
-                          const seleccionada = fichaSalud.condiciones.includes(cond);
+                          const seleccionada = (fichaSalud?.condiciones || []).includes(cond);
                           return (
                             <button
                               type="button"

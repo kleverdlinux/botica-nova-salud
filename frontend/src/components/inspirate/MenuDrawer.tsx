@@ -60,9 +60,10 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-white flex flex-col justify-between p-4 sm:p-8 md:p-12 animate-in fade-in duration-200">
-      {/* Top Bar with Close */}
-      <div className="max-w-7xl mx-auto w-full flex items-center justify-between border-b border-zinc-200 pb-4 sm:pb-6">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-white p-4 sm:p-8 md:p-12 animate-in fade-in duration-200">
+      <div className="min-h-full max-w-7xl mx-auto flex flex-col justify-between">
+        {/* Top Bar with Close */}
+        <div className="w-full flex items-center justify-between border-b border-zinc-200 pb-4 sm:pb-6">
         <div className="flex items-center gap-2">
           <span className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950">
             NOVA<span className="text-[#0d9488] ml-1">SALUD</span>
@@ -262,10 +263,11 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="max-w-7xl mx-auto w-full pt-4 sm:pt-6 border-t border-zinc-200 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-2">
-        <span>© 2026 Botica Nova Salud • Farmacia Ética & Dispensación Profesional</span>
-        <span>Atención Presencial en Lima & Delivery Express</span>
+        {/* Bottom Bar */}
+        <div className="w-full pt-4 sm:pt-6 border-t border-zinc-200 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-2">
+          <span>© 2026 Botica Nova Salud • Farmacia Ética & Dispensación Profesional</span>
+          <span>Atención Presencial en Lima & Delivery Express</span>
+        </div>
       </div>
     </div>
   );

@@ -34,10 +34,10 @@ export const Layout = ({ children }: LayoutProps) => {
   }, []);
   return (
     <TooltipProvider>
-      <div className="min-h-screen flex flex-col bg-background text-foreground relative pt-[70px] lg:pt-[76px]">
+      <div className="min-h-screen flex flex-col bg-background text-foreground relative pt-[70px] lg:pt-[76px] overflow-x-clip max-w-full">
         <Header />
         <motion.main
-          className="flex-1"
+          className="flex-1 w-full min-w-0 overflow-x-clip"
           variants={pageVariants}
           initial="initial"
           animate="animate"

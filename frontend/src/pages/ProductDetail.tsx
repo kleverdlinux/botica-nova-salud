@@ -121,15 +121,19 @@ const ProductDetail = () => {
     setQuantity(1);
   };
 
+  const productImages = Array.isArray(product.images) && product.images.length > 0
+    ? product.images
+    : [collection?.image || "/media/botica-hero-clean.jpg"];
+
   const nextImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === product.images.length - 1 ? 0 : prev + 1
+      prev >= productImages.length - 1 ? 0 : prev + 1
     );
   };
 
   const prevImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === 0 ? product.images.length - 1 : prev - 1
+      prev <= 0 ? productImages.length - 1 : prev - 1
     );
   };
 
@@ -186,7 +190,7 @@ const ProductDetail = () => {
               >
                 <img
                   key={currentImageIndex}
-                  src={product.images[currentImageIndex]}
+                  src={productImages[currentImageIndex] || productImages[0]}
                   alt={product.name}
                   onError={(e) => {
                     const target = e.currentTarget;
@@ -204,7 +208,7 @@ const ProductDetail = () => {
 
 
                 {/* Flechas de navegación si hay más de 1 imagen */}
-                {product.images.length > 1 && (
+                {productImages.length > 1 && (
                   <>
                     <button
                       type="button"
@@ -247,9 +251,9 @@ const ProductDetail = () => {
               </div>
 
               {/* Thumbnails si tiene múltiples imágenes */}
-              {product.images.length > 1 && (
+              {productImages.length > 1 && (
                 <div className="flex gap-2.5 overflow-x-auto pb-1">
-                  {product.images.map((image, index) => (
+                  {productImages.map((image, index) => (
                     <button
                       key={index}
                       type="button"

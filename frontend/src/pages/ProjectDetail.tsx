@@ -128,7 +128,7 @@ const ProjectDetail: React.FC = () => {
             >
               <p className="text-xs text-muted-foreground mb-3">Servicios y Procedimientos Clínicos</p>
               <div className="flex flex-wrap gap-2">
-                {project.services.map((service) => (
+                {(project.services || []).map((service) => (
                   <span 
                     key={service}
                     className="px-3 py-1.5 text-xs font-medium text-foreground bg-secondary rounded-full"
@@ -168,7 +168,7 @@ const ProjectDetail: React.FC = () => {
               className="mb-16"
             >
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {project.gallery.map((image, index) => (
+                {(project.gallery || []).map((image, index) => (
                   <div key={index} className="overflow-hidden group">
                     <img
                       src={image}

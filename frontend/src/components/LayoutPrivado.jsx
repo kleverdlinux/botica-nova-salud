@@ -82,6 +82,10 @@ export default function LayoutPrivado() {
   // Recargar alertas al navegar entre páginas para reflejar cambios inmediatos
   useEffect(() => {
     consultarAlertas();
+    // En móviles, cerrar automáticamente el sidebar al cambiar de ruta
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setSidebarAbierto(false);
+    }
   }, [location.pathname, location.search, consultarAlertas]);
 
   // Cerrar dropdown al hacer clic fuera
@@ -518,6 +522,15 @@ export default function LayoutPrivado() {
           </button>
         </div>
       </aside>
+
+      {/* Backdrop overlay para móviles cuando el sidebar está abierto */}
+      {sidebarAbierto && (
+        <div
+          onClick={toggleSidebar}
+          className="fixed inset-0 z-30 bg-black/50 backdrop-blur-xs md:hidden"
+          aria-hidden="true"
+        />
+      )}
 
       {/* Contenido Principal con Scroll Independiente */}
       <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
