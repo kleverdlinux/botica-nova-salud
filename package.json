@@ -5,8 +5,8 @@
   "description": "Sistema Farmacéutico Integral & E-commerce - Botica Nova Salud",
   "type": "module",
   "scripts": {
-    "render-build": "npm install --prefix backend && npm install --prefix frontend && npm --prefix backend run prisma:generate && npm --prefix frontend run build",
-    "render-start": "npm --prefix backend run prisma:deploy && node backend/src/server.js",
+    "render-build": "npm install --prefix backend --include=dev --production=false && npm install --prefix frontend --include=dev --production=false && npm --prefix backend run prisma:generate && npm --prefix frontend run build",
+    "render-start": "npm --prefix backend run prisma:deploy && (npm --prefix backend run prisma:seed || true) && node backend/src/server.js",
     "build": "npm --prefix backend run prisma:generate && npm --prefix frontend run build",
     "start": "node backend/src/server.js",
     "prisma:deploy": "npm --prefix backend run prisma:deploy",

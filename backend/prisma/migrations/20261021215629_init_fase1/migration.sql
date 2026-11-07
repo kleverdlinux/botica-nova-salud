@@ -2,7 +2,7 @@
 CREATE SCHEMA IF NOT EXISTS "public";
 
 -- CreateEnum
-CREATE TYPE "Rol" AS ENUM ('ADMIN', 'CAJERO');
+CREATE TYPE "Rol" AS ENUM ('ADMIN', 'CAJERO', 'ALMACEN');
 
 -- CreateEnum
 CREATE TYPE "TipoMovimiento" AS ENUM ('ENTRADA', 'SALIDA', 'AJUSTE');
@@ -17,6 +17,8 @@ CREATE TABLE "Usuario" (
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "rol" "Rol" NOT NULL DEFAULT 'CAJERO',
+    "avatar" TEXT,
+    "telefono" TEXT,
     "activo" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
