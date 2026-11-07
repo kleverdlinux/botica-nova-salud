@@ -156,7 +156,9 @@ const Products = () => {
               )}
             />
           ))}
-          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-charcoal/30 to-charcoal/15" />
+          {/* Overlay oscuro para máximo contraste y legibilidad impecable de los títulos blancos */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/50 to-black/30 pointer-events-none" />
+          <div className="absolute inset-0 bg-black/25 pointer-events-none" />
         </div>
 
         <div className="relative container-full h-full flex flex-col justify-end pb-12 md:pb-16">
@@ -165,14 +167,14 @@ const Products = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const }}
           >
-            <p className="text-[11px] font-extrabold tracking-[0.2em] uppercase text-teal-300 mb-2">
+            <p className="text-[11px] font-extrabold tracking-[0.2em] uppercase text-teal-300 mb-2 drop-shadow-sm">
               {currentCollection ? "Colección" : "Catálogo Oficial"}
             </p>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-3 font-black uppercase tracking-[-0.03em] leading-[0.95]">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-3 font-black uppercase tracking-[-0.03em] leading-[0.95] drop-shadow-lg">
               {currentCollection ? currentCollection.name : "Medicamentos & Salud"}
             </h1>
             {currentCollection && (
-              <p className="text-sm md:text-base text-white/90 max-w-xl font-normal leading-relaxed">
+              <p className="text-sm md:text-base text-white/95 max-w-xl font-medium leading-relaxed drop-shadow-sm">
                 {currentCollection.description}
               </p>
             )}

@@ -43,7 +43,6 @@ export const SITE_IMAGES = {
   star2: 'https://static.tildacdn.com/tild6439-3131-4466-b332-356462396336/Star_2.svg',
 
   heroSlides: [
-    '/media/home/hero-slide-1.jpg',
     '/media/home/hero-slide-2.jpg',
     '/media/home/hero-slide-3.jpg',
   ],

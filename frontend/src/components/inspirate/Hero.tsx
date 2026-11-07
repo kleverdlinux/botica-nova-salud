@@ -52,8 +52,8 @@ export const Hero: React.FC<HeroProps> = ({
           >
             {idx === 0 ? (
               <picture className="w-full h-full block">
-                <source media="(max-width: 640px)" srcSet="/media/home/hero-slide-1-mobile.webp" type="image/webp" />
-                <source srcSet="/media/home/hero-slide-1.webp" type="image/webp" />
+                <source media="(max-width: 640px)" srcSet="/media/home/hero-slide-2-mobile.webp" type="image/webp" />
+                <source srcSet="/media/home/hero-slide-2.webp" type="image/webp" />
                 <img
                   src={src}
                   alt="Botica Nova Salud - Salud & Confianza Cerca de tu Familia"
@@ -64,14 +64,18 @@ export const Hero: React.FC<HeroProps> = ({
                 />
               </picture>
             ) : (
-              <img
-                src={src}
-                alt={`Botica Nova Salud ${idx + 1}`}
-                loading="lazy"
-                decoding="async"
-                fetchPriority="low"
-                className="w-full h-full object-cover object-center"
-              />
+              <picture className="w-full h-full block">
+                <source media="(max-width: 640px)" srcSet="/media/home/hero-slide-3-mobile.webp" type="image/webp" />
+                <source srcSet="/media/home/hero-slide-3.webp" type="image/webp" />
+                <img
+                  src={src}
+                  alt={`Botica Nova Salud ${idx + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                  fetchPriority="low"
+                  className="w-full h-full object-cover object-center"
+                />
+              </picture>
             )}
           </div>
         );
