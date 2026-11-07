@@ -186,7 +186,7 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto sm:overflow-hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-200 print:p-0 print:bg-white"
+      className="fixed inset-0 z-60 overflow-y-auto sm:overflow-hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-200 print:p-0 print:bg-white"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -529,7 +529,7 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
       {/* Modal de Zoom para Código QR Oficial SUNAT */}
       {isQrZoomed && (
         <div
-          className="fixed inset-0 z-60 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150"
+          className="fixed inset-0 z-70 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150"
           onClick={() => setIsQrZoomed(false)}
         >
           <div
