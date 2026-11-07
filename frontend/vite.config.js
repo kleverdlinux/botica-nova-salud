@@ -37,7 +37,16 @@ export default defineConfig({
             if (id.includes('lucide-react') || id.includes('react-icons')) {
               return 'vendor-icons';
             }
-            if (id.includes('sweetalert2') || id.includes('qrcode') || id.includes('html2canvas') || id.includes('axios') || id.includes('zod')) {
+            if (id.includes('html2canvas')) {
+              return 'vendor-canvas';
+            }
+            if (id.includes('qrcode')) {
+              return 'vendor-qrcode';
+            }
+            if (id.includes('sweetalert2')) {
+              return 'vendor-swal';
+            }
+            if (id.includes('axios') || id.includes('zod')) {
               return 'vendor-utils';
             }
             return 'vendor-libs';

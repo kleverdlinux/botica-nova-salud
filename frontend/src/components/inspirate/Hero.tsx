@@ -32,18 +32,33 @@ export const Hero: React.FC<HeroProps> = ({
       {ASSETS.heroSlides.map((src, idx) => (
         <div
           key={src}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-out ${
+          className={`absolute inset-0 ${
             idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-          }`}
+          } ${currentSlide === 0 && idx === 0 ? '' : 'transition-opacity duration-700 ease-out'}`}
         >
-          <img
-            src={src}
-            alt={`Botica Nova Salud ${idx + 1}`}
-            loading={idx === 0 ? "eager" : "lazy"}
-            decoding={idx === 0 ? "sync" : "async"}
-            fetchPriority={idx === 0 ? "high" : "low"}
-            className="w-full h-full object-cover object-center"
-          />
+          {idx === 0 ? (
+            <picture className="w-full h-full block">
+              <source media="(max-width: 640px)" srcSet="/media/home/hero-slide-1-mobile.webp" type="image/webp" />
+              <source srcSet="/media/home/hero-slide-1.webp" type="image/webp" />
+              <img
+                src={src}
+                alt="Botica Nova Salud - Salud & Confianza Cerca de tu Familia"
+                loading="eager"
+                decoding="sync"
+                fetchPriority="high"
+                className="w-full h-full object-cover object-center"
+              />
+            </picture>
+          ) : (
+            <img
+              src={src}
+              alt={`Botica Nova Salud ${idx + 1}`}
+              loading="lazy"
+              decoding="async"
+              fetchPriority="low"
+              className="w-full h-full object-cover object-center"
+            />
+          )}
         </div>
       ))}
 

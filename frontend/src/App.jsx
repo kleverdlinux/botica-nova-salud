@@ -8,6 +8,7 @@ import { TooltipProvider } from './components/ui/tooltip';
 import { ScrollToTop } from './components/ScrollToTop';
 import { useAuth } from './context/AuthContext.jsx';
 import GestorInactividadSeguridad from './components/GestorInactividadSeguridad.jsx';
+import Inicio from './pages/Inicio.jsx';
 
 // Carga diferida inteligente (Code Splitting con React.lazy)
 const LayoutPrivado = React.lazy(() => import('./components/LayoutPrivado.jsx'));
@@ -19,7 +20,6 @@ const Ventas = React.lazy(() => import('./pages/Ventas.jsx'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard.jsx'));
 const Usuarios = React.lazy(() => import('./pages/Usuarios.jsx'));
 const Reportes = React.lazy(() => import('./pages/Reportes.jsx'));
-const Inicio = React.lazy(() => import('./pages/Inicio.jsx'));
 const ProjectDetail = React.lazy(() => import('./pages/ProjectDetail'));
 const Products = React.lazy(() => import('./pages/Products'));
 const ProductDetail = React.lazy(() => import('./pages/ProductDetail'));

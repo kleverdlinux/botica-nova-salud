@@ -11,16 +11,18 @@ import { ReviewsSlider } from '@/components/inspirate/ReviewsSlider';
 import { JournalSection } from '@/components/inspirate/JournalSection';
 import { ConsultationForm } from '@/components/inspirate/ConsultationForm';
 import Footer from '@/components/layout/Footer';
-import { MenuDrawer } from '@/components/inspirate/MenuDrawer';
-import { WishlistDrawer } from '@/components/WishlistDrawer';
-import { CartDrawer } from '@/components/CartDrawer';
-import { CheckoutModal } from '@/components/checkout/CheckoutModal';
-import { QuotationModal } from '@/components/inspirate/QuotationModal';
-import { ServicesModal } from '@/components/inspirate/ServicesModal';
-import { ReclamacionesModal } from '@/components/inspirate/ReclamacionesModal';
-import { ArticleModal } from '@/components/inspirate/ArticleModal';
-import { BrandModal } from '@/components/inspirate/BrandModal';
 import { CookieBanner } from '@/components/inspirate/CookieBanner';
+
+// Lazy loading inteligente de modales y drawers para reducir bundle inicial
+const MenuDrawer = React.lazy(() => import('@/components/inspirate/MenuDrawer').then(m => ({ default: m.MenuDrawer })));
+const WishlistDrawer = React.lazy(() => import('@/components/WishlistDrawer').then(m => ({ default: m.WishlistDrawer })));
+const CartDrawer = React.lazy(() => import('@/components/CartDrawer').then(m => ({ default: m.CartDrawer })));
+const CheckoutModal = React.lazy(() => import('@/components/checkout/CheckoutModal').then(m => ({ default: m.CheckoutModal })));
+const QuotationModal = React.lazy(() => import('@/components/inspirate/QuotationModal').then(m => ({ default: m.QuotationModal })));
+const ServicesModal = React.lazy(() => import('@/components/inspirate/ServicesModal').then(m => ({ default: m.ServicesModal })));
+const ReclamacionesModal = React.lazy(() => import('@/components/inspirate/ReclamacionesModal').then(m => ({ default: m.ReclamacionesModal })));
+const ArticleModal = React.lazy(() => import('@/components/inspirate/ArticleModal').then(m => ({ default: m.ArticleModal })));
+const BrandModal = React.lazy(() => import('@/components/inspirate/BrandModal').then(m => ({ default: m.BrandModal })));
 import { ARTICLES } from '@/data/inspirateData';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -203,86 +205,110 @@ export default function Inicio() {
       <Footer />
 
       {/* Fullscreen Navigation Drawer */}
-      <MenuDrawer
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-        onOpenQuotation={() => setIsQuotationOpen(true)}
-        onOpenCatalog={handleOpenCatalog}
-        onOpenBuilder={() => {
-          setDefaultServiceId('presion');
-          setIsServicesOpen(true);
-        }}
-        onOpenBrand={() => {
-          setBrandDefaultTab('historia');
-          setIsBrandOpen(true);
-        }}
-        onOpenQuickOrder={() => navigate('/catalogo')}
-        onOpenAllArticles={() => setSelectedArticle(ARTICLES[0])}
-      />
+      {isMenuOpen && (
+        <React.Suspense fallback={null}>
+          <MenuDrawer
+            isOpen={isMenuOpen}
+            onClose={() => setIsMenuOpen(false)}
+            onOpenQuotation={() => setIsQuotationOpen(true)}
+            onOpenCatalog={handleOpenCatalog}
+            onOpenBuilder={() => {
+              setDefaultServiceId('presion');
+              setIsServicesOpen(true);
+            }}
+            onOpenBrand={() => {
+              setBrandDefaultTab('historia');
+              setIsBrandOpen(true);
+            }}
+            onOpenQuickOrder={() => navigate('/catalogo')}
+            onOpenAllArticles={() => setSelectedArticle(ARTICLES[0])}
+          />
+        </React.Suspense>
+      )}
 
       {/* Official Wishlist / Favorites Drawer */}
-      <WishlistDrawer
-        isOpen={isWishlistOpen}
-        onClose={() => setIsWishlistOpen(false)}
-      />
+      {isWishlistOpen && (
+        <React.Suspense fallback={null}>
+          <WishlistDrawer
+            isOpen={isWishlistOpen}
+            onClose={() => setIsWishlistOpen(false)}
+          />
+        </React.Suspense>
+      )}
 
       {/* Slide-over Cart Drawer idéntico en diseño y animación a Wishlist */}
-      <CartDrawer
-        isOpen={isDrawerOpen}
-        onClose={closeDrawer}
-        onOpenCheckout={openCheckout}
-      />
+      {isDrawerOpen && (
+        <React.Suspense fallback={null}>
+          <CartDrawer
+            isOpen={isDrawerOpen}
+            onClose={closeDrawer}
+            onOpenCheckout={openCheckout}
+          />
+        </React.Suspense>
+      )}
 
       {/* Modal Vertical Centrado de Checkout sin scroll innecesario */}
       {isCheckoutOpen && (
-        <CheckoutModal
-          isOpen={isCheckoutOpen}
-          onClose={closeCheckout}
-        />
+        <React.Suspense fallback={null}>
+          <CheckoutModal
+            isOpen={isCheckoutOpen}
+            onClose={closeCheckout}
+          />
+        </React.Suspense>
       )}
 
       {/* Interactive Quotation Modal */}
       {isQuotationOpen && (
-        <QuotationModal
-          isOpen={isQuotationOpen}
-          onClose={() => setIsQuotationOpen(false)}
-        />
+        <React.Suspense fallback={null}>
+          <QuotationModal
+            isOpen={isQuotationOpen}
+            onClose={() => setIsQuotationOpen(false)}
+          />
+        </React.Suspense>
       )}
 
       {/* Official Clinical & Pharmaceutical Services Modal */}
       {isServicesOpen && (
-        <ServicesModal
-          isOpen={isServicesOpen}
-          onClose={() => setIsServicesOpen(false)}
-          defaultServiceId={defaultServiceId}
-        />
+        <React.Suspense fallback={null}>
+          <ServicesModal
+            isOpen={isServicesOpen}
+            onClose={() => setIsServicesOpen(false)}
+            defaultServiceId={defaultServiceId}
+          />
+        </React.Suspense>
       )}
 
       {/* Official INDECOPI Libro de Reclamaciones Virtual Modal */}
       {isReclamacionesOpen && (
-        <ReclamacionesModal
-          isOpen={isReclamacionesOpen}
-          onClose={() => setIsReclamacionesOpen(false)}
-        />
+        <React.Suspense fallback={null}>
+          <ReclamacionesModal
+            isOpen={isReclamacionesOpen}
+            onClose={() => setIsReclamacionesOpen(false)}
+          />
+        </React.Suspense>
       )}
 
       {/* Article Reader Modal */}
       {selectedArticle && (
-        <ArticleModal
-          article={selectedArticle}
-          onClose={() => setSelectedArticle(null)}
-          onSelectArticle={(art) => setSelectedArticle(art)}
-        />
+        <React.Suspense fallback={null}>
+          <ArticleModal
+            article={selectedArticle}
+            onClose={() => setSelectedArticle(null)}
+            onSelectArticle={(art) => setSelectedArticle(art)}
+          />
+        </React.Suspense>
       )}
 
       {/* Brand History & Location Map Modal */}
       {isBrandOpen && (
-        <BrandModal
-          isOpen={isBrandOpen}
-          onClose={() => setIsBrandOpen(false)}
-          onOpenQuotation={() => setIsQuotationOpen(true)}
-          defaultTab={brandDefaultTab}
-        />
+        <React.Suspense fallback={null}>
+          <BrandModal
+            isOpen={isBrandOpen}
+            onClose={() => setIsBrandOpen(false)}
+            onOpenQuotation={() => setIsQuotationOpen(true)}
+            defaultTab={brandDefaultTab}
+          />
+        </React.Suspense>
       )}
 
       {/* Cookie Consent Floating Banner */}
