@@ -4,14 +4,13 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import { CarritoProvider } from './context/CarritoContext.jsx';
 import { ThemeProvider } from './hooks/useTheme.tsx';
 import RutaProtegida from './components/RutaProtegida.jsx';
-import LayoutPrivado from './components/LayoutPrivado.jsx';
 import { TooltipProvider } from './components/ui/tooltip';
-import { PageLoader } from './components/ui/page-loader';
 import { ScrollToTop } from './components/ScrollToTop';
 import { useAuth } from './context/AuthContext.jsx';
 import GestorInactividadSeguridad from './components/GestorInactividadSeguridad.jsx';
 
 // Carga diferida inteligente (Code Splitting con React.lazy)
+const LayoutPrivado = React.lazy(() => import('./components/LayoutPrivado.jsx'));
 const Login = React.lazy(() => import('./pages/Login.jsx'));
 const Pos = React.lazy(() => import('./pages/Pos.jsx'));
 const Inventario = React.lazy(() => import('./pages/Inventario.jsx'));
@@ -77,8 +76,6 @@ export default function App() {
           <GestorInactividadSeguridad />
           <CarritoProvider>
             <TooltipProvider>
-              <PageLoader />
-
               <Suspense fallback={<LazyFallback />}>
                 <Routes>
                   {/* Ruta de Demo de Ribbon Fold Loader */}

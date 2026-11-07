@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import compression from 'compression';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
@@ -23,6 +24,9 @@ import dashboardRoutes from './routes/dashboardRoutes.js';
 import dispositivoRoutes from './routes/dispositivoRoutes.js';
 
 const app = express();
+
+// Compresión GZIP de alta velocidad para HTML, CSS, JS y JSON
+app.use(compression());
 
 // Middlewares de seguridad y perimétricos
 app.use(helmet({
