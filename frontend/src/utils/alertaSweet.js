@@ -1,5 +1,12 @@
 import Swal from 'sweetalert2';
-import 'sweetalert2/dist/sweetalert2.min.css';
+
+let cssLoaded = false;
+const ensureCss = () => {
+  if (!cssLoaded && typeof document !== 'undefined') {
+    cssLoaded = true;
+    import('sweetalert2/dist/sweetalert2.min.css');
+  }
+};
 
 // Configuración corporativa Botica Nova Salud (Monocromático Blanco & Negro de Alta Fidelidad)
 const ModalSwal = Swal.mixin({
@@ -33,6 +40,7 @@ const ToastSwal = Swal.mixin({
 });
 
 export const notificarExito = (titulo, texto = '') => {
+  ensureCss();
   return ModalSwal.fire({
     icon: 'success',
     title: titulo,
@@ -44,6 +52,7 @@ export const notificarExito = (titulo, texto = '') => {
 };
 
 export const notificarError = (titulo, texto = '') => {
+  ensureCss();
   return ModalSwal.fire({
     icon: 'error',
     title: titulo,
@@ -53,6 +62,7 @@ export const notificarError = (titulo, texto = '') => {
 };
 
 export const notificarAdvertencia = (titulo, texto = '') => {
+  ensureCss();
   return ModalSwal.fire({
     icon: 'warning',
     title: titulo,
@@ -62,6 +72,7 @@ export const notificarAdvertencia = (titulo, texto = '') => {
 };
 
 export const confirmarAccion = async ({ titulo, texto, confirmText = 'Sí, continuar', cancelText = 'Cancelar' }) => {
+  ensureCss();
   const result = await ModalSwal.fire({
     title: titulo,
     text: texto,
@@ -77,6 +88,7 @@ export const confirmarAccion = async ({ titulo, texto, confirmText = 'Sí, conti
 // Objeto drop-in para reemplazar react-hot-toast en toda la web
 export const toast = {
   success: (msg, opts = {}) => {
+    ensureCss();
     return ToastSwal.fire({
       icon: 'success',
       title: typeof msg === 'string' ? msg : 'Operación exitosa',
@@ -84,6 +96,7 @@ export const toast = {
     });
   },
   error: (msg, opts = {}) => {
+    ensureCss();
     return ToastSwal.fire({
       icon: 'error',
       title: typeof msg === 'string' ? msg : 'Ocurrió un error',
@@ -91,6 +104,7 @@ export const toast = {
     });
   },
   info: (msg, opts = {}) => {
+    ensureCss();
     return ToastSwal.fire({
       icon: 'info',
       title: typeof msg === 'string' ? msg : '',
@@ -98,6 +112,7 @@ export const toast = {
     });
   },
   warning: (msg, opts = {}) => {
+    ensureCss();
     return ToastSwal.fire({
       icon: 'warning',
       title: typeof msg === 'string' ? msg : 'Atención',
@@ -105,6 +120,7 @@ export const toast = {
     });
   },
   loading: (msg = 'Procesando...') => {
+    ensureCss();
     return ToastSwal.fire({
       title: msg,
       didOpen: () => {
