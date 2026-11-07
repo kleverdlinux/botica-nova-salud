@@ -100,7 +100,7 @@ export const CatalogModal: React.FC<CatalogModalProps> = ({
               >
                 <div>
                   <div className="w-full h-52 bg-[#f8f8f8] mb-4 flex items-center justify-center overflow-hidden">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={p.image}
                       alt={p.title}
                       className="w-full h-full object-contain p-2 group-hover:scale-108 transition-transform duration-500"

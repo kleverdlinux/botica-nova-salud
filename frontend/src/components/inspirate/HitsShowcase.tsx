@@ -45,7 +45,7 @@ export const HitsShowcase: React.FC<HitsShowcaseProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-[20px]">
         {/* Left Model Photo */}
         <div className="relative w-full h-[620px] sm:h-[760px] lg:h-[920px] overflow-hidden bg-[#c8c9cb]">
-          <img
+          <img loading="lazy" decoding="async"
             src="/media/home/about-farmaceutica-historia-flipped.jpg"
             alt="Atención farmacéutica profesional Botica Nova Salud"
             className="w-full h-full object-cover object-center"
@@ -88,7 +88,7 @@ export const HitsShowcase: React.FC<HitsShowcaseProps> = ({
               }`}
             >
               <div className="flex-1 flex items-center justify-center overflow-hidden p-2">
-                <img
+                <img loading="lazy" decoding="async"
                   src={ASSETS.hitWhite1}
                   alt="Panadol Antigripal NF"
                   className="w-full h-full object-contain"
@@ -108,7 +108,7 @@ export const HitsShowcase: React.FC<HitsShowcaseProps> = ({
 
         {/* Right Model Photo */}
         <div className="relative w-full h-[680px] sm:h-[820px] lg:h-[920px] overflow-hidden bg-[#b5b7ba]">
-          <img
+          <img loading="lazy" decoding="async"
             src={ASSETS.hitModelRight}
             alt="Cuidado preventivo y tópico clínico"
             className="w-full h-full object-cover object-center"
@@ -151,7 +151,7 @@ export const HitsShowcase: React.FC<HitsShowcaseProps> = ({
               }`}
             >
               <div className="flex-1 flex items-center justify-center overflow-hidden p-2">
-                <img
+                <img loading="lazy" decoding="async"
                   src={ASSETS.hitWhite2}
                   alt="Apronax 550 mg Naproxeno Sódico"
                   className="w-full h-full object-contain"
@@ -198,7 +198,7 @@ export const HitsShowcase: React.FC<HitsShowcaseProps> = ({
               }`}
             >
               <div className="flex-1 flex items-center justify-center overflow-hidden p-2">
-                <img
+                <img loading="lazy" decoding="async"
                   src={ASSETS.hitWhite3}
                   alt="Fotoprotector ISDIN Fusion Water Magic SPF 50"
                   className="w-full h-full object-contain"
@@ -229,12 +229,12 @@ export const HitsShowcase: React.FC<HitsShowcaseProps> = ({
             >
               {/* Image Area with Secondary Hover Image */}
               <div className="relative w-full aspect-square bg-white overflow-hidden p-4">
-                <img
+                <img loading="lazy" decoding="async"
                   src={product.image}
                   alt={product.name}
                   className="w-full h-full object-contain object-center transition-opacity duration-500 group-hover:opacity-0"
                 />
-                <img
+                <img loading="lazy" decoding="async"
                   src={product.hoverImage || product.image}
                   alt={product.name}
                   className="absolute inset-0 w-full h-full object-contain object-center p-4 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-105"

@@ -32,7 +32,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
               <span className="absolute top-[10px] left-[10px] z-10 bg-white px-[10px] py-[6px] text-[10px] font-extrabold uppercase tracking-[0.04em] text-[#A6A9AD]">
                 {featuredArticle.tag}
               </span>
-              <img
+              <img loading="lazy" decoding="async"
                 src={featuredArticle.image}
                 alt={featuredArticle.title}
                 className="w-full h-full object-cover object-center transition-transform duration-[450ms] ease-out group-hover:scale-110"
@@ -84,7 +84,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
                   <span className="absolute top-[10px] left-[10px] z-10 bg-white px-[10px] py-[6px] text-[10px] font-extrabold uppercase tracking-[0.04em] text-[#A6A9AD]">
                     {article.tag}
                   </span>
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={article.image}
                     alt={article.title}
                     className="w-full h-full object-cover object-center transition-transform duration-[450ms] ease-out group-hover:scale-110"
@@ -133,7 +133,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
                 <span className="absolute top-[10px] left-[10px] z-10 bg-white px-[10px] py-[6px] text-[10px] font-extrabold uppercase tracking-[0.04em] text-[#A6A9AD]">
                   {article.tag}
                 </span>
-                <img
+                <img loading="lazy" decoding="async"
                   src={article.image}
                   alt={article.title}
                   className="w-full h-full object-cover object-center transition-transform duration-[450ms] ease-out group-hover:scale-110"

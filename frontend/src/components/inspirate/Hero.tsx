@@ -39,6 +39,9 @@ export const Hero: React.FC<HeroProps> = ({
           <img
             src={src}
             alt={`Botica Nova Salud ${idx + 1}`}
+            loading={idx === 0 ? "eager" : "lazy"}
+            decoding={idx === 0 ? "sync" : "async"}
+            fetchPriority={idx === 0 ? "high" : "low"}
             className="w-full h-full object-cover object-center"
           />
         </div>
@@ -129,6 +132,10 @@ export const Hero: React.FC<HeroProps> = ({
             <img
               src={ASSETS.heroCardRing}
               alt="Fotoprotector ISDIN Fusion Water Magic SPF 50"
+              loading="eager"
+              decoding="async"
+              width={240}
+              height={240}
               className="w-full h-full object-contain transition-transform duration-[450ms] ease-out group-hover:scale-[1.12]"
             />
           </div>

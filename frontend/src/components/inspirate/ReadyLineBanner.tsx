@@ -15,7 +15,7 @@ export const ReadyLineBanner: React.FC<ReadyLineBannerProps> = ({
       <div className="relative w-full h-[760px] lg:h-[980px] overflow-hidden select-none flex flex-col justify-between items-center text-center py-[75px] lg:py-[90px] px-4">
         {/* Default Background Image */}
         <div className="absolute inset-0 z-0">
-          <img
+          <img loading="lazy" decoding="async"
             src={ASSETS.readyLineBg}
             alt="Categorías de Salud Botica Nova Salud"
             className="w-full h-full object-cover object-center"
@@ -31,7 +31,7 @@ export const ReadyLineBanner: React.FC<ReadyLineBannerProps> = ({
               hoveredCategory === cat.id ? 'opacity-100' : 'opacity-0'
             }`}
           >
-            <img
+            <img loading="lazy" decoding="async"
               src={cat.image}
               alt={cat.name}
               className="w-full h-full object-cover object-center"

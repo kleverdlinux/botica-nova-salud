@@ -12,7 +12,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onOpenBrand }) => {
     >
       <div className="relative w-full min-h-[760px] lg:h-[820px] overflow-hidden bg-[#1f3a34] flex flex-col lg:block p-5">
         {/* Background Image */}
-        <img
+        <img loading="lazy" decoding="async"
           src="/media/home/about-farmaceutica-historia-flipped.jpg"
           alt="Profesional farmacéutica Botica Nova Salud"
           className="absolute inset-0 w-full h-full object-cover object-[30%_center]"

@@ -214,7 +214,7 @@ export const EarringBuilderModal: React.FC<EarringBuilderModalProps> = ({
               <div className="lg:col-span-5 bg-[#fafafa] p-6 border border-gray-100 flex flex-col justify-between">
                 <div>
                   <div className="w-full h-44 bg-white border border-gray-200 overflow-hidden mb-4 relative">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src="/media/home/srv-topico-signos.jpg"
                       alt="Tópico clínico Botica Nova Salud"
                       className="w-full h-full object-cover"

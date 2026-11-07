@@ -15,7 +15,7 @@ export const BuilderSection: React.FC<BuilderSectionProps> = ({
     >
       <div className="relative w-full min-h-[760px] lg:h-[820px] overflow-hidden bg-[#1f3a34] flex flex-col lg:block p-5">
         {/* Background Image */}
-        <img
+        <img loading="lazy" decoding="async"
           src={ASSETS.builderBg}
           alt="Servicios de tópico y control de signos vitales Botica Nova Salud"
           className="absolute inset-0 w-full h-full object-cover object-center"

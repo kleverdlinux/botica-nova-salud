@@ -43,7 +43,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           {/* Left Product Image */}
           <div className="w-full h-80 sm:h-96 bg-[#f7f7f7] flex items-center justify-center overflow-hidden border border-gray-100 p-6 relative">
-            <img
+            <img loading="lazy" decoding="async"
               src={product.image}
               alt={product.title}
               className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"

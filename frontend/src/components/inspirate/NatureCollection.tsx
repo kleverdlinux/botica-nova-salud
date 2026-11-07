@@ -27,7 +27,7 @@ export const NatureCollection: React.FC<NatureCollectionProps> = ({
 
           {/* Center Star & Description */}
           <div className="my-10 flex flex-col items-center max-w-[340px]">
-            <img
+            <img loading="lazy" decoding="async"
               src={ASSETS.starDark}
               alt="Nova Salud Bienestar"
               className="w-[28px] h-[28px] mb-8"
@@ -59,7 +59,7 @@ export const NatureCollection: React.FC<NatureCollectionProps> = ({
           onClick={onExploreNature}
           className="group w-full h-[500px] lg:h-full overflow_class relative cursor-pointer"
         >
-          <img
+          <img loading="lazy" decoding="async"
             src={ASSETS.natureImg}
             alt="Línea de bienestar y suplementación Botica Nova Salud"
             className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"

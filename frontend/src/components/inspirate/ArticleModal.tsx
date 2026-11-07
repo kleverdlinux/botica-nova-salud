@@ -51,7 +51,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
 
         {/* Feature Image */}
         <div className="w-full h-64 sm:h-80 bg-[#f4f4f4] overflow-hidden mb-8">
-          <img
+          <img loading="lazy" decoding="async"
             src={article.image}
             alt={article.title}
             className="w-full h-full object-cover"
@@ -77,7 +77,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
                 onClick={() => onSelectArticle(other)}
                 className="p-3 border border-gray-100 bg-[#fafafa] hover:bg-gray-100 transition-colors cursor-pointer flex gap-3 items-center"
               >
-                <img
+                <img loading="lazy" decoding="async"
                   src={other.image}
                   alt={other.title}
                   className="w-14 h-14 object-cover flex-shrink-0"

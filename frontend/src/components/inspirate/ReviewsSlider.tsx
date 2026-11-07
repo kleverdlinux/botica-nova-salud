@@ -80,7 +80,7 @@ export const ReviewsSlider: React.FC = () => {
             <div>
               {/* 140x200 Top-Left Portrait Thumbnail */}
               <div className="w-[140px] h-[190px] overflow-hidden bg-[#EDF1F4] border border-gray-100">
-                <img
+                <img loading="lazy" decoding="async"
                   src={review.image}
                   alt={review.name}
                   className="w-full h-full object-cover object-center"

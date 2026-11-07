@@ -234,44 +234,56 @@ export default function Inicio() {
       />
 
       {/* Modal Vertical Centrado de Checkout sin scroll innecesario */}
-      <CheckoutModal
-        isOpen={isCheckoutOpen}
-        onClose={closeCheckout}
-      />
+      {isCheckoutOpen && (
+        <CheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={closeCheckout}
+        />
+      )}
 
       {/* Interactive Quotation Modal */}
-      <QuotationModal
-        isOpen={isQuotationOpen}
-        onClose={() => setIsQuotationOpen(false)}
-      />
+      {isQuotationOpen && (
+        <QuotationModal
+          isOpen={isQuotationOpen}
+          onClose={() => setIsQuotationOpen(false)}
+        />
+      )}
 
       {/* Official Clinical & Pharmaceutical Services Modal */}
-      <ServicesModal
-        isOpen={isServicesOpen}
-        onClose={() => setIsServicesOpen(false)}
-        defaultServiceId={defaultServiceId}
-      />
+      {isServicesOpen && (
+        <ServicesModal
+          isOpen={isServicesOpen}
+          onClose={() => setIsServicesOpen(false)}
+          defaultServiceId={defaultServiceId}
+        />
+      )}
 
       {/* Official INDECOPI Libro de Reclamaciones Virtual Modal */}
-      <ReclamacionesModal
-        isOpen={isReclamacionesOpen}
-        onClose={() => setIsReclamacionesOpen(false)}
-      />
+      {isReclamacionesOpen && (
+        <ReclamacionesModal
+          isOpen={isReclamacionesOpen}
+          onClose={() => setIsReclamacionesOpen(false)}
+        />
+      )}
 
       {/* Article Reader Modal */}
-      <ArticleModal
-        article={selectedArticle}
-        onClose={() => setSelectedArticle(null)}
-        onSelectArticle={(art) => setSelectedArticle(art)}
-      />
+      {selectedArticle && (
+        <ArticleModal
+          article={selectedArticle}
+          onClose={() => setSelectedArticle(null)}
+          onSelectArticle={(art) => setSelectedArticle(art)}
+        />
+      )}
 
       {/* Brand History & Location Map Modal */}
-      <BrandModal
-        isOpen={isBrandOpen}
-        onClose={() => setIsBrandOpen(false)}
-        onOpenQuotation={() => setIsQuotationOpen(true)}
-        defaultTab={brandDefaultTab}
-      />
+      {isBrandOpen && (
+        <BrandModal
+          isOpen={isBrandOpen}
+          onClose={() => setIsBrandOpen(false)}
+          onOpenQuotation={() => setIsQuotationOpen(true)}
+          defaultTab={brandDefaultTab}
+        />
+      )}
 
       {/* Cookie Consent Floating Banner */}
       <CookieBanner />

@@ -30,7 +30,7 @@ export const Footer: React.FC<FooterProps> = ({
                 onClick={() => onOpenCatalog('ALL')}
                 className="w-full aspect-square overflow_class bg-[#EDF1F4] cursor-pointer group"
               >
-                <img
+                <img loading="lazy" decoding="async"
                   src={src}
                   alt={`18GEMS Colección ${idx + 1}`}
                   className="w-full h-full object-cover object-center transition-transform duration-[450ms] ease-out group-hover:scale-110"
@@ -158,7 +158,7 @@ export const Footer: React.FC<FooterProps> = ({
 
       {/* Giant Full-Width Wordmark SVG (matches rec1124827931 elemId 1750853118830) */}
       <div className="mt-14 lg:mt-20 w-full">
-        <img
+        <img loading="lazy" decoding="async"
           src={ASSETS.footerLogoSvg}
           alt="18GEMS"
           className="w-full h-auto block select-none"

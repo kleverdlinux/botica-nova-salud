@@ -29,7 +29,7 @@ export const ConsultationForm: React.FC = () => {
       className="relative w-full min-h-[760px] lg:h-[780px] overflow-hidden bg-[#1f3a34] flex flex-col lg:block p-5 select-none"
     >
       {/* Full-Bleed Background Image */}
-      <img
+      <img loading="lazy" decoding="async"
         src={ASSETS.consultBg}
         alt="Fachada y atención en Botica Nova Salud"
         className="absolute inset-0 w-full h-full object-cover object-center"

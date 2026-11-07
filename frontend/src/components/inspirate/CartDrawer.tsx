@@ -176,7 +176,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   className="flex gap-4 p-3 bg-[#fafafa] border border-gray-100 items-center justify-between"
                 >
                   <div className="w-16 h-16 bg-white overflow-hidden flex-shrink-0 flex items-center justify-center border border-gray-100">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={item.product.image}
                       alt={item.product.title}
                       className="w-full h-full object-contain p-1"

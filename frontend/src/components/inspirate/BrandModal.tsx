@@ -91,7 +91,7 @@ export const BrandModal: React.FC<BrandModalProps> = ({
           {activeTab === 'historia' ? (
             <div className="space-y-6">
               <div className="w-full h-56 sm:h-72 rounded-xl bg-zinc-100 overflow-hidden border border-zinc-200">
-                <img
+                <img loading="lazy" decoding="async"
                   src={SITE_IMAGES.brandModel}
                   alt="Química Farmacéutica en Botica Nova Salud"
                   className="w-full h-full object-cover object-top"
