@@ -61,3 +61,9 @@ export async function consultarDocumentoApi(numero) {
   const { data } = await clienteAxios.get(`/consulta-documento?numero=${encodeURIComponent(numero.trim())}`);
   return data;
 }
+
+// Sincronizar catálogo oficial de la web con el inventario (ADMIN)
+export async function sincronizarCatalogoApi() {
+  const { data } = await clienteAxios.post('/productos/sincronizar-catalogo');
+  return data;
+}

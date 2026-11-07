@@ -65,8 +65,7 @@
       "materials": "Paracetamol 500mg, Fenilefrina 5mg, Clorfenamina 2mg (Haleon)",
       "dimensions": "Caja x 52 sobres (104 tabletas)",
       "images": [
-        "/media/products/panadol-antigripal-nf.jpg",
-        "/media/products/panadol-1.png"
+        "/media/products/panadol-antigripal-nf.jpg"
       ],
       "featured": true
     },
@@ -85,8 +84,7 @@
       "materials": "Naproxeno Sódico 550 mg (Bayer)",
       "dimensions": "Caja dispensadora x 120 tabletas recubiertas (30 blísteres de 4)",
       "images": [
-        "/media/products/apronax-1.png",
-        "/media/products/apronax-2.png"
+        "/media/products/apronax-1.png"
       ],
       "new": true
     },

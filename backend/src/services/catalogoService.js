@@ -2,6 +2,204 @@ import prisma from '../lib/prisma.js';
 import { getInicioDiaLima } from '../utils/fechas.js';
 import { sincronizarCaducidadAutomatica } from './productoService.js';
 import * as ventaService from './ventaService.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/**
+ * Sincroniza todos los 120 productos y 6 categorías oficiales del catálogo web con PostgreSQL
+ */
+export async function sincronizarCatalogoCompleto(usuarioId) {
+  const dataPath = path.resolve(__dirname, '../../prisma/store_products.json');
+  if (!fs.existsSync(dataPath)) {
+    throw new Error(`Archivo de catálogo no encontrado: ${dataPath}`);
+  }
+
+  const rawData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+  const { collections, products } = rawData;
+
+  // 1. Obtener usuario administrador para Kardex
+  let responsableId = usuarioId;
+  if (!responsableId) {
+    const admin = await prisma.usuario.findFirst({ where: { rol: 'ADMIN' } });
+    responsableId = admin ? admin.id : 1;
+  }
+
+  // 2. Proveedor oficial DIGEMID
+  const proveedor = await prisma.proveedor.upsert({
+    where: { ruc: '20100055231' },
+    update: {
+      razonSocial: 'Distribuidora Farmacéutica del Perú S.A.C.',
+      telefono: '01-4458920',
+      contacto: 'Ing. Químico Farmacéutico Responsable'
+    },
+    create: {
+      ruc: '20100055231',
+      razonSocial: 'Distribuidora Farmacéutica del Perú S.A.C.',
+      telefono: '01-4458920',
+      contacto: 'Ing. Químico Farmacéutico Responsable'
+    }
+  });
+
+  // 3. Crear / mapear las 6 categorías del catálogo oficial
+  const categoriaMap = {};
+  for (const col of collections) {
+    const cat = await prisma.categoria.upsert({
+      where: { nombre: col.name },
+      update: { descripcion: col.description, activo: true },
+      create: {
+        nombre: col.name,
+        descripcion: col.description,
+        activo: true
+      }
+    });
+    categoriaMap[col.id] = cat.id;
+  }
+
+  const defaultCat = await prisma.categoria.findFirst();
+  const defaultCatId = defaultCat ? defaultCat.id : 1;
+
+  // 4. Fechas de vencimiento farmacéuticas vigentes (junio 2028)
+  const fechaFutura = new Date('2028-06-30T00:00:00Z');
+
+  let sincronizados = 0;
+  let kardexCreados = 0;
+
+  for (let i = 0; i < products.length; i++) {
+    const p = products[i];
+    const codigoBarras = `775${String(i + 1).padStart(9, '0')}`;
+
+    let laboratorio = 'Nova Salud Lab';
+    let principioActivo = p.name;
+
+    if (p.materials) {
+      const matchLab = p.materials.match(/\(([^)]+)\)/);
+      if (matchLab && matchLab[1]) {
+        laboratorio = matchLab[1].trim();
+        principioActivo = p.materials.replace(/\([^)]+\)/, '').trim();
+      } else {
+        principioActivo = p.materials.trim();
+      }
+    }
+
+    const presentacion = p.dimensions || p.boxLabel || p.unitLabel || 'Unidad / Presentación Farmacéutica';
+    const precio = parseFloat(p.price) || 5.0;
+    const costo = Math.round(precio * 0.65 * 100) / 100;
+    const stock = 25 + ((i * 7) % 45); // Entre 25 y 70 unidades
+    const lote = `L-2026-${String((i % 40) + 10).padStart(3, '0')}`;
+    const categoriaId = categoriaMap[p.collection] || defaultCatId;
+    const imagen = p.images && p.images[0] ? p.images[0] : null;
+
+    const existente = await prisma.producto.findFirst({
+      where: {
+        OR: [{ nombre: p.name }, { codigoBarras: codigoBarras }]
+      }
+    });
+
+    if (existente) {
+      const fechaValida = (existente.fechaVencimiento && new Date(existente.fechaVencimiento) > new Date())
+        ? existente.fechaVencimiento
+        : fechaFutura;
+
+      await prisma.producto.update({
+        where: { id: existente.id },
+        data: {
+          costo,
+          precio,
+          stock: existente.stock > 0 ? existente.stock : stock,
+          presentacion,
+          laboratorio,
+          principioActivo,
+          imagen: imagen || existente.imagen,
+          categoriaId,
+          proveedorId: proveedor.id,
+          fechaVencimiento: fechaValida,
+          activo: true
+        }
+      });
+      sincronizados++;
+    } else {
+      const nuevo = await prisma.producto.create({
+        data: {
+          codigoBarras,
+          nombre: p.name,
+          principioActivo,
+          presentacion,
+          laboratorio,
+          costo,
+          precio,
+          stock,
+          stockMinimo: 5,
+          lote,
+          fechaVencimiento: fechaFutura,
+          imagen,
+          activo: true,
+          categoriaId,
+          proveedorId: proveedor.id
+        }
+      });
+
+      await prisma.movimientoInventario.create({
+        data: {
+          productoId: nuevo.id,
+          usuarioId: responsableId,
+          tipo: 'ENTRADA',
+          cantidad: stock,
+          motivo: 'Inventario inicial integrado con catálogo oficial web',
+          stockAnterior: 0,
+          stockNuevo: stock
+        }
+      });
+
+      sincronizados++;
+      kardexCreados++;
+    }
+  }
+
+  // 5. Limpieza de los 5 productos dummy de prueba si no tienen ventas
+  try {
+    const dummyBarcodes = ['775012345001', '775012345002', '775012345003', '775012345004', '775012345005'];
+    for (const bCode of dummyBarcodes) {
+      const dummyProd = await prisma.producto.findUnique({
+        where: { codigoBarras: bCode },
+        include: { detallesVenta: true }
+      });
+      if (dummyProd && dummyProd.detallesVenta.length === 0) {
+        await prisma.movimientoInventario.deleteMany({ where: { productoId: dummyProd.id } });
+        await prisma.producto.delete({ where: { id: dummyProd.id } });
+      }
+    }
+  } catch (errClean) {
+    console.warn('Omitiendo limpieza de productos dummy:', errClean.message);
+  }
+
+  return {
+    totalSincronizados: sincronizados,
+    kardexCreados,
+    categorias: collections.length
+  };
+}
+
+/**
+ * Auto-verificación en arranque: si hay menos de 100 productos en BD, sincroniza automáticamente
+ */
+export async function sincronizarCatalogoSiEsNecesario() {
+  try {
+    const total = await prisma.producto.count({ where: { activo: true } });
+    if (total < 100) {
+      console.log(`[AutoSync] Base de datos con ${total} productos. Sincronizando catálogo oficial web (120 productos)...`);
+      const res = await sincronizarCatalogoCompleto();
+      console.log(`[AutoSync] ✅ ${res.totalSincronizados} productos sincronizados exitosamente.`);
+    } else {
+      console.log(`[AutoSync] Catálogo completo verificado (${total} productos activos en inventario).`);
+    }
+  } catch (err) {
+    console.error('[AutoSync] Error verificando catálogo:', err.message);
+  }
+}
 
 export async function obtenerCatalogoPublico() {
   // Sincronizar caducidad para inhabilitar productos con fecha expirada

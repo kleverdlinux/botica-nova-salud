@@ -19,6 +19,7 @@ router.get('/', productoController.listar);
 router.get('/:id', productoController.obtenerPorId);
 
 // 4. Operaciones de escritura (ADMIN y ALMACEN)
+router.post('/sincronizar-catalogo', requiereRol('ADMIN'), productoController.sincronizarCatalogo);
 router.post('/', requiereRol('ADMIN', 'ALMACEN'), validar(productoCreateSchema), productoController.crear);
 router.put('/:id', requiereRol('ADMIN', 'ALMACEN'), validar(productoUpdateSchema), productoController.actualizar);
 router.patch('/:id/activar', requiereRol('ADMIN', 'ALMACEN'), productoController.activar);

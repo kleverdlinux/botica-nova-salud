@@ -58,3 +58,12 @@ export const listarProveedores = asyncHandler(async (req, res) => {
   const proveedores = await productoService.listarProveedores();
   return res.status(200).json(proveedores);
 });
+
+export const sincronizarCatalogo = asyncHandler(async (req, res) => {
+  const catalogoService = await import('../services/catalogoService.js');
+  const resultado = await catalogoService.sincronizarCatalogoCompleto(req.usuario.id);
+  return res.status(200).json({
+    mensaje: 'Catálogo oficial de Botica Nova Salud sincronizado con éxito.',
+    ...resultado
+  });
+});

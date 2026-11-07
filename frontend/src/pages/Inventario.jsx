@@ -31,7 +31,8 @@ import {
   listarProductosApi,
   desactivarProductoApi,
   activarProductoApi,
-  listarCategoriasApi
+  listarCategoriasApi,
+  sincronizarCatalogoApi
 } from '../api/productosApi.js';
 import { obtenerKardexGlobalApi } from '../api/inventarioApi.js';
 import {
@@ -87,6 +88,7 @@ export default function Inventario() {
 
   // Estados de Control de Lotes & Vencimientos (Tab 3)
   const [lotesProductos, setLotesProductos] = useState([]);
+  const [sincronizando, setSincronizando] = useState(false);
   const [cargandoLotes, setCargandoLotes] = useState(false);
   const [lotesBusqueda, setLotesBusqueda] = useState('');
   const [filtroEstadoLote, setFiltroEstadoLote] = useState('TODOS'); // 'TODOS' | 'VIGENTE' | 'POR_VENCER' | 'CADUCADO'
@@ -137,6 +139,26 @@ export default function Inventario() {
       setCargando(false);
     }
   }, [busqueda, categoriaId, mostrarDesactivados, esAdmin]);
+
+  // Sincronizar catálogo oficial web con inventario PostgreSQL
+  const handleSincronizarCatalogo = async () => {
+    try {
+      setSincronizando(true);
+      const res = await sincronizarCatalogoApi();
+      await cargarProductos(1);
+      const cats = await listarCategoriasApi();
+      setCategorias(cats);
+      notificarExito(
+        '¡Catálogo Web Sincronizado!',
+        `Se sincronizaron ${res.totalSincronizados || 120} medicamentos certificados en ${res.categorias || 6} familias farmacéuticas.`
+      );
+    } catch (err) {
+      console.error('Error al sincronizar catálogo:', err);
+      notificarError('Error de Sincronización', err.response?.data?.error || err.message);
+    } finally {
+      setSincronizando(false);
+    }
+  };
 
   // Cargar Kardex Global Multiproducto
   const cargarKardexGlobal = useCallback(async (p = 1) => {
@@ -534,6 +556,20 @@ export default function Inventario() {
             </div>
             <span>{exportando ? 'Generando PDF...' : 'Imprimir PDF'}</span>
           </button>
+
+          {usuario?.rol === 'ADMIN' && (
+            <button
+              onClick={handleSincronizarCatalogo}
+              disabled={sincronizando}
+              className="px-3.5 py-2 bg-blue-50/80 hover:bg-blue-100 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60 rounded-xl text-xs font-bold shadow-2xs flex items-center space-x-2 transition cursor-pointer disabled:opacity-50"
+              title="Sincronizar los 120 medicamentos y 6 familias oficiales del catálogo web con el inventario"
+            >
+              <div className="w-5 h-5 rounded-md bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0">
+                <RefreshCw className={`w-3.5 h-3.5 ${sincronizando ? 'animate-spin' : ''}`} />
+              </div>
+              <span>{sincronizando ? 'Sincronizando...' : 'Sincronizar Catálogo Web'}</span>
+            </button>
+          )}
 
           {esAdmin && (
             <button
