@@ -95,7 +95,7 @@ export const products: Product[] = [
     longDescription: "Panadol Antigripal NF de Haleon combina Paracetamol 500mg, Clorhidrato de Fenilefrina 5mg y Maleato de Clorfenamina 2mg para descongestionar el tracto respiratorio y cortar la gripe sin irritar el estómago.",
     materials: "Paracetamol 500mg, Fenilefrina 5mg, Clorfenamina 2mg (Haleon)",
     dimensions: "Caja x 52 sobres (104 tabletas)",
-    images: ["/media/products/panadol-antigripal-nf.jpg", "/media/products/panadol-1.png"],
+    images: ["/media/products/panadol-antigripal-nf.jpg"],
     featured: true,
   },
   {
@@ -112,7 +112,7 @@ export const products: Product[] = [
     longDescription: "Apronax 550 mg (Naproxeno Sódico) de Laboratorios Bayer alivia dolores intensos musculares, articulares, inflamaciones dentales y lumbalgias con su tecnología de rápida disolución.",
     materials: "Naproxeno Sódico 550 mg (Bayer)",
     dimensions: "Caja dispensadora x 120 tabletas recubiertas (30 blísteres de 4)",
-    images: ["/media/products/apronax-1.png", "/media/products/apronax-2.png"],
+    images: ["/media/products/apronax-1.png"],
     new: true,
   },
   {
