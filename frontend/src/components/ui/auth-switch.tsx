@@ -27,6 +27,7 @@ export interface AuthSwitchProps {
 export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: AuthSwitchProps) {
   const [isSignUp, setIsSignUp] = useState(defaultMode === "signup");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   // Estados de Iniciar Sesión
@@ -44,7 +45,7 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
     district: "Lima Cercado",
   });
 
-  const handleSignInSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSignInSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!loginIdentifier.trim()) {
@@ -52,21 +53,26 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
       return;
     }
 
-    const result = loginClient(loginIdentifier.trim(), loginPassword);
-    if (!result.success || !result.client) {
-      notificarError("Error de Acceso", result.message || "Credenciales no encontradas.");
-      return;
-    }
+    try {
+      setIsLoading(true);
+      const result = await loginClient(loginIdentifier.trim(), loginPassword);
+      if (!result.success || !result.client) {
+        notificarError("Error de Acceso", result.message || "Credenciales no encontradas.");
+        return;
+      }
 
-    notificarExito("¡Bienvenido(a)!", `Hola ${result.client.name}, has iniciado sesión.`);
-    if (onLoginSuccess) {
-      onLoginSuccess(result.client);
-    } else {
-      navigate("/cliente");
+      notificarExito("¡Bienvenido(a)!", `Hola ${result.client.name}, has iniciado sesión.`);
+      if (onLoginSuccess) {
+        onLoginSuccess(result.client);
+      } else {
+        navigate("/cliente");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSignUpSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSignUpSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!registerData.name.trim()) {
@@ -86,50 +92,60 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
       return;
     }
 
-    const result = registerClient({
-      name: registerData.name,
-      dni: registerData.dni,
-      email: registerData.email,
-      phone: registerData.phone || "999999999",
-      address: registerData.address || "Lima",
-      district: registerData.district || "Lima Cercado",
-      password: registerData.password,
-    });
+    try {
+      setIsLoading(true);
+      const result = await registerClient({
+        name: registerData.name,
+        dni: registerData.dni,
+        email: registerData.email,
+        phone: registerData.phone || "999999999",
+        address: registerData.address || "Lima",
+        district: registerData.district || "Lima Cercado",
+        password: registerData.password,
+      });
 
-    if (!result.success || !result.client) {
-      notificarError("Error al Registrar", result.message);
-      return;
-    }
+      if (!result.success || !result.client) {
+        notificarError("Error al Registrar", result.message);
+        return;
+      }
 
-    notificarExito("¡Cuenta Creada!", result.message);
-    if (onLoginSuccess) {
-      onLoginSuccess(result.client);
-    } else {
-      navigate("/cliente");
+      notificarExito("¡Cuenta Creada!", result.message);
+      if (onLoginSuccess) {
+        onLoginSuccess(result.client);
+      } else {
+        navigate("/cliente");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleFillDemo = () => {
-    const demo = loginClient("72345678", "123456");
-    if (demo.success && demo.client) {
-      setLoginIdentifier("72345678");
-      setLoginPassword("123456");
-      notificarExito("Cliente Demo", "Credenciales de prueba cargadas.");
-    } else {
-      const reg = registerClient({
-        name: "María Elena Quispe",
-        dni: "72345678",
-        email: "maria.quispe@gmail.com",
-        phone: "955545561",
-        address: "Av. Arequipa 1840, Dpto 502",
-        district: "Lince",
-        password: "demo123Password"
-      });
-      if (reg.client) {
-        setLoginIdentifier("maria.quispe@gmail.com");
-        setLoginPassword("demo123Password");
-        notificarExito("Cliente Demo Creado", "Credenciales de prueba listas.");
+  const handleFillDemo = async () => {
+    try {
+      setIsLoading(true);
+      const demo = await loginClient("72345678", "123456");
+      if (demo.success && demo.client) {
+        setLoginIdentifier("72345678");
+        setLoginPassword("123456");
+        notificarExito("Cliente Demo", "Credenciales de prueba cargadas.");
+      } else {
+        const reg = await registerClient({
+          name: "María Elena Quispe",
+          dni: "72345678",
+          email: "maria.quispe@gmail.com",
+          phone: "955545561",
+          address: "Av. Arequipa 1840, Dpto 502",
+          district: "Lince",
+          password: "demo123Password"
+        });
+        if (reg.client) {
+          setLoginIdentifier("maria.quispe@gmail.com");
+          setLoginPassword("demo123Password");
+          notificarExito("Cliente Demo Creado", "Credenciales de prueba listas.");
+        }
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -642,8 +658,8 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
                 </button>
               </div>
 
-              <button type="submit" className="btn">
-                <span>Ingresar a Mi Cuenta</span>
+              <button type="submit" className="btn" disabled={isLoading}>
+                <span>{isLoading ? "Verificando en servidor..." : "Ingresar a Mi Cuenta"}</span>
                 <ArrowRight className="w-3.5 h-3.5 stroke-[1.75]" />
               </button>
 
@@ -738,8 +754,8 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
                 />
               </div>
 
-              <button type="submit" className="btn">
-                <span>Registrarme Gratis</span>
+              <button type="submit" className="btn" disabled={isLoading}>
+                <span>{isLoading ? "Creando cuenta en servidor..." : "Registrarme Gratis"}</span>
                 <ArrowRight className="w-3.5 h-3.5 stroke-[1.75]" />
               </button>
 

@@ -2,6 +2,8 @@ import prisma from '../lib/prisma.js';
 import { getInicioDiaLima } from '../utils/fechas.js';
 import { sincronizarCaducidadAutomatica } from './productoService.js';
 import * as ventaService from './ventaService.js';
+import bcrypt from 'bcryptjs';
+import { ErrorNegocio } from '../utils/errores.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -329,4 +331,171 @@ export async function registrarPedidoWebPublico({
   });
 
   return nuevaVenta;
+}
+
+/**
+ * Registra un nuevo cliente en la base de datos central de PostgreSQL
+ */
+export async function registrarCliente({ dni, nombre, email, telefono, direccion, distrito, password }) {
+  const cleanDni = String(dni || '').trim();
+  const cleanEmail = String(email || '').trim().toLowerCase();
+  const cleanNombre = String(nombre || '').trim();
+  const rawPassword = String(password || '').trim();
+
+  if (!cleanNombre) {
+    throw new ErrorNegocio('Ingresa tus nombres y apellidos completos.', 400);
+  }
+  if (!/^\d{8}$/.test(cleanDni)) {
+    throw new ErrorNegocio('El DNI debe contener exactamente 8 dígitos numéricos.', 400);
+  }
+  if (!cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+    throw new ErrorNegocio('Ingresa un correo electrónico válido.', 400);
+  }
+  if (rawPassword.length < 6) {
+    throw new ErrorNegocio('La contraseña debe tener al menos 6 caracteres.', 400);
+  }
+
+  // Verificar si ya existe por DNI o correo
+  const existenteDni = await prisma.cliente.findUnique({ where: { dni: cleanDni } });
+  if (existenteDni) {
+    throw new ErrorNegocio('Ya existe una cuenta registrada con este DNI. Por favor inicia sesión.', 400);
+  }
+
+  const existenteEmail = await prisma.cliente.findUnique({ where: { email: cleanEmail } });
+  if (existenteEmail) {
+    throw new ErrorNegocio('Ya existe una cuenta registrada con este correo electrónico. Por favor inicia sesión.', 400);
+  }
+
+  const hashedPassword = await bcrypt.hash(rawPassword, 10);
+
+  const nuevo = await prisma.cliente.create({
+    data: {
+      dni: cleanDni,
+      nombre: cleanNombre,
+      email: cleanEmail,
+      telefono: telefono ? String(telefono).trim() : '',
+      direccion: direccion ? String(direccion).trim() : 'Lima',
+      distrito: distrito ? String(distrito).trim() : 'Lima Cercado',
+      password: hashedPassword,
+      fichaMedica: { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
+      botiquin: [],
+      activo: true
+    }
+  });
+
+  return {
+    id: nuevo.dni,
+    dni: nuevo.dni,
+    name: nuevo.nombre,
+    email: nuevo.email,
+    phone: nuevo.telefono || '',
+    address: nuevo.direccion || 'Lima',
+    district: nuevo.distrito || 'Lima Cercado',
+    fichaSalud: nuevo.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
+    createdAt: nuevo.createdAt
+  };
+}
+
+/**
+ * Iniciar sesión de cliente consultando la base de datos central de PostgreSQL
+ */
+export async function loginCliente({ identifier, password }) {
+  const idf = String(identifier || '').trim().toLowerCase();
+  const rawPassword = String(password || '').trim();
+
+  if (!idf) {
+    throw new ErrorNegocio('Ingresa tu DNI o correo electrónico.', 400);
+  }
+
+  const cliente = await prisma.cliente.findFirst({
+    where: {
+      OR: [
+        { dni: idf },
+        { email: idf }
+      ],
+      activo: true
+    }
+  });
+
+  if (!cliente) {
+    throw new ErrorNegocio('No encontramos una cuenta con ese DNI o correo. Por favor crea una cuenta nueva.', 404);
+  }
+
+  // Validar contraseña si el cliente tiene una guardada
+  if (cliente.password && rawPassword) {
+    const esValida = await bcrypt.compare(rawPassword, cliente.password);
+    // Compatibilidad retroactiva si no estaba hasheada
+    const esIgualPlano = cliente.password === rawPassword;
+    if (!esValida && !esIgualPlano) {
+      throw new ErrorNegocio('Contraseña incorrecta. Por favor verifica tus datos.', 401);
+    }
+  }
+
+  return {
+    id: cliente.dni,
+    dni: cliente.dni,
+    name: cliente.nombre,
+    email: cliente.email,
+    phone: cliente.telefono || '',
+    address: cliente.direccion || 'Lima',
+    district: cliente.distrito || 'Lima Cercado',
+    fichaSalud: cliente.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
+    createdAt: cliente.createdAt
+  };
+}
+
+/**
+ * Actualiza el perfil o ficha médica del cliente en PostgreSQL
+ */
+export async function actualizarPerfilCliente({ dni, telefono, direccion, distrito, fichaMedica, botiquin }) {
+  const cleanDni = String(dni || '').trim();
+  if (!cleanDni) {
+    throw new ErrorNegocio('DNI de cliente requerido.', 400);
+  }
+
+  const dataToUpdate = {};
+  if (telefono !== undefined) dataToUpdate.telefono = String(telefono).trim();
+  if (direccion !== undefined) dataToUpdate.direccion = String(direccion).trim();
+  if (distrito !== undefined) dataToUpdate.distrito = String(distrito).trim();
+  if (fichaMedica !== undefined) dataToUpdate.fichaMedica = fichaMedica;
+  if (botiquin !== undefined) dataToUpdate.botiquin = botiquin;
+
+  const actualizado = await prisma.cliente.update({
+    where: { dni: cleanDni },
+    data: dataToUpdate
+  });
+
+  return {
+    id: actualizado.dni,
+    dni: actualizado.dni,
+    name: actualizado.nombre,
+    email: actualizado.email,
+    phone: actualizado.telefono || '',
+    address: actualizado.direccion || 'Lima',
+    district: actualizado.distrito || 'Lima Cercado',
+    fichaSalud: actualizado.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
+    createdAt: actualizado.createdAt
+  };
+}
+
+/**
+ * Obtener pedidos asociados al DNI de un cliente desde la base de datos
+ */
+export async function obtenerPedidosCliente(dni) {
+  const cleanDni = String(dni || '').trim();
+  if (!cleanDni) return [];
+
+  const ventas = await prisma.venta.findMany({
+    where: { clienteDoc: cleanDni },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      detalles: {
+        include: {
+          producto: true
+        }
+      }
+    }
+  });
+
+  return ventas;
 }

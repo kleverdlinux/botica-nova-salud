@@ -118,13 +118,27 @@ export function getCustomerOrders(clientIdentifier?: string | { dni?: string; em
   }
 }
 
+function getApiBaseUrl(): string {
+  if ((import.meta as any).env?.VITE_API_URL) return (import.meta as any).env.VITE_API_URL;
+  if (typeof window !== 'undefined') {
+    const { hostname } = window.location;
+    if (!hostname.includes('localhost') && !hostname.includes('127.0.0.1') && !hostname.startsWith('192.168.') && !hostname.startsWith('10.')) {
+      return '/api';
+    }
+    if (hostname.startsWith('192.168.') || hostname.startsWith('10.')) {
+      return `http://${hostname}:4000/api`;
+    }
+  }
+  return 'http://localhost:4000/api';
+}
+
 /**
  * Sincroniza el pedido web con la base de datos backend de Botica Nova Salud
  * Registra la venta atómica, descuenta stock del inventario y alimenta las métricas del panel Admin
  */
 export async function syncOrderToBackend(order: CustomerOrder) {
   try {
-    const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:4000/api';
+    const API_BASE = getApiBaseUrl();
     await fetch(`${API_BASE}/catalogo/pedido-web`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -223,13 +237,13 @@ export function getActiveClient(): ClientProfile | null {
 }
 
 /**
- * Guarda el cliente con sesión activa
+ * Guarda el cliente con sesión activa (en localStorage y sincroniza con PostgreSQL)
  */
 export function saveActiveClient(client: ClientProfile): void {
   try {
     localStorage.setItem(CLIENT_USER_KEY, JSON.stringify(client));
 
-    // Asegurar que también esté guardado en la lista de clientes registrados
+    // Asegurar que también esté guardado en la lista de clientes registrados localmente
     const clients = getRegisteredClients();
     const index = clients.findIndex((c) => c.dni === client.dni || c.email === client.email);
     if (index >= 0) {
@@ -240,15 +254,30 @@ export function saveActiveClient(client: ClientProfile): void {
     localStorage.setItem(CLIENTS_DB_KEY, JSON.stringify(clients));
 
     window.dispatchEvent(new CustomEvent('client-auth-changed', { detail: client }));
+
+    // Sincronizar en segundo plano con PostgreSQL
+    const API_BASE = getApiBaseUrl();
+    fetch(`${API_BASE}/catalogo/cliente/perfil`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        dni: client.dni,
+        telefono: client.phone,
+        direccion: client.address,
+        distrito: client.district,
+        fichaMedica: client.fichaSalud || undefined
+      })
+    }).catch(() => {});
   } catch (e) {
     console.error('Error guardando cliente:', e);
   }
 }
 
 /**
- * Registrar un nuevo cliente
+ * Registrar un nuevo cliente en la base de datos central de PostgreSQL
+ * Funciona de inmediato en cualquier dispositivo (celular, laptop, tablet)
  */
-export function registerClient(data: {
+export async function registerClient(data: {
   name: string;
   dni: string;
   email: string;
@@ -256,7 +285,7 @@ export function registerClient(data: {
   address: string;
   district?: string;
   password?: string;
-}): { success: boolean; message: string; client?: ClientProfile } {
+}): Promise<{ success: boolean; message: string; client?: ClientProfile }> {
   try {
     const cleanDni = data.dni.trim();
     const cleanEmail = data.email.trim().toLowerCase();
@@ -275,9 +304,45 @@ export function registerClient(data: {
       return { success: false, message: 'La contraseña debe tener al menos 6 caracteres.' };
     }
 
-    const clients = getRegisteredClients();
+    // 1. Intentar registrar en la Base de Datos central de PostgreSQL
+    const API_BASE = getApiBaseUrl();
+    try {
+      const res = await fetch(`${API_BASE}/catalogo/cliente/registro`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dni: cleanDni,
+          nombre: cleanName,
+          email: cleanEmail,
+          telefono: data.phone?.trim() || '',
+          direccion: data.address?.trim() || 'Lima',
+          distrito: data.district?.trim() || 'Lima Cercado',
+          password: data.password || ''
+        })
+      });
 
-    // Validar duplicidad
+      const json = await res.json();
+      if (!res.ok) {
+        return {
+          success: false,
+          message: json.error || json.mensaje || 'Error al registrar cliente en el servidor.'
+        };
+      }
+
+      if (json.client) {
+        saveActiveClient(json.client);
+        return {
+          success: true,
+          message: json.mensaje || `¡Bienvenido(a), ${cleanName}! Tu cuenta ha sido creada exitosamente.`,
+          client: json.client
+        };
+      }
+    } catch (networkErr) {
+      console.warn('Servidor central no disponible, aplicando fallback local:', networkErr);
+    }
+
+    // 2. Fallback de contingencia local
+    const clients = getRegisteredClients();
     if (clients.some((c) => c.dni === cleanDni)) {
       return {
         success: false,
@@ -312,25 +377,59 @@ export function registerClient(data: {
       message: `¡Bienvenido(a), ${cleanName}! Tu cuenta ha sido creada exitosamente.`,
       client: newClient,
     };
-  } catch (e) {
+  } catch (e: any) {
     console.error('Error en registerClient:', e);
-    return { success: false, message: 'Ocurrió un error al registrar la cuenta.' };
+    return { success: false, message: e.message || 'Ocurrió un error al registrar la cuenta.' };
   }
 }
 
 /**
- * Iniciar sesión de un cliente por DNI o correo
+ * Iniciar sesión de cliente consultando la base de datos central de PostgreSQL
+ * Si la cuenta se creó en un celular, podrá ingresar en una laptop sin problema
  */
-export function loginClient(
+export async function loginClient(
   identifier: string,
   password?: string
-): { success: boolean; message: string; client?: ClientProfile } {
+): Promise<{ success: boolean; message: string; client?: ClientProfile }> {
   try {
     const idf = identifier.trim().toLowerCase();
     if (!idf) {
       return { success: false, message: 'Ingresa tu DNI o correo electrónico.' };
     }
 
+    // 1. Consultar primero en la base de datos central del servidor
+    const API_BASE = getApiBaseUrl();
+    try {
+      const res = await fetch(`${API_BASE}/catalogo/cliente/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          identifier: idf,
+          password: password || ''
+        })
+      });
+
+      const json = await res.json();
+      if (!res.ok) {
+        return {
+          success: false,
+          message: json.error || json.mensaje || 'Credenciales incorrectas.'
+        };
+      }
+
+      if (json.client) {
+        saveActiveClient(json.client);
+        return {
+          success: true,
+          message: json.mensaje || `¡Bienvenido(a) de nuevo, ${json.client.name.split(' ')[0]}!`,
+          client: json.client
+        };
+      }
+    } catch (networkErr) {
+      console.warn('Servidor central no disponible, buscando en memoria local:', networkErr);
+    }
+
+    // 2. Fallback de contingencia en almacenamiento local
     const clients = getRegisteredClients();
     const found = clients.find(
       (c) => c.dni.toLowerCase() === idf || c.email.toLowerCase() === idf
@@ -343,7 +442,6 @@ export function loginClient(
       };
     }
 
-    // Si tiene contraseña registrada, verificarla
     if (found.password && password) {
       if (found.password !== password) {
         return { success: false, message: 'Contraseña incorrecta. Por favor verifica tus datos.' };
@@ -357,9 +455,9 @@ export function loginClient(
       message: `¡Bienvenido(a) de nuevo, ${found.name.split(' ')[0]}!`,
       client: found,
     };
-  } catch (e) {
+  } catch (e: any) {
     console.error('Error en loginClient:', e);
-    return { success: false, message: 'Ocurrió un error al iniciar sesión.' };
+    return { success: false, message: e.message || 'Ocurrió un error al iniciar sesión.' };
   }
 }
 

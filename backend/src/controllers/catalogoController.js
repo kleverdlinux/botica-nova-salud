@@ -13,3 +13,38 @@ export const registrarPedidoWeb = asyncHandler(async (req, res) => {
     venta
   });
 });
+
+export const registrarCliente = asyncHandler(async (req, res) => {
+  const client = await catalogoService.registrarCliente(req.body);
+  return res.status(201).json({
+    ok: true,
+    mensaje: `¡Bienvenido(a), ${client.name}! Tu cuenta ha sido creada exitosamente.`,
+    client
+  });
+});
+
+export const loginCliente = asyncHandler(async (req, res) => {
+  const client = await catalogoService.loginCliente(req.body);
+  return res.status(200).json({
+    ok: true,
+    mensaje: `¡Bienvenido(a) de nuevo, ${client.name.split(' ')[0]}!`,
+    client
+  });
+});
+
+export const actualizarPerfilCliente = asyncHandler(async (req, res) => {
+  const client = await catalogoService.actualizarPerfilCliente(req.body);
+  return res.status(200).json({
+    ok: true,
+    mensaje: 'Perfil actualizado exitosamente en el servidor.',
+    client
+  });
+});
+
+export const obtenerPedidosCliente = asyncHandler(async (req, res) => {
+  const pedidos = await catalogoService.obtenerPedidosCliente(req.params.dni);
+  return res.status(200).json({
+    ok: true,
+    pedidos
+  });
+});

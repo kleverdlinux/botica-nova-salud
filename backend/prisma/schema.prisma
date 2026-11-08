@@ -102,6 +102,22 @@ model Venta {
   detalles     DetalleVenta[]
 }
 
+model Cliente {
+  id          Int      @id @default(autoincrement())
+  dni         String   @unique
+  nombre      String
+  email       String   @unique
+  telefono    String?
+  direccion   String?
+  distrito    String?  @default("Lima Cercado")
+  password    String
+  fichaMedica Json?    @default("{}")
+  botiquin    Json?    @default("[]")
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model DetalleVenta {
   id             Int       @id @default(autoincrement())
   cantidad       Int
