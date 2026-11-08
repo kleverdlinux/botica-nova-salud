@@ -12,3 +12,4 @@ router.get('/', verificarAuth, citaController.listarCitas);
 router.patch('/:id/estado', verificarAuth, citaController.cambiarEstadoCita);
 
 export default router;
+

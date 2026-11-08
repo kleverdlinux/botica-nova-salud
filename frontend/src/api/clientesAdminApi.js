@@ -12,3 +12,4 @@ export async function reasignarPasswordClienteApi({ dni, nuevaPassword }) {
   });
   return data;
 }
+

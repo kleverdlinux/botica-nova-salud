@@ -112,3 +112,4 @@ export async function cambiarEstadoCita({ id, nuevoEstado }) {
 
   return citas[idx];
 }
+

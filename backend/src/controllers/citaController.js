@@ -1,4 +1,4 @@
-import asyncHandler from 'express-async-handler';
+import { asyncHandler } from '../utils/asyncHandler.js';
 import * as citaService from '../services/citaService.js';
 
 export const registrarCita = asyncHandler(async (req, res) => {
@@ -53,3 +53,4 @@ export const cambiarEstadoCita = asyncHandler(async (req, res) => {
     cita: citaActualizada
   });
 });
+

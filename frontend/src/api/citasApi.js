@@ -14,3 +14,4 @@ export async function cambiarEstadoCitaApi(id, nuevoEstado) {
   const { data } = await clienteAxios.patch(`/citas/${id}/estado`, { nuevoEstado });
   return data;
 }
+
