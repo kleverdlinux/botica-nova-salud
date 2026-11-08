@@ -17,7 +17,7 @@ import {
   FileText,
 } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa6';
-import { CustomerOrder } from '@/utils/orderStorage';
+import { CustomerOrder, getActiveClient } from '@/utils/orderStorage';
 
 interface BoletaModalProps {
   isOpen: boolean;
@@ -292,6 +292,21 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
   };
 
   const handleGoToClientPanel = () => {
+    // Si el usuario ya tiene sesión iniciada con este documento o si la cuenta ya existía previamente
+    const active = getActiveClient();
+    const isAlreadyLoggedIn = Boolean(
+      active && (active.dni === order.customer.dni || active.dni === order.customer.ruc)
+    );
+
+    // Solo mostrar modal de credenciales iniciales para invitados que se acaban de auto-registrar por primera vez
+    const isNewAccount = order.isNewAccount === true && !isAlreadyLoggedIn;
+
+    if (!isNewAccount) {
+      onClose();
+      navigate('/mi-cuenta', { state: { tab: 'pedidos', highlightOrder: order.id } });
+      return;
+    }
+
     setShowCredentialsModal(true);
   };
 

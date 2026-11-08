@@ -24,6 +24,7 @@ import {
   saveCustomerOrder,
   generateNextCorrelative,
   CustomerOrder,
+  ClientProfile,
 } from '@/utils/orderStorage';
 import { PaymentModal, PaymentData } from '@/components/checkout/PaymentModal';
 import { BoletaModal } from '@/components/checkout/BoletaModal';
@@ -236,10 +237,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         status: 'CONFIRMADO',
       };
 
-      // Guardar pedido persistente
-      saveCustomerOrder(orderData);
-
-      // Auto-registrar o sincronizar cliente activo en PostgreSQL con contraseña igual a su DNI
+      // Sincronizar o auto-registrar cliente en PostgreSQL
       const clientName =
         tipoComprobante === 'FACTURA' && formData.razonSocial
           ? formData.razonSocial
@@ -247,20 +245,28 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       const clientEmail = formData.email || `${cleanDni || cleanRuc}@cliente.novasalud.pe`;
       const clientDni = cleanDni || cleanRuc;
 
+      const activeClient = getActiveClient();
+      const alreadyLoggedIn = Boolean(
+        activeClient && (activeClient.dni === clientDni || activeClient.id === clientDni)
+      );
+
       // Registrar o sincronizar en PostgreSQL
-      await registerClient({
+      const regRes = await registerClient({
         dni: clientDni,
         name: clientName,
         email: clientEmail,
         phone: cleanPhone,
         address: formData.address,
         district: formData.district,
-        password: clientDni,
+        password: clientDni, // Sólo se usa si la cuenta es 100% nueva
         esAutoRegistro: true,
       });
 
-      // Asegurar sesión activa local
-      saveActiveClient({
+      // Se considera cuenta nueva solo si el usuario no estaba autenticado y el servidor confirma que es nueva
+      const isBrandNewAccount = !alreadyLoggedIn && Boolean(regRes.isNewAccount);
+
+      // Asegurar sesión activa local SIN sobreescribir la contraseña original con el DNI
+      const clientToActive: ClientProfile = {
         id: clientDni,
         dni: clientDni,
         name: clientName,
@@ -268,14 +274,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         phone: cleanPhone,
         address: formData.address,
         district: formData.district,
-        password: clientDni,
-      });
+        ...(alreadyLoggedIn && activeClient?.password ? { password: activeClient.password } : {}),
+      };
+      saveActiveClient(clientToActive);
+
+      // Guardar pedido persistente con la bandera isNewAccount
+      const fullOrderData: CustomerOrder = {
+        ...orderData,
+        isNewAccount: isBrandNewAccount,
+      };
+      saveCustomerOrder(fullOrderData);
 
       // Limpiar y preparar boleta
       clearCart();
       setIsPaymentModalOpen(false);
       handleClose();
-      setConfirmedOrder(orderData);
+      setConfirmedOrder(fullOrderData);
       setIsBoletaOpen(true);
 
       toast.success(

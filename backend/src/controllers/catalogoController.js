@@ -18,8 +18,11 @@ export const registrarCliente = asyncHandler(async (req, res) => {
   const client = await catalogoService.registrarCliente(req.body);
   return res.status(201).json({
     ok: true,
-    mensaje: `¡Bienvenido(a), ${client.name}! Tu cuenta ha sido creada exitosamente.`,
-    client
+    mensaje: client.isNewAccount
+      ? `¡Bienvenido(a), ${client.name}! Tu cuenta ha sido creada exitosamente.`
+      : `Datos de entrega sincronizados para ${client.name}.`,
+    client,
+    isNewAccount: client.isNewAccount
   });
 });
 

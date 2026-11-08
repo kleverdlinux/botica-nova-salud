@@ -454,7 +454,8 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
         fichaSalud: actualizado.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
         botiquin: Array.isArray(actualizado.botiquin) ? actualizado.botiquin : [],
         puntos: puntosGuardados,
-        createdAt: actualizado.createdAt
+        createdAt: actualizado.createdAt,
+        isNewAccount: false
       };
     }
     throw new ErrorNegocio('Ya existe una cuenta registrada con este DNI. Por favor inicia sesión.', 400);
@@ -499,7 +500,8 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
     fichaSalud: nuevo.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
     botiquin: [],
     puntos: 50,
-    createdAt: nuevo.createdAt
+    createdAt: nuevo.createdAt,
+    isNewAccount: true
   };
 }
 

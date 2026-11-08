@@ -44,6 +44,7 @@ export interface CustomerOrder {
   paymentMethod: 'YAPE_PLIN' | 'TARJETA' | 'CONTRA_ENTREGA' | 'TRANSFERENCIA';
   paymentDetails: string;
   status: 'CONFIRMADO' | 'PREPARANDO' | 'EN_CAMINO' | 'ENTREGADO';
+  isNewAccount?: boolean;
 }
 
 export interface ClientProfile {
@@ -61,6 +62,7 @@ export interface ClientProfile {
   botiquin?: any[];
   puntos?: number;
   createdAt?: number;
+  isNewAccount?: boolean;
 }
 
 const STORAGE_ORDERS_KEY = 'nova_salud_customer_orders';
@@ -288,36 +290,41 @@ export function getActiveClient(): ClientProfile | null {
  */
 export function saveActiveClient(client: ClientProfile): void {
   try {
-    localStorage.setItem(CLIENT_USER_KEY, JSON.stringify(client));
+    const existing = getActiveClient();
+    const finalClient: ClientProfile = {
+      ...client,
+      password: client.password || (existing?.dni === client.dni ? existing.password : undefined)
+    };
+
+    localStorage.setItem(CLIENT_USER_KEY, JSON.stringify(finalClient));
 
     // Asegurar que también esté guardado en la lista de clientes registrados localmente
     const clients = getRegisteredClients();
-    const index = clients.findIndex((c) => c.dni === client.dni || c.email === client.email);
+    const index = clients.findIndex((c) => c.dni === finalClient.dni || c.email === finalClient.email);
     if (index >= 0) {
-      clients[index] = { ...clients[index], ...client };
+      clients[index] = { ...clients[index], ...finalClient };
     } else {
-      clients.push(client);
+      clients.push(finalClient);
     }
     localStorage.setItem(CLIENTS_DB_KEY, JSON.stringify(clients));
 
-    window.dispatchEvent(new CustomEvent('client-auth-changed', { detail: client }));
+    window.dispatchEvent(new CustomEvent('client-auth-changed', { detail: finalClient }));
 
-    // Sincronizar en segundo plano con PostgreSQL
+    // Sincronizar en segundo plano con PostgreSQL SIN tocar contraseña
     const API_BASE = getApiBaseUrl();
     fetch(`${API_BASE}/catalogo/cliente/perfil`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        dni: client.dni,
-        nombre: client.name,
-        email: client.email,
-        telefono: client.phone,
-        direccion: client.address,
-        distrito: client.district,
-        password: client.password || undefined,
+        dni: finalClient.dni,
+        nombre: finalClient.name,
+        email: finalClient.email,
+        telefono: finalClient.phone,
+        direccion: finalClient.address,
+        distrito: finalClient.district,
         fichaMedica: {
-          ...(client.fichaSalud || {}),
-          avatar: client.avatar || undefined,
+          ...(finalClient.fichaSalud || {}),
+          avatar: finalClient.avatar || undefined,
         }
       })
     }).catch(() => {});
@@ -439,7 +446,7 @@ export async function registerClient(data: {
   district?: string;
   password?: string;
   esAutoRegistro?: boolean;
-}): Promise<{ success: boolean; message: string; client?: ClientProfile }> {
+}): Promise<{ success: boolean; message: string; client?: ClientProfile; isNewAccount?: boolean }> {
   try {
     const cleanDni = data.dni.trim();
     const cleanEmail = data.email.trim().toLowerCase();
@@ -485,11 +492,21 @@ export async function registerClient(data: {
       }
 
       if (json.client) {
-        saveActiveClient(json.client);
+        const isNew = Boolean(json.isNewAccount ?? json.client.isNewAccount);
+        const existingActive = getActiveClient();
+        const clientToSave: ClientProfile = {
+          ...json.client,
+          isNewAccount: isNew,
+          password: (!isNew && existingActive?.dni === json.client.dni && existingActive.password)
+            ? existingActive.password
+            : (json.client.password || undefined)
+        };
+        saveActiveClient(clientToSave);
         return {
           success: true,
           message: json.mensaje || `¡Bienvenido(a), ${cleanName}! Tu cuenta ha sido creada exitosamente.`,
-          client: json.client
+          client: clientToSave,
+          isNewAccount: isNew
         };
       }
     } catch (networkErr) {
@@ -498,16 +515,25 @@ export async function registerClient(data: {
 
     // 2. Fallback de contingencia local
     const clients = getRegisteredClients();
-    if (clients.some((c) => c.dni === cleanDni)) {
+    const existing = clients.find((c) => c.dni === cleanDni || c.email.toLowerCase() === cleanEmail);
+    if (existing) {
+      if (data.esAutoRegistro) {
+        existing.phone = data.phone?.trim() || existing.phone;
+        existing.address = data.address?.trim() || existing.address;
+        existing.district = data.district?.trim() || existing.district;
+        existing.isNewAccount = false;
+        localStorage.setItem(CLIENTS_DB_KEY, JSON.stringify(clients));
+        saveActiveClient(existing);
+        return {
+          success: true,
+          message: `Datos sincronizados para ${existing.name}.`,
+          client: existing,
+          isNewAccount: false,
+        };
+      }
       return {
         success: false,
         message: 'Ya existe una cuenta registrada con este DNI. Por favor inicia sesión.',
-      };
-    }
-    if (clients.some((c) => c.email.toLowerCase() === cleanEmail)) {
-      return {
-        success: false,
-        message: 'Ya existe una cuenta registrada con este correo electrónico. Por favor inicia sesión.',
       };
     }
 
@@ -521,6 +547,7 @@ export async function registerClient(data: {
       district: data.district?.trim() || 'Juliaca Cercado',
       password: data.password || '',
       createdAt: Date.now(),
+      isNewAccount: true,
     };
 
     clients.push(newClient);
@@ -531,6 +558,7 @@ export async function registerClient(data: {
       success: true,
       message: `¡Bienvenido(a), ${cleanName}! Tu cuenta ha sido creada exitosamente.`,
       client: newClient,
+      isNewAccount: true,
     };
   } catch (e: any) {
     console.error('Error en registerClient:', e);
