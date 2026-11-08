@@ -47,11 +47,15 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({ isOpen, onCl
         const prodName = normalizeText(p.name);
         const prodMat = normalizeText(p.materials || '');
 
-        if (isShort) {
-          // Búsqueda corta (1 o 2 letras, ej: "A"): buscar SOLO medicamentos cuyo nombre o principio inicie con dicha letra
+        if (norm.length === 1) {
+          // Para 1 sola letra (ej: "P" o "A"): el medicamento DEBE iniciar exactamente con esa letra
+          return prodName.startsWith(norm);
+        }
+
+        if (norm.length === 2) {
+          // Para 2 letras (ej: "Pa" o "Am"): coincidencia por inicio de nombre o inicio de palabra
           const nameWords = prodName.split(/\s+/);
-          const matWords = prodMat.split(/\s+/);
-          return nameWords.some((w) => w.startsWith(norm)) || matWords.some((w) => w.startsWith(norm));
+          return prodName.startsWith(norm) || nameWords.some((w) => w.startsWith(norm));
         }
 
         const fullText = normalizeText(

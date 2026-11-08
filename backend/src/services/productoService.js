@@ -35,11 +35,22 @@ export async function buscarProductosPOS(termino) {
   // Garantizar que no haya medicamentos caducados en estado activo antes de consultar
   await sincronizarCaducidadAutomatica();
 
-  const isShort = query.length <= 2;
+  const isOneChar = query.length === 1;
+  const isTwoChar = query.length === 2;
   let whereCond;
 
-  if (isShort) {
-    // Si el usuario escribe 1 o 2 letras (ej: "A" o "Am"), buscar SOLO fármacos que inicien con esa letra
+  if (isOneChar) {
+    // Para 1 sola letra (ej: "A" o "P"): SOLO fármacos cuyo nombre empiece exactamente con esa letra
+    whereCond = {
+      activo: true,
+      stock: { gt: 0 },
+      OR: [
+        { nombre: { startsWith: query, mode: 'insensitive' } },
+        { codigoBarras: { startsWith: query, mode: 'insensitive' } }
+      ]
+    };
+  } else if (isTwoChar) {
+    // Para 2 letras (ej: "Am" o "Pa"): fármacos cuyo nombre o palabras comiencen con ese prefijo
     whereCond = {
       activo: true,
       stock: { gt: 0 },
@@ -47,7 +58,6 @@ export async function buscarProductosPOS(termino) {
         { nombre: { startsWith: query, mode: 'insensitive' } },
         { nombre: { contains: ` ${query}`, mode: 'insensitive' } },
         { principioActivo: { startsWith: query, mode: 'insensitive' } },
-        { principioActivo: { contains: ` ${query}`, mode: 'insensitive' } },
         { codigoBarras: { startsWith: query, mode: 'insensitive' } }
       ]
     };
@@ -95,11 +105,20 @@ export async function buscarProductosPOS(termino) {
     const aName = (a.nombre || '').toLowerCase();
     const bName = (b.nombre || '').toLowerCase();
 
+    // 1. Prioridad máxima: el NOMBRE inicia exactamente con el término buscado
     const aStarts = aName.startsWith(normQuery);
     const bStarts = bName.startsWith(normQuery);
     if (aStarts && !bStarts) return -1;
     if (!aStarts && bStarts) return 1;
+    if (aStarts && bStarts) return aName.localeCompare(bName);
 
+    // 2. Prioridad secundaria: el principio activo inicia con el término
+    const aPrincipio = (a.principioActivo || '').toLowerCase().startsWith(normQuery);
+    const bPrincipio = (b.principioActivo || '').toLowerCase().startsWith(normQuery);
+    if (aPrincipio && !bPrincipio) return -1;
+    if (!aPrincipio && bPrincipio) return 1;
+
+    // 3. Palabra dentro del nombre
     const aWord = aName.split(/\s+/).some(w => w.startsWith(normQuery));
     const bWord = bName.split(/\s+/).some(w => w.startsWith(normQuery));
     if (aWord && !bWord) return -1;
@@ -143,13 +162,18 @@ export async function listarProductos({ rol, activoQuery, page = 1, limit = 20, 
     const q = busqueda.trim();
     const isShort = q.length <= 2;
 
-    if (isShort) {
-      // Para 1 o 2 letras (ej: "A"), buscar SOLO fármacos cuyo nombre o principio inicie con dicha letra
+    if (q.length === 1) {
+      // Para 1 sola letra (ej: "A" o "P"): SOLO fármacos cuyo nombre empiece con dicha letra
+      where.OR = [
+        { nombre: { startsWith: q, mode: 'insensitive' } },
+        { codigoBarras: { startsWith: q, mode: 'insensitive' } }
+      ];
+    } else if (q.length === 2) {
+      // Para 2 letras (ej: "Am" o "Pa"): prefijos de nombre o palabra
       where.OR = [
         { nombre: { startsWith: q, mode: 'insensitive' } },
         { nombre: { contains: ` ${q}`, mode: 'insensitive' } },
         { principioActivo: { startsWith: q, mode: 'insensitive' } },
-        { principioActivo: { contains: ` ${q}`, mode: 'insensitive' } },
         { codigoBarras: { startsWith: q, mode: 'insensitive' } }
       ];
     } else {

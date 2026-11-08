@@ -255,11 +255,16 @@ export default function Inventario() {
       const prodLote = (prod.lote || '').toLowerCase();
       const prodBar = (prod.codigoBarras || '').toLowerCase();
 
-      if (isShort) {
-        // Para 1 o 2 letras, buscar SOLO lotes cuyo nombre o principio inicie con dicha letra
+      if (q.length === 1) {
+        // Para 1 sola letra (ej: "A" o "P"): el nombre comercial debe iniciar exactamente con esa letra
+        const matchesOne = prodName.startsWith(q) || prodLote.startsWith(q) || prodBar.startsWith(q);
+        if (!matchesOne) return false;
+      } else if (q.length === 2) {
+        // Para 2 letras (ej: "Am" o "Pa"): inicio de nombre o inicio de palabra
         const nameWords = prodName.split(/\s+/);
         const priWords = prodPrincipio.split(/\s+/);
         const matchesShort =
+          prodName.startsWith(q) ||
           nameWords.some((w) => w.startsWith(q)) ||
           priWords.some((w) => w.startsWith(q)) ||
           prodLote.startsWith(q) ||
