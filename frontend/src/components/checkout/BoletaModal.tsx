@@ -169,7 +169,105 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
   if (!isOpen || !order) return null;
 
   const handlePrint = () => {
-    window.print();
+    const elemento = document.getElementById('seccion-boleta-imprimible');
+    if (!elemento) {
+      window.print();
+      return;
+    }
+
+    try {
+      // Eliminar iframe previo si quedó en memoria
+      const frameExistente = document.getElementById('print-comprobante-isolated-iframe');
+      if (frameExistente) {
+        frameExistente.remove();
+      }
+
+      // Extraer todas las hojas de estilo y fuentes del sistema
+      const estilos = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+        .map((el) => el.outerHTML)
+        .join('\n');
+
+      const iframe = document.createElement('iframe');
+      iframe.id = 'print-comprobante-isolated-iframe';
+      iframe.style.position = 'fixed';
+      iframe.style.left = '-9999px';
+      iframe.style.top = '-9999px';
+      iframe.style.width = '0px';
+      iframe.style.height = '0px';
+      iframe.style.border = 'none';
+      document.body.appendChild(iframe);
+
+      const doc = iframe.contentWindow?.document;
+      if (!doc) {
+        window.print();
+        return;
+      }
+
+      doc.open();
+      doc.write(`<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Comprobante ${order.serieNumero}</title>
+  ${estilos}
+  <style>
+    @page {
+      size: auto;
+      margin: 8mm 10mm;
+    }
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #ffffff !important;
+      color: #18181b !important;
+      font-family: inherit;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    #seccion-boleta-imprimible {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 2mm 4mm !important;
+      box-sizing: border-box !important;
+      border: none !important;
+      box-shadow: none !important;
+      display: block !important;
+      visibility: visible !important;
+      background: #ffffff !important;
+    }
+    #seccion-boleta-imprimible * {
+      visibility: visible !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="seccion-boleta-imprimible">
+    ${elemento.innerHTML}
+  </div>
+</body>
+</html>`);
+      doc.close();
+
+      setTimeout(() => {
+        try {
+          iframe.contentWindow?.focus();
+          iframe.contentWindow?.print();
+        } catch (err) {
+          console.error('Error al imprimir por iframe, usando fallback:', err);
+          window.print();
+        } finally {
+          setTimeout(() => {
+            try {
+              iframe.remove();
+            } catch {}
+          }, 2500);
+        }
+      }, 350);
+    } catch (e) {
+      console.error('Fallback a window.print:', e);
+      window.print();
+    }
   };
 
   const handleGoToClientPanel = () => {
@@ -235,12 +333,12 @@ Para seguimiento de tu despacho ingresa a tu panel de cliente en Botica Nova Sal
   return (
     <>
       <div
-        className="fixed inset-0 z-[100] overflow-y-auto bg-black/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-2.5 sm:p-4 pt-16 sm:pt-6 pb-6 animate-in fade-in duration-200 print:p-0 print:bg-white print:static print:block print:inset-auto print:m-0 print:overflow-visible"
+        className="fixed inset-0 z-[100] overflow-y-auto bg-black/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-2.5 sm:p-4 pt-16 sm:pt-6 pb-6 animate-in fade-in duration-200 print:hidden"
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}
       >
-      <div className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-zinc-200 flex flex-col my-auto text-[#18181b] animate-in zoom-in-95 duration-200 print:border-none print:shadow-none print:max-w-none print:rounded-none print:static print:block print:m-0 print:p-0 print:w-full">
+      <div className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-zinc-200 flex flex-col my-auto text-[#18181b] animate-in zoom-in-95 duration-200">
         {/* ========================================================
             HEADER DEL MODAL (Fondo blanco, diseño unificado)
             ======================================================== */}
@@ -277,14 +375,14 @@ Para seguimiento de tu despacho ingresa a tu panel de cliente en Botica Nova Sal
         {/* ========================================================
             CUERPO HORIZONTAL EN 2 COLUMNAS (DOCUMENTO + BOTONES DERECHA)
             ======================================================== */}
-        <div className="grid grid-cols-1 md:grid-cols-12 flex-1 print:block print:m-0 print:p-0">
+        <div className="grid grid-cols-1 md:grid-cols-12 flex-1">
           {/* ====================================================================
               COLUMNA IZQUIERDA (7 u 8 cols): BOLETA / FACTURA FÍSICA AUTÉNTICA
               ==================================================================== */}
           <div
             id="seccion-boleta-imprimible"
             ref={printRef}
-            className="md:col-span-7 lg:col-span-8 p-3.5 sm:p-5 flex flex-col justify-between space-y-3 bg-white border-b md:border-b-0 md:border-r border-zinc-200 print:border-none print:p-0 print:m-0 print:w-full"
+            className="md:col-span-7 lg:col-span-8 p-3.5 sm:p-5 flex flex-col justify-between space-y-3 bg-white border-b md:border-b-0 md:border-r border-zinc-200"
           >
             <div className="space-y-3">
               {/* Encabezado de la Boleta / Factura */}
