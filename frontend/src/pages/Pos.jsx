@@ -274,6 +274,10 @@ export default function Pos() {
 
   // Sincronización en tiempo real con la Pantalla de Cliente / Visor Externo
   useEffect(() => {
+    // Si la venta acaba de completarse (el modal de boleta está abierto),
+    // no enviar REPOSO inmediatamente para darle tiempo a la terminal móvil y visor de mostrar el éxito
+    if (ventaCompletada) return;
+
     if (items.length === 0) {
       posDisplay.enviarEstado({
         modo: 'REPOSO',
@@ -296,7 +300,7 @@ export default function Pos() {
         clienteNom: clienteNom || (tipoComprobante === 'FACTURA' ? 'Empresa' : 'Cliente General')
       });
     }
-  }, [items, totalCalculadoUI, metodoPago, yapeEnviadoADispositivo, tarjetaEnviadaADispositivo, clienteNom, tipoComprobante]);
+  }, [items, totalCalculadoUI, metodoPago, yapeEnviadoADispositivo, tarjetaEnviadaADispositivo, clienteNom, tipoComprobante, ventaCompletada]);
 
   // Generar código QR dinámico de Yape / Plin accesible desde el celular por Wi-Fi o Producción
   useEffect(() => {
@@ -470,10 +474,17 @@ export default function Pos() {
 
       toast.success(res.mensaje || '¡Venta registrada exitosamente!');
 
+      const ventaData = res.venta || {};
+      const comprobanteNum = ventaData.numeroComprobante || ventaData.comprobanteNumero || ticketIdActual.current;
+
       posDisplay.enviarEstado({
         modo: 'EXITO',
         total: totalCalculadoUI,
-        ticketId: ticketIdActual.current
+        ticketId: ticketIdActual.current,
+        comprobante: comprobanteNum,
+        metodoPago: metodoFinal,
+        clienteNom: nombreFinal,
+        items: items.map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, precio: i.precio }))
       });
 
       setVentaCompletada(res.venta);
@@ -490,10 +501,6 @@ export default function Pos() {
       setTarjetaEnviadaADispositivo(false);
       ultimoDocConsultadoRef.current = '';
       ticketIdActual.current = `TKT-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-
-      setTimeout(() => {
-        posDisplay.enviarEstado({ modo: 'REPOSO', items: [], total: 0 });
-      }, 4000);
     } catch (err) {
       const errorServidor = err.response?.data?.error || 'No se pudo procesar la venta. Verifique los datos.';
       toast.error(errorServidor, { duration: 6000 });
@@ -1216,7 +1223,15 @@ export default function Pos() {
       {ventaCompletada && (
         <ModalTicket
           venta={ventaCompletada}
-          onClose={() => setVentaCompletada(null)}
+          onClose={() => {
+            setVentaCompletada(null);
+            posDisplay.enviarEstado({
+              modo: 'REPOSO',
+              items: [],
+              total: 0,
+              ticketId: ticketIdActual.current
+            });
+          }}
         />
       )}
 
