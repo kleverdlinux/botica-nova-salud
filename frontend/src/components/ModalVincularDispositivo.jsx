@@ -16,6 +16,8 @@ export default function ModalVincularDispositivo({
   onClose,
   monto = 0,
   ticketId = '',
+  clienteDoc = '',
+  clienteNom = '',
   dispositivoConectado,
   nombreDispositivo,
   onConectar,
@@ -40,6 +42,8 @@ export default function ModalVincularDispositivo({
     const params = new URLSearchParams();
     if (Number(monto) > 0) params.set('monto', Number(monto).toFixed(2));
     if (ticketId) params.set('ticket', ticketId);
+    if (clienteDoc) params.set('doc', clienteDoc);
+    if (clienteNom) params.set('cliente', clienteNom);
     const qs = params.toString();
     return qs ? `${base}?${qs}` : base;
   };
@@ -53,7 +57,9 @@ export default function ModalVincularDispositivo({
       posDisplay.enviarEstado({
         modo: 'CARRITO',
         total: Number(monto),
-        ticketId: ticketId
+        ticketId: ticketId,
+        clienteDoc,
+        clienteNom
       });
     }
 
@@ -130,6 +136,20 @@ export default function ModalVincularDispositivo({
               <span className="text-xs font-black text-purple-700 bg-purple-100 dark:bg-purple-900/60 px-2.5 py-1 rounded-full border border-purple-200 dark:border-purple-800">
                 Yape / Tarjeta
               </span>
+            </div>
+          )}
+
+          {clienteNom && (
+            <div className="p-2.5 bg-slate-50 dark:bg-neutral-950 rounded-xl border border-slate-200 dark:border-neutral-800 text-xs text-left flex items-center justify-between">
+              <div>
+                <span className="text-[10px] uppercase font-bold text-slate-400 block">Titular de la Boleta</span>
+                <span className="font-bold text-slate-800 dark:text-neutral-100">{clienteNom}</span>
+              </div>
+              {clienteDoc && (
+                <span className="font-mono font-bold text-teal-800 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded-md border border-teal-200 dark:border-teal-800 text-[11px]">
+                  {clienteDoc.length === 8 ? 'DNI ' : 'RUC '}{clienteDoc}
+                </span>
+              )}
             </div>
           )}
 

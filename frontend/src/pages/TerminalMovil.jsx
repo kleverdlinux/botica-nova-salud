@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   Smartphone,
@@ -19,29 +19,34 @@ import { posDisplay } from '../utils/posDisplayChannel.js';
 import { formatearMoneda } from '../utils/formateadores.js';
 
 export default function TerminalMovil() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const montoUrl = parseFloat(searchParams.get('monto') || '0');
   const ticketUrl = searchParams.get('ticket') || '';
+  const clienteUrl = searchParams.get('cliente') || '';
+  const docUrl = searchParams.get('doc') || '';
 
   const [metodoActivo, setMetodoActivo] = useState('YAPE_PLIN'); // 'YAPE_PLIN' | 'TARJETA'
+  const [sesionFinalizada, setSesionFinalizada] = useState(false);
+  const ultimaVentaCerradaRef = useRef(null);
+
   const [estadoPos, setEstadoPos] = useState({
     modo: montoUrl > 0 ? 'CARRITO' : 'REPOSO',
     total: montoUrl > 0 ? montoUrl : 0,
     items: [],
     ticketId: ticketUrl || 'TKT-001',
-    clienteNom: ''
+    clienteNom: clienteUrl || '',
+    clienteDoc: docUrl || ''
   });
 
   const [conectado, setConectado] = useState(true);
   const [mostrarDetalle, setMostrarDetalle] = useState(false);
-  const [notificacionLocal, setNotificacionLocal] = useState(null);
   const [pagoCompletado, setPagoCompletado] = useState(null);
 
   // Estados interactivos para cobro con tarjeta
   const [cardNumber, setCardNumber] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');
   const [cardCvv, setCardCvv] = useState('');
-  const [cardHolder, setCardHolder] = useState('');
+  const [cardHolder, setCardHolder] = useState(clienteUrl || '');
 
   // 1. Cargar estado inicial y suscribirse a eventos de la Laptop (SSE y BroadcastChannel)
   useEffect(() => {
@@ -50,7 +55,7 @@ export default function TerminalMovil() {
       setEstadoPos(inicial);
       if (inicial.modo === 'TARJETA') setMetodoActivo('TARJETA');
       if (inicial.modo === 'YAPE_PLIN') setMetodoActivo('YAPE_PLIN');
-      if (inicial.clienteNom) setCardHolder(inicial.clienteNom);
+      if (inicial.clienteNom && !cardHolder) setCardHolder(inicial.clienteNom);
     }
 
     const unsuscribe = posDisplay.suscribir((mensaje) => {
@@ -61,16 +66,26 @@ export default function TerminalMovil() {
 
         // Si la laptop finalizó la venta con éxito
         if (payload.modo === 'EXITO') {
-          setPagoCompletado((prev) => ({
-            monto: Number(payload.total) || prev?.monto || (Number(estadoPos.total) > 0 ? Number(estadoPos.total) : montoUrl) || 0,
-            metodo: payload.metodoPago || prev?.metodo || metodoActivo,
-            referencia: payload.comprobante || prev?.referencia || 'VCH-APROBADO',
-            ticket: payload.ticketId || prev?.ticket || ticketUrl || 'TKT-001',
-            cliente: payload.clienteNom || prev?.cliente || cardHolder || 'Cliente General',
+          const ref = String(payload.comprobante || payload.ticketId || '');
+          // Si el usuario ya presionó "Listo / Siguiente Atención" para esta venta, no volver a mostrarla
+          if (ultimaVentaCerradaRef.current && (ref === ultimaVentaCerradaRef.current || ultimaVentaCerradaRef.current === 'CERRADO')) {
+            return;
+          }
+          if (sesionFinalizada) {
+            return;
+          }
+
+          setPagoCompletado({
+            monto: Number(payload.total) || (Number(estadoPos.total) > 0 ? Number(estadoPos.total) : montoUrl) || 0,
+            metodo: payload.metodoPago || metodoActivo,
+            referencia: payload.comprobante || 'VCH-APROBADO',
+            ticket: payload.ticketId || ticketUrl || 'TKT-001',
+            cliente: payload.clienteNom || cardHolder || clienteUrl || 'Cliente General',
+            clienteDoc: payload.clienteDoc || docUrl || '',
             hora: new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
             fecha: new Date().toLocaleDateString('es-PE'),
             items: Array.isArray(payload.items) && payload.items.length > 0 ? payload.items : (Array.isArray(estadoPos.items) ? estadoPos.items : [])
-          }));
+          });
           return;
         }
 
@@ -80,23 +95,31 @@ export default function TerminalMovil() {
           return;
         }
 
-        // Si trae información de carrito o cambio de estado
-        if (Number(payload.total) > 0 || (Array.isArray(payload.items) && payload.items.length > 0) || payload.modo === 'REPOSO') {
+        // Si trae información de carrito o nueva venta activa
+        if (Number(payload.total) > 0 || (Array.isArray(payload.items) && payload.items.length > 0)) {
+          if (sesionFinalizada) {
+            setSesionFinalizada(false);
+            ultimaVentaCerradaRef.current = null;
+          }
           setEstadoPos((prev) => ({
             ...prev,
             ...payload,
-            total: Number(payload.total) > 0 ? Number(payload.total) : (prev.total > 0 ? prev.total : montoUrl)
+            total: Number(payload.total)
           }));
-        }
-
-        if (payload.clienteNom && !cardHolder) {
-          setCardHolder(payload.clienteNom);
-        }
-
-        if (payload.modo === 'TARJETA') {
-          setMetodoActivo('TARJETA');
-        } else if (payload.modo === 'YAPE_PLIN') {
-          setMetodoActivo('YAPE_PLIN');
+          if (payload.clienteNom && !cardHolder) {
+            setCardHolder(payload.clienteNom);
+          }
+          if (payload.modo === 'TARJETA') {
+            setMetodoActivo('TARJETA');
+          } else if (payload.modo === 'YAPE_PLIN') {
+            setMetodoActivo('YAPE_PLIN');
+          }
+        } else if (payload.modo === 'REPOSO' && !pagoCompletado) {
+          setEstadoPos((prev) => ({
+            ...prev,
+            ...payload,
+            total: 0
+          }));
         }
       } else if (mensaje.tipo === 'CAMBIAR_METODO_PAGO') {
         const metodo = mensaje.payload?.metodoPago;
@@ -107,9 +130,9 @@ export default function TerminalMovil() {
     });
 
     return () => unsuscribe();
-  }, [cardHolder, pagoCompletado, estadoPos.total, estadoPos.items, metodoActivo, montoUrl, ticketUrl]);
+  }, [cardHolder, pagoCompletado, estadoPos.total, estadoPos.items, metodoActivo, montoUrl, ticketUrl, clienteUrl, docUrl, sesionFinalizada]);
 
-  // 2. Sondeo continuo HTTP REST de alta confiabilidad (Garantía de sincronización Celular <-> Laptop en Render / Wi-Fi)
+  // 2. Sondeo continuo HTTP REST de alta confiabilidad (Sincronización Celular <-> Laptop en Render / Wi-Fi)
   useEffect(() => {
     let activo = true;
 
@@ -121,12 +144,21 @@ export default function TerminalMovil() {
 
         // Si la venta se completó en la laptop
         if (estado.modo === 'EXITO') {
+          const ref = String(estado.comprobante || estado.ticketId || '');
+          if (ultimaVentaCerradaRef.current && (ref === ultimaVentaCerradaRef.current || ultimaVentaCerradaRef.current === 'CERRADO')) {
+            return;
+          }
+          if (sesionFinalizada) {
+            return;
+          }
+
           setPagoCompletado((prev) => prev || {
             monto: Number(estado.total) || montoUrl,
             metodo: estado.metodoPago || metodoActivo,
             referencia: estado.comprobante || 'VCH-APROBADO',
             ticket: estado.ticketId || ticketUrl || 'TKT-001',
-            cliente: estado.clienteNom || cardHolder || 'Cliente General',
+            cliente: estado.clienteNom || cardHolder || clienteUrl || 'Cliente General',
+            clienteDoc: estado.clienteDoc || docUrl || '',
             hora: new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
             fecha: new Date().toLocaleDateString('es-PE'),
             items: Array.isArray(estado.items) ? estado.items : []
@@ -134,8 +166,12 @@ export default function TerminalMovil() {
           return;
         }
 
-        // Si el servidor tiene datos activos de la venta en curso
+        // Si el servidor tiene datos activos de una nueva venta en curso
         if (Number(estado.total) > 0 || (Array.isArray(estado.items) && estado.items.length > 0)) {
+          if (sesionFinalizada) {
+            setSesionFinalizada(false);
+            ultimaVentaCerradaRef.current = null;
+          }
           setEstadoPos((prev) => ({
             ...prev,
             ...estado
@@ -157,7 +193,7 @@ export default function TerminalMovil() {
       activo = false;
       clearInterval(interval);
     };
-  }, [pagoCompletado, montoUrl, ticketUrl, cardHolder, metodoActivo]);
+  }, [pagoCompletado, montoUrl, ticketUrl, cardHolder, metodoActivo, clienteUrl, docUrl, sesionFinalizada]);
 
   // Cambiar método de cobro
   const seleccionarMetodo = (metodo) => {
@@ -190,21 +226,18 @@ export default function TerminalMovil() {
 
   // Confirmar cobro Yape desde el celular
   const handleConfirmarYapeDesdeCelular = () => {
-    if (total <= 0) {
-      setNotificacionLocal({
-        tipo: 'alerta',
-        titulo: 'Mostrador en Reposo',
-        detalle: 'Agregue medicamentos al carrito en el mostrador para confirmar el pago.'
-      });
-      setTimeout(() => setNotificacionLocal(null), 3000);
-      return;
-    }
+    if (total <= 0) return;
 
     const op = String(Math.floor(100000 + Math.random() * 900000));
+    const nomCliente = estadoPos.clienteNom || clienteUrl || 'Cliente General';
+    const docCliente = estadoPos.clienteDoc || docUrl || '';
+
     posDisplay.notificarPagoMovil({
       numeroOperacion: op,
       monto: total,
-      metodoPago: 'YAPE_PLIN'
+      metodoPago: 'YAPE_PLIN',
+      clienteDoc: docCliente,
+      clienteNom: nomCliente
     });
 
     setPagoCompletado({
@@ -212,33 +245,27 @@ export default function TerminalMovil() {
       metodo: 'YAPE_PLIN',
       referencia: `OP-${op}`,
       ticket: estadoPos.ticketId || ticketUrl || 'TKT-001',
-      cliente: estadoPos.clienteNom || 'Cliente General',
+      cliente: nomCliente,
+      clienteDoc: docCliente,
       hora: new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
       fecha: new Date().toLocaleDateString('es-PE'),
       items: items.length > 0 ? [...items] : []
     });
-
-    if (typeof window !== 'undefined' && window.history?.replaceState) {
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
   };
 
   // Confirmar cobro Tarjeta desde el celular
   const handleConfirmarTarjetaDesdeCelular = () => {
-    if (total <= 0) {
-      setNotificacionLocal({
-        tipo: 'alerta',
-        titulo: 'Mostrador en Reposo',
-        detalle: 'Agregue medicamentos al carrito en el mostrador para aprobar el cobro.'
-      });
-      setTimeout(() => setNotificacionLocal(null), 3000);
-      return;
-    }
+    if (total <= 0) return;
 
     const voucher = `VCH-${Math.floor(10000 + Math.random() * 90000)}`;
+    const nomCliente = cardHolder || estadoPos.clienteNom || clienteUrl || 'Cliente General';
+    const docCliente = estadoPos.clienteDoc || docUrl || '';
+
     posDisplay.notificarPagoTarjeta({
       voucher,
-      monto: total
+      monto: total,
+      clienteDoc: docCliente,
+      clienteNom: nomCliente
     });
 
     setPagoCompletado({
@@ -246,45 +273,59 @@ export default function TerminalMovil() {
       metodo: 'TARJETA',
       referencia: voucher,
       ticket: estadoPos.ticketId || ticketUrl || 'TKT-001',
-      cliente: cardHolder || estadoPos.clienteNom || 'Cliente',
+      cliente: nomCliente,
+      clienteDoc: docCliente,
       hora: new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
       fecha: new Date().toLocaleDateString('es-PE'),
       items: items.length > 0 ? [...items] : []
     });
-
-    if (typeof window !== 'undefined' && window.history?.replaceState) {
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
   };
 
-  // Reiniciar estado para la siguiente transacción
+  // Reiniciar estado inmediatamente a CERO sin requerir refrescar la página
   const handleSiguienteAtencion = () => {
+    if (pagoCompletado) {
+      ultimaVentaCerradaRef.current = String(pagoCompletado.referencia || pagoCompletado.ticket || 'CERRADO');
+    }
     setPagoCompletado(null);
+    setSesionFinalizada(true);
     setCardNumber('');
     setCardExpiry('');
     setCardCvv('');
-    setNotificacionLocal(null);
     setMostrarDetalle(false);
+
+    // Limpiar en React Router los searchParams inmediatamente para que montoUrl pase a 0
+    setSearchParams({}, { replace: true });
+
+    // Reiniciar estado POS local a REPOSO limpio
     setEstadoPos({
       modo: 'REPOSO',
       total: 0,
       items: [],
       ticketId: '',
-      clienteNom: ''
+      clienteNom: '',
+      clienteDoc: ''
     });
-    if (typeof window !== 'undefined' && window.history?.replaceState) {
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
+
+    // Notificar al servidor que este terminal pasó a reposo
+    posDisplay.enviarEstado({
+      modo: 'REPOSO',
+      total: 0,
+      items: [],
+      ticketId: ''
+    });
   };
 
-  // Total protegido: Prioriza monto del estado POS activo o monto de la URL del QR
-  const total = pagoCompletado
+  // Total protegido: si ya se finalizó la sesión, el total cae estrictamente a 0 en tiempo real
+  const montoUrlEfectivo = sesionFinalizada ? 0 : montoUrl;
+  const total = (pagoCompletado || sesionFinalizada)
     ? 0
     : (Number(estadoPos.total) > 0
         ? Number(estadoPos.total)
-        : (montoUrl > 0 ? montoUrl : 0));
+        : (montoUrlEfectivo > 0 ? montoUrlEfectivo : 0));
 
   const items = Array.isArray(estadoPos.items) ? estadoPos.items : [];
+  const nombreMostrado = estadoPos.clienteNom || clienteUrl || cardHolder;
+  const docMostrado = estadoPos.clienteDoc || docUrl;
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-800 flex flex-col font-sans select-none">
@@ -318,19 +359,6 @@ export default function TerminalMovil() {
           </div>
         </div>
       </header>
-
-      {/* Notificación Flotante de Acción */}
-      {notificacionLocal && (
-        <div className="px-4 pt-3 max-w-md mx-auto w-full animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="bg-emerald-600 text-white rounded-2xl p-3 shadow-lg flex items-center space-x-3">
-            <CheckCircle2 className="w-5 h-5 shrink-0 stroke-[2.5]" />
-            <div className="text-xs flex-1">
-              <p className="font-bold">{notificacionLocal.titulo}</p>
-              <p className="text-[11px] opacity-90">{notificacionLocal.detalle}</p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ======================================================================== */}
       {/* CASO 1: VISTA DE VOUCHER DIGITAL - PAGO APROBADO & CONFIRMADO */}
@@ -410,6 +438,15 @@ export default function TerminalMovil() {
                 </div>
               )}
 
+              {pagoCompletado.clienteDoc && (
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 font-medium">Documento:</span>
+                  <span className="font-mono font-bold text-slate-800">
+                    {pagoCompletado.clienteDoc.length === 8 ? 'DNI ' : 'RUC '}{pagoCompletado.clienteDoc}
+                  </span>
+                </div>
+              )}
+
               <div className="flex justify-between items-center pt-2 border-t border-slate-200 text-[11px]">
                 <span className="text-slate-500">Fecha y Hora:</span>
                 <span className="font-mono text-slate-700">
@@ -422,11 +459,11 @@ export default function TerminalMovil() {
             <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-teal-50 border border-teal-200 text-teal-900 text-left text-xs">
               <ShieldCheck className="w-4 h-4 text-teal-700 shrink-0 mt-0.5" />
               <p className="leading-snug">
-                El comprobante de pago electrónico (Boleta / Factura SUNAT) ha sido emitido en la caja de mostrador.
+                El comprobante de pago electrónico (Boleta / Factura SUNAT) ha sido emitido con su DNI y Nombre en mostrador.
               </p>
             </div>
 
-            {/* Botón de Siguiente Atención */}
+            {/* Botón de Siguiente Atención: Cierra la pantalla en un solo click */}
             <button
               type="button"
               onClick={handleSiguienteAtencion}
@@ -510,6 +547,21 @@ export default function TerminalMovil() {
               )}
             </div>
 
+            {/* Identificación del Cliente si fue ingresada en Mostrador */}
+            {nombreMostrado && (
+              <div className="mt-2 bg-white rounded-2xl p-3 border border-slate-200 shadow-xs text-xs flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Cliente Mostrador</span>
+                  <span className="font-bold text-slate-800">{nombreMostrado}</span>
+                </div>
+                {docMostrado && (
+                  <span className="font-mono font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200 text-[11px]">
+                    {docMostrado.length === 8 ? 'DNI ' : 'RUC '}{docMostrado}
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Detalle Desplegable del Ticket */}
             {mostrarDetalle && items.length > 0 && (
               <div className="mt-2 bg-white rounded-2xl p-3 border border-slate-200 shadow-xs text-xs space-y-1.5 animate-in fade-in duration-150">
@@ -591,7 +643,7 @@ export default function TerminalMovil() {
                     </span>
                   </button>
                   <p className="text-[10px] text-slate-400 mt-2">
-                    Al confirmar, el sistema de caja en la laptop se actualizará automáticamente.
+                    Al confirmar, el sistema de caja en la laptop emitirá la boleta automáticamente.
                   </p>
                 </div>
               </div>
@@ -629,7 +681,7 @@ export default function TerminalMovil() {
                         Titular
                       </span>
                       <span className="font-sans font-bold uppercase truncate max-w-[150px] block">
-                        {cardHolder || estadoPos.clienteNom || 'NOMBRE Y APELLIDO'}
+                        {cardHolder || nombreMostrado || 'NOMBRE Y APELLIDO'}
                       </span>
                     </div>
                     <div>

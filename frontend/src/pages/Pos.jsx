@@ -218,18 +218,22 @@ export default function Pos() {
       if (mensaje.tipo === 'PRODUCTO_ESCANEADO') {
         procesarCodigoEscaneado(mensaje.payload.codigo);
       } else if (mensaje.tipo === 'PAGO_MOVIL_CONFIRMADO') {
-        const { numeroOperacion, monto } = mensaje.payload;
+        const { numeroOperacion, monto, clienteDoc: docM, clienteNom: nomM } = mensaje.payload || {};
         setMetodoPago('YAPE_PLIN');
         setNumeroOperacionYape(numeroOperacion);
+        if (docM && !clienteDoc) setClienteDoc(docM);
+        if (nomM && !clienteNom) setClienteNom(nomM);
         toast.success(`Pago Yape recibido: S/ ${monto} (Op: ${numeroOperacion})`);
-        handleCobrarRef.current?.(null, 'YAPE_PLIN', numeroOperacion);
+        handleCobrarRef.current?.(null, 'YAPE_PLIN', numeroOperacion, docM, nomM);
       } else if (mensaje.tipo === 'PAGO_TARJETA_APROBADO') {
-        const { voucher, monto } = mensaje.payload;
+        const { voucher, monto, clienteDoc: docM, clienteNom: nomM } = mensaje.payload || {};
         const vchFinal = voucher || 'VCH-APROBADO';
         setMetodoPago('TARJETA');
         setVoucherTarjeta(vchFinal);
+        if (docM && !clienteDoc) setClienteDoc(docM);
+        if (nomM && !clienteNom) setClienteNom(nomM);
         toast.success(`Cobro con Tarjeta aprobado: S/ ${monto || totalCalculadoUI}`);
-        handleCobrarRef.current?.(null, 'TARJETA', vchFinal);
+        handleCobrarRef.current?.(null, 'TARJETA', vchFinal, docM, nomM);
       } else if (mensaje.tipo === 'CAMBIAR_METODO_PAGO') {
         const metodo = mensaje.payload.metodoPago;
         setMetodoPago(metodo);
@@ -238,7 +242,7 @@ export default function Pos() {
       }
     });
     return () => unsuscribe();
-  }, [items, totalCalculadoUI]);
+  }, [items, totalCalculadoUI, clienteDoc, clienteNom]);
 
   // Sondeo continuo de respaldo para pagos de Tarjeta y Yape (Garantía ante micro-desconexiones en Render / Wi-Fi)
   useEffect(() => {
@@ -249,18 +253,23 @@ export default function Pos() {
         const pago = await posDisplay.consultarPagoPendiente();
         if (pago && pago.payload && activo) {
           await posDisplay.marcarPagoProcesado(pago.id);
+          const { voucher, numeroOperacion, monto, clienteDoc: docM, clienteNom: nomM } = pago.payload;
           if (pago.tipo === 'PAGO_TARJETA_APROBADO') {
-            const vch = pago.payload.voucher || 'VCH-APROBADO';
+            const vch = voucher || 'VCH-APROBADO';
             setMetodoPago('TARJETA');
             setVoucherTarjeta(vch);
-            toast.success(`Cobro con Tarjeta aprobado desde terminal: S/ ${pago.payload.monto || totalCalculadoUI}`);
-            handleCobrarRef.current?.(null, 'TARJETA', vch);
+            if (docM && !clienteDoc) setClienteDoc(docM);
+            if (nomM && !clienteNom) setClienteNom(nomM);
+            toast.success(`Cobro con Tarjeta aprobado desde terminal: S/ ${monto || totalCalculadoUI}`);
+            handleCobrarRef.current?.(null, 'TARJETA', vch, docM, nomM);
           } else if (pago.tipo === 'PAGO_MOVIL_CONFIRMADO') {
-            const op = pago.payload.numeroOperacion || 'OP-CONFIRMADA';
+            const op = numeroOperacion || 'OP-CONFIRMADA';
             setMetodoPago('YAPE_PLIN');
             setNumeroOperacionYape(op);
-            toast.success(`Pago Yape confirmado desde terminal: S/ ${pago.payload.monto || totalCalculadoUI}`);
-            handleCobrarRef.current?.(null, 'YAPE_PLIN', op);
+            if (docM && !clienteDoc) setClienteDoc(docM);
+            if (nomM && !clienteNom) setClienteNom(nomM);
+            toast.success(`Pago Yape confirmado desde terminal: S/ ${monto || totalCalculadoUI}`);
+            handleCobrarRef.current?.(null, 'YAPE_PLIN', op, docM, nomM);
           }
         }
       } catch (e) {}
@@ -270,7 +279,7 @@ export default function Pos() {
       activo = false;
       clearInterval(intervalId);
     };
-  }, [items, totalCalculadoUI]);
+  }, [items, totalCalculadoUI, clienteDoc, clienteNom]);
 
   // Sincronización en tiempo real con la Pantalla de Cliente / Visor Externo
   useEffect(() => {
@@ -439,7 +448,7 @@ export default function Pos() {
   };
 
   // Cobro seguro con descuento atómico de stock en PostgreSQL y Kardex
-  const handleCobrar = async (e, metodoSobrescrito, referenciaSobrescrita) => {
+  const handleCobrar = async (e, metodoSobrescrito, referenciaSobrescrita, docSobrescrito, nomSobrescrito) => {
     if (e && e.preventDefault) e.preventDefault();
 
     if (items.length === 0) {
@@ -447,7 +456,10 @@ export default function Pos() {
       return;
     }
 
-    if (tipoComprobante === 'FACTURA' && (!clienteDoc || clienteDoc.length !== 11)) {
+    const docFinal = (docSobrescrito || clienteDoc || '').trim();
+    let nomFinal = (nomSobrescrito || clienteNom || '').trim();
+
+    if (tipoComprobante === 'FACTURA' && (!docFinal || docFinal.length !== 11)) {
       toast.error('Para emitir Factura es obligatorio ingresar un RUC válido de 11 dígitos.');
       return;
     }
@@ -458,18 +470,20 @@ export default function Pos() {
       if (metodoFinal === 'YAPE_PLIN') setNumeroOperacionYape(referenciaSobrescrita);
     }
 
+    if (!nomFinal) {
+      nomFinal = tipoComprobante === 'FACTURA' ? 'Empresa Cliente' : (docFinal ? `Cliente DNI ${docFinal}` : 'Cliente General');
+    }
+
     setCobrando(true);
     try {
-      const nombreFinal = clienteNom ? clienteNom.trim() : (tipoComprobante === 'FACTURA' ? 'Empresa Cliente' : 'Cliente General');
-
       const res = await registrarVentaApi({
         items: items.map((i) => ({
           productoId: i.productoId,
           cantidad: i.cantidad
         })),
         metodoPago: metodoFinal,
-        clienteDoc: clienteDoc ? clienteDoc.trim() : null,
-        clienteNom: nombreFinal
+        clienteDoc: docFinal || null,
+        clienteNom: nomFinal
       });
 
       toast.success(res.mensaje || '¡Venta registrada exitosamente!');
@@ -483,7 +497,8 @@ export default function Pos() {
         ticketId: ticketIdActual.current,
         comprobante: comprobanteNum,
         metodoPago: metodoFinal,
-        clienteNom: nombreFinal,
+        clienteNom: nomFinal,
+        clienteDoc: docFinal,
         items: items.map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, precio: i.precio }))
       });
 
@@ -1225,6 +1240,8 @@ export default function Pos() {
         onClose={() => setModalVincularAbierto(false)}
         monto={totalCalculadoUI}
         ticketId={ticketIdActual.current}
+        clienteDoc={clienteDoc}
+        clienteNom={clienteNom}
         dispositivoConectado={dispositivoUsbConectado}
         nombreDispositivo={nombreDispositivoUsb}
         onConectar={(nombre) => {
