@@ -58,21 +58,24 @@ export default function Pos() {
   // Referencia para evitar consultas duplicadas de DNI / RUC
   const ultimoDocConsultadoRef = useRef('');
 
-  // Detección de dispositivo móvil / tablet
-  const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
+  // Detección estricta de dispositivo móvil / tablet vs Laptop / PC
+  const [esMovil, setEsMovil] = useState(false);
   useEffect(() => {
     const checkMobile = () => {
-      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-      const isSmall = window.innerWidth <= 1024;
-      setIsMobileOrTablet(isSmall || isTouch);
+      const anchoMovil = window.innerWidth < 1024;
+      const uaMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      setEsMovil(anchoMovil || (uaMovil && window.innerWidth < 1280));
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Modal de Dispositivo
+  // Modal de Vinculación QR (Laptop / PC)
   const [modalVincularAbierto, setModalVincularAbierto] = useState(false);
+
+  // Modal con Opciones de Pago (Yape / Plin y Tarjeta en Móvil o Manual en PC)
+  const [modalOpcionesPagoAbierto, setModalOpcionesPagoAbierto] = useState(false);
 
   // Tipo de comprobante SUNAT (Boleta vs Factura)
   const [tipoComprobante, setTipoComprobante] = useState('BOLETA'); // 'BOLETA' | 'FACTURA'
@@ -1003,13 +1006,12 @@ export default function Pos() {
                     onClick={() => {
                       setGrupoMetodo('OTROS');
                       setMetodoPago(subMetodoOtros);
-                      const esMovil =
-                        typeof window !== 'undefined' &&
-                        (window.innerWidth < 768 ||
-                          ('ontouchstart' in window && window.innerWidth < 1024));
-                      // Si está en PC y no hay terminal conectada, sugerir modal QR de vinculación
-                      if (!esMovil && dispositivosConectados === 0) {
-                        setModalQrAbierto(true);
+                      if (esMovil) {
+                        // EN CELULAR / TABLET: Se abre directamente el modal con las opciones de pago
+                        setModalOpcionesPagoAbierto(true);
+                      } else {
+                        // EN LAPTOP / PC: Se abre directamente el QR de vinculación en pantalla
+                        setModalVincularAbierto(true);
                       }
                     }}
                     className={`py-2.5 px-3 rounded-xl text-xs font-black flex items-center justify-center space-x-2 border transition cursor-pointer ${
@@ -1080,218 +1082,65 @@ export default function Pos() {
               )}
 
               {/* 2. MODO OTROS MÉTODOS (YAPE / TARJETA) */}
-              {grupoMetodo === 'OTROS' && (
-                <div className="space-y-3">
-                  {/* Sub-selector: Yape/Plin vs Tarjeta */}
-                  <div className="p-1 bg-neutral-100 dark:bg-neutral-800/80 rounded-xl grid grid-cols-2 gap-1 text-xs font-bold">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSubMetodoOtros('YAPE_PLIN');
-                        setMetodoPago('YAPE_PLIN');
-                        setTarjetaEnviadaADispositivo(false);
-                      }}
-                      className={`py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition cursor-pointer ${
-                        subMetodoOtros === 'YAPE_PLIN'
-                          ? 'bg-[#732282] text-white shadow-xs'
-                          : 'text-neutral-600 dark:text-neutral-300 hover:bg-white/60 dark:hover:bg-neutral-700/60'
-                      }`}
-                    >
-                      <QrCode className="w-3.5 h-3.5" />
-                      <span>Yape / Plin</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSubMetodoOtros('TARJETA');
-                        setMetodoPago('TARJETA');
-                        setYapeEnviadoADispositivo(false);
-                      }}
-                      className={`py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition cursor-pointer ${
-                        subMetodoOtros === 'TARJETA'
-                          ? 'bg-blue-600 text-white shadow-xs'
-                          : 'text-neutral-600 dark:text-neutral-300 hover:bg-white/60 dark:hover:bg-neutral-700/60'
-                      }`}
-                    >
-                      <CreditCard className="w-3.5 h-3.5" />
-                      <span>Tarjeta</span>
-                    </button>
+              {grupoMetodo === 'OTROS' && !esMovil && (
+                /* VISTA EN PC / LAPTOP: Solo tarjeta informativa limpia con botón para reabrir el QR o cobro manual */
+                <div className="p-3.5 bg-purple-50/80 dark:bg-purple-950/40 rounded-2xl border border-purple-200 dark:border-purple-800/60 space-y-2.5 animate-in fade-in duration-150">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#732282] animate-ping" />
+                      <span className="text-xs font-black text-purple-900 dark:text-purple-200 uppercase tracking-wide">
+                        Vinculación Móvil Activa
+                      </span>
+                    </div>
+                    <span className="text-xs font-black font-mono text-[#732282] dark:text-purple-300">
+                      {formatearMoneda(totalCalculadoUI)}
+                    </span>
                   </div>
 
-                  {/* En PC: Si no está vinculado con terminal móvil, mostrar aviso para vincular QR */}
-                  {typeof window !== 'undefined' && window.innerWidth >= 768 && (
-                    <div className="p-2.5 bg-purple-50/60 dark:bg-purple-950/30 rounded-xl border border-purple-200/80 dark:border-purple-800/50 flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <Smartphone className="w-4 h-4 text-purple-700 shrink-0" />
-                        <span className="text-[11px] text-purple-900 dark:text-purple-200 truncate">
-                          {dispositivosConectados > 0
-                            ? 'Terminal móvil conectada en mostrador'
-                            : 'Vincule su celular para cobrar sin voltear la pantalla'}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setModalQrAbierto(true)}
-                        className="px-2 py-1 bg-[#732282] hover:bg-[#5b1968] text-white text-[10px] font-bold rounded-lg transition cursor-pointer shrink-0"
-                      >
-                        {dispositivosConectados > 0 ? 'Ver QR' : 'Vincular'}
-                      </button>
-                    </div>
-                  )}
+                  <p className="text-[11px] text-purple-800/80 dark:text-purple-300/80 leading-relaxed">
+                    Muestre el código QR al cliente para que elija <strong>Yape / Plin</strong> o <strong>Tarjeta</strong> en su celular.
+                  </p>
 
-                  {/* Subvista: Yape / Plin */}
-                  {subMetodoOtros === 'YAPE_PLIN' && (
-                    <div className="p-3 bg-white dark:bg-neutral-900 rounded-xl border border-purple-200 dark:border-purple-900/60 space-y-2.5 animate-in fade-in duration-150">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-black text-[#732282] dark:text-purple-300 flex items-center space-x-1.5">
-                          <span className="w-2 h-2 rounded-full bg-[#732282] animate-ping" />
-                          <span>Cobro Yape / Plin</span>
-                        </span>
-                        <span className="text-xs font-mono font-black text-neutral-900 dark:text-white">
-                          {formatearMoneda(totalCalculadoUI)}
-                        </span>
-                      </div>
+                  <div className="flex items-center gap-2 pt-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setModalVincularAbierto(true)}
+                      className="flex-1 py-2 px-3 bg-[#732282] hover:bg-[#5b1968] text-white rounded-xl text-xs font-black transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                    >
+                      <QrCode className="w-3.5 h-3.5" />
+                      <span>Ver QR de Vinculación</span>
+                    </button>
 
-                      <div className="space-y-1.5">
-                        <label className="block text-[10px] text-purple-700 dark:text-purple-300 font-bold uppercase">
-                          N° Operación Yape / Plin:
-                        </label>
-                        <div className="flex gap-1.5">
-                          <input
-                            type="text"
-                            maxLength={8}
-                            value={numeroOperacionYape}
-                            onChange={(e) => setNumeroOperacionYape(e.target.value.replace(/\D/g, ''))}
-                            placeholder="Ej. 849201"
-                            className="flex-1 px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs font-mono font-bold text-neutral-900 dark:text-white focus:ring-1 focus:ring-[#732282] focus:outline-none"
-                          />
-                          <button
-                            type="button"
-                            onClick={simularPagoYape}
-                            className="px-2 py-1 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 text-[10px] font-bold text-neutral-700 dark:text-neutral-300 rounded-lg transition cursor-pointer"
-                            title="Generar código de operación para prueba"
-                          >
-                            Generar Op.
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setModalYapeAbierto(true)}
-                            className="px-2.5 py-1 bg-[#732282] hover:bg-[#5b1968] text-white text-[10px] font-bold rounded-lg transition cursor-pointer flex items-center gap-1 shadow-2xs"
-                            title="Ver QR y datos completos"
-                          >
-                            <QrCode className="w-3 h-3" />
-                            <span>Ver QR</span>
-                          </button>
-                        </div>
-                      </div>
+                    <button
+                      type="button"
+                      onClick={() => setModalOpcionesPagoAbierto(true)}
+                      className="py-2 px-2.5 bg-white dark:bg-neutral-900 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800 rounded-xl text-[11px] font-bold transition cursor-pointer"
+                      title="Ingreso manual en PC si el cliente no puede escanear"
+                    >
+                      Cobro Manual
+                    </button>
+                  </div>
+                </div>
+              )}
 
-                      {/* Botón directo de aprobación Yape */}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          const opFinal = numeroOperacionYape || String(Math.floor(100000 + Math.random() * 900000));
-                          setNumeroOperacionYape(opFinal);
-                          handleCobrar(e, 'YAPE_PLIN', opFinal);
-                        }}
-                        disabled={cobrando || items.length === 0}
-                        className="w-full py-2.5 px-3 bg-[#732282] hover:bg-[#5b1968] text-white rounded-xl text-xs font-black shadow-md shadow-purple-700/20 flex items-center justify-center space-x-1.5 transition cursor-pointer disabled:opacity-50"
-                      >
-                        <Check className="w-3.5 h-3.5 stroke-[3]" />
-                        <span>Aprobar Cobro Yape (Completar Venta)</span>
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Subvista: Tarjeta Interactiva */}
-                  {subMetodoOtros === 'TARJETA' && (
-                    <div className="p-3 bg-white dark:bg-neutral-900 rounded-xl border border-blue-200 dark:border-blue-900/60 space-y-2.5 animate-in fade-in duration-150">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-black text-blue-600 dark:text-blue-400 flex items-center space-x-1.5">
-                          <CreditCard className="w-4 h-4" />
-                          <span>Cobro con Tarjeta ({marcaTarjeta})</span>
-                        </span>
-                        <span className="text-xs font-mono font-black text-neutral-900 dark:text-white">
-                          {formatearMoneda(totalCalculadoUI)}
-                        </span>
-                      </div>
-
-                      {/* Tarjeta Visual Interactiva */}
-                      <div className="bg-gradient-to-tr from-zinc-900 via-slate-800 to-zinc-950 text-white rounded-xl p-3 shadow-sm border border-zinc-700 space-y-2 font-mono">
-                        <div className="flex justify-between items-center text-[10px]">
-                          <span className="tracking-widest text-zinc-400 font-sans font-bold">Nova Salud Pay</span>
-                          <span className="font-black text-teal-400">{tarjetaNumero.startsWith('4') ? 'VISA' : 'MASTERCARD'}</span>
-                        </div>
-                        <div className="text-xs tracking-widest text-center py-0.5 text-zinc-100 font-bold">
-                          {tarjetaNumero || '•••• •••• •••• ••••'}
-                        </div>
-                        <div className="flex justify-between items-end text-[9px]">
-                          <div>
-                            <span className="block text-zinc-400 font-sans uppercase">Titular</span>
-                            <span className="font-sans font-bold uppercase truncate max-w-[140px] block">
-                              {tarjetaTitular || clienteNom || 'CLIENTE MOSTRADOR'}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="block text-zinc-400 font-sans uppercase">Vence</span>
-                            <span>{tarjetaVence || 'MM/AA'}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Inputs de Tarjeta */}
-                      <div className="space-y-1.5 text-xs">
-                        <input
-                          type="text"
-                          value={tarjetaNumero}
-                          onChange={(e) => {
-                            const v = e.target.value.replace(/\D/g, '').slice(0, 16);
-                            const formatted = v.match(/.{1,4}/g)?.join(' ') || v;
-                            setTarjetaNumero(formatted);
-                            if (v.startsWith('4')) setMarcaTarjeta('VISA');
-                            else if (v.startsWith('5')) setMarcaTarjeta('MASTERCARD');
-                            else if (v.startsWith('3')) setMarcaTarjeta('AMEX');
-                          }}
-                          placeholder="Número de Tarjeta (16 dígitos)"
-                          className="w-full px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs font-mono text-neutral-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
-                        <div className="grid grid-cols-2 gap-1.5">
-                          <input
-                            type="text"
-                            value={tarjetaVence}
-                            onChange={(e) => {
-                              const v = e.target.value.replace(/\D/g, '').slice(0, 4);
-                              setTarjetaVence(v.length >= 3 ? `${v.slice(0, 2)}/${v.slice(2)}` : v);
-                            }}
-                            placeholder="Vence (MM/AA)"
-                            className="w-full px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs font-mono text-neutral-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                          />
-                          <input
-                            type="password"
-                            maxLength={4}
-                            value={tarjetaCvv}
-                            onChange={(e) => setTarjetaCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                            placeholder="CVV (3 dígitos)"
-                            className="w-full px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs font-mono text-neutral-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Botón directo de aprobación Tarjeta */}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          const vchFinal = voucherTarjeta || `VCH-${Math.floor(10000 + Math.random() * 90000)}`;
-                          setVoucherTarjeta(vchFinal);
-                          handleCobrar(e, 'TARJETA', vchFinal);
-                        }}
-                        disabled={cobrando || items.length === 0}
-                        className="w-full py-2.5 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black shadow-md shadow-blue-600/20 flex items-center justify-center space-x-1.5 transition cursor-pointer disabled:opacity-50"
-                      >
-                        <Check className="w-3.5 h-3.5 stroke-[3]" />
-                        <span>Aprobar Cobro de Tarjeta (Completar Venta)</span>
-                      </button>
-                    </div>
-                  )}
+              {grupoMetodo === 'OTROS' && esMovil && (
+                /* VISTA EN CELULAR / TABLET: Tarjeta compacta con botón para abrir el modal de pago */
+                <div className="p-3 bg-purple-50 dark:bg-purple-950/40 rounded-xl border border-purple-200 dark:border-purple-800/60 flex items-center justify-between text-xs animate-in fade-in duration-150">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-purple-600 dark:text-purple-400 block">
+                      Método Seleccionado:
+                    </span>
+                    <span className="font-black text-purple-900 dark:text-purple-200">
+                      {subMetodoOtros === 'TARJETA' ? 'Tarjeta Débito/Crédito' : 'Yape / Plin'}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setModalOpcionesPagoAbierto(true)}
+                    className="px-3 py-1.5 bg-[#732282] hover:bg-[#5b1968] text-white rounded-lg font-bold text-xs shadow-xs cursor-pointer"
+                  >
+                    Abrir Opciones
+                  </button>
                 </div>
               )}
 
