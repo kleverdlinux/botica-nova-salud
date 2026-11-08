@@ -120,35 +120,6 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
     }
   };
 
-  const handleFillDemo = async () => {
-    try {
-      setIsLoading(true);
-      const demo = await loginClient("72345678", "123456");
-      if (demo.success && demo.client) {
-        setLoginIdentifier("72345678");
-        setLoginPassword("123456");
-        notificarExito("Cliente Demo", "Credenciales de prueba cargadas.");
-      } else {
-        const reg = await registerClient({
-          name: "María Elena Quispe",
-          dni: "72345678",
-          email: "maria.quispe@gmail.com",
-          phone: "955545561",
-          address: "Jr. Mariano Núñez 485, Int. 2",
-          district: "Juliaca Cercado",
-          password: "demo123Password"
-        });
-        if (reg.client) {
-          setLoginIdentifier("maria.quispe@gmail.com");
-          setLoginPassword("demo123Password");
-          notificarExito("Cliente Demo Creado", "Credenciales de prueba listas.");
-        }
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <div className="auth-switch">
       <style>{`
@@ -663,14 +634,7 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
                 <ArrowRight className="w-3.5 h-3.5 stroke-[1.75]" />
               </button>
 
-              <div className="flex items-center gap-3 mt-3 w-full max-w-[360px] justify-between">
-                <button
-                  type="button"
-                  onClick={handleFillDemo}
-                  className="text-[11px] font-semibold text-neutral-600 hover:text-neutral-950 underline underline-offset-4 transition cursor-pointer"
-                >
-                  Cargar cuenta demo
-                </button>
+              <div className="flex items-center gap-3 mt-3 w-full max-w-[360px] justify-center">
                 <Link to="/" className="aux-link">
                   <ArrowLeft className="w-3 h-3 stroke-[1.75]" />
                   <span>Volver a la tienda</span>

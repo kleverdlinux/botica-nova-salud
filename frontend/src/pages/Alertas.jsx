@@ -77,9 +77,9 @@ export default function Alertas() {
   return (
     <div className="w-full space-y-5 pb-12">
       {/* 1. Encabezado Oficial */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-neutral-900 p-5 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 bg-white dark:bg-neutral-900 p-3.5 sm:p-5 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs">
         <div>
-          <div className="flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-neutral-400 mb-1">
+          <div className="hidden sm:flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-neutral-400 mb-1">
             <span className="text-[#0d9488] dark:text-teal-400 font-bold">Botica Nova Salud</span>
             <span>/</span>
             <span>Alertas Sanitarias & Control de Existencias</span>
@@ -90,11 +90,11 @@ export default function Alertas() {
               </span>
             )}
           </div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center space-x-2.5">
-            <ShieldAlert className="w-6 h-6 text-[#0d9488] dark:text-teal-400" />
+          <h1 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center space-x-2 sm:space-x-2.5">
+            <ShieldAlert className="w-5 h-5 sm:w-6 sm:h-6 text-[#0d9488] dark:text-teal-400 shrink-0" />
             <span>Monitoreo de Alertas Sanitarias y Stock Físico</span>
           </h1>
-          <p className="text-xs text-slate-500 dark:text-neutral-400 mt-1">
+          <p className="hidden sm:block text-xs text-slate-500 dark:text-neutral-400 mt-1">
             Trazabilidad DIGEMID · Detección automática de lotes vencidos, rotación FEFO preventiva y quiebres de existencias.
           </p>
         </div>

@@ -1470,7 +1470,7 @@ export default function ClientPortal() {
         {/* =========================================================================
             VISTA MÓVIL: RESUMEN DEL PACIENTE + OPCIONES CENTRADAS EN EL MEDIO (SIN SCROLL)
             ========================================================================= */}
-        <div className="block lg:hidden w-full max-w-sm sm:max-w-md mx-auto py-1 space-y-2.5">
+        <div className="block lg:hidden w-full max-w-sm sm:max-w-md mx-auto pt-4 pb-3 sm:py-2 space-y-2.5">
           {/* 1. Tarjeta de Perfil Compacta */}
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-3 shadow-xs">
             <div className="flex items-center justify-between gap-2">

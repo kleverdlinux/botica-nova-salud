@@ -282,8 +282,9 @@ Para seguimiento de tu despacho ingresa a tu panel de cliente en Botica Nova Sal
               COLUMNA IZQUIERDA (7 u 8 cols): BOLETA / FACTURA FÍSICA AUTÉNTICA
               ==================================================================== */}
           <div
+            id="seccion-boleta-imprimible"
             ref={printRef}
-            className="md:col-span-7 lg:col-span-8 p-3.5 sm:p-5 flex flex-col justify-between space-y-3 bg-white border-b md:border-b-0 md:border-r border-zinc-200 print:border-none print:p-8"
+            className="md:col-span-7 lg:col-span-8 p-3.5 sm:p-5 flex flex-col justify-between space-y-3 bg-white border-b md:border-b-0 md:border-r border-zinc-200 print:border-none print:p-6 print:m-0"
           >
             <div className="space-y-3">
               {/* Encabezado de la Boleta / Factura */}
@@ -445,7 +446,7 @@ Para seguimiento de tu despacho ingresa a tu panel de cliente en Botica Nova Sal
                     <button
                       type="button"
                       onClick={() => setIsQrZoomed(true)}
-                      className="text-[9.5px] font-bold text-[#0d9488] hover:underline cursor-pointer flex items-center gap-1 pt-0.5"
+                      className="text-[9.5px] font-bold text-[#0d9488] hover:underline cursor-pointer flex items-center gap-1 pt-0.5 print:hidden"
                     >
                       <ExternalLink className="w-3 h-3" />
                       <span>Ver QR en pantalla completa</span>

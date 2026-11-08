@@ -474,9 +474,9 @@ export default function Reportes() {
   return (
     <div className="w-full space-y-6 pb-12 font-sans">
       {/* Cabecera del Centro de Reportes */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-neutral-900 p-5 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 bg-white dark:bg-neutral-900 p-3.5 sm:p-5 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs">
         <div>
-          <div className="flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-neutral-400 mb-1">
+          <div className="hidden sm:flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-neutral-400 mb-1">
             <span className="text-[#0d9488] font-bold">Botica Nova Salud</span>
             <span>/</span>
             <span>Sistema Operativo</span>
@@ -484,11 +484,11 @@ export default function Reportes() {
               Formatos Oficiales Excel & PDF
             </span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center space-x-2.5">
-            <FileSpreadsheet className="w-6 h-6 text-[#0d9488]" />
+          <h1 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center space-x-2 sm:space-x-2.5">
+            <FileSpreadsheet className="w-5 h-5 sm:w-6 sm:h-6 text-[#0d9488] shrink-0" />
             <span>Centro de Reportes & Trazabilidad</span>
           </h1>
-          <p className="text-xs text-slate-500 dark:text-neutral-400 mt-1">
+          <p className="hidden sm:block text-xs text-slate-500 dark:text-neutral-400 mt-1">
             Descarga y auditoría oficial de inventario valorizado, libros de kardex, vigilancia DIGEMID, arqueo de caja y compras a droguerías.
           </p>
         </div>

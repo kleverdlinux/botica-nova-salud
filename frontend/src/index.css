@@ -278,26 +278,23 @@
   color: #f8fafc !important;
 }
 
-/* Soporte para impresión térmica 80mm */
+/* Soporte universal para impresión: Ticket térmico 80mm y Boleta / Factura A4 oficial */
 @media print {
-  @page {
-    size: 80mm auto;
-    margin: 0;
-  }
-
   html, body {
-    width: 80mm !important;
+    background: #ffffff !important;
     margin: 0 !important;
     padding: 0 !important;
-    background: #ffffff !important;
   }
 
   body * {
     visibility: hidden;
   }
   
-  #ticket-termico, #ticket-termico * {
-    visibility: visible;
+  #ticket-termico,
+  #ticket-termico *,
+  #seccion-boleta-imprimible,
+  #seccion-boleta-imprimible * {
+    visibility: visible !important;
   }
   
   #ticket-termico {
@@ -315,6 +312,28 @@
     line-height: 1.25;
     box-shadow: none !important;
     border: none !important;
+  }
+
+  #seccion-boleta-imprimible {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 6mm 10mm !important;
+    background: #ffffff !important;
+    color: #18181b !important;
+    box-shadow: none !important;
+    border: none !important;
+    display: block !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  @page {
+    size: auto;
+    margin: 6mm 8mm;
   }
 }
 
