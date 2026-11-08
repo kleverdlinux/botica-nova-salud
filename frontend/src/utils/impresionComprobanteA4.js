@@ -316,7 +316,7 @@ export function imprimirComprobanteA4({ venta, esFactura = false, orientacion = 
   </div>
 
   <div class="footer-nota">
-    Botica Nova Salud &bull; Sistema Maestro Farmacéutico &bull; Sede Central: Jr. Mariano Núñez 485, Juliaca &bull; Consultas: 955 545 561
+    Botica Nova Salud &bull; Sistema Farmacéutico &bull; Sede Central: Jr. Mariano Núñez 485, Juliaca &bull; Consultas: 955 545 561
   </div>
 
   <script>

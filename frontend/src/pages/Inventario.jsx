@@ -552,7 +552,7 @@ export default function Inventario() {
         <div>
           <h1 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center space-x-2 sm:space-x-2.5">
             <Package className="w-5 h-5 sm:w-6 sm:h-6 text-[#0d9488] shrink-0" />
-            <span>Sistema Maestro de Inventario & Farmacia</span>
+            <span>Sistema de Inventario & Farmacia</span>
           </h1>
           <p className="hidden sm:block text-xs text-slate-500 dark:text-neutral-400 mt-1">
             {esAdmin
