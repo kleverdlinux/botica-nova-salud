@@ -13,6 +13,8 @@ import toast from '../utils/alertaSweet.js';
 export default function ModalVincularDispositivo({
   isOpen,
   onClose,
+  monto = 0,
+  ticketId = '',
   dispositivoConectado,
   nombreDispositivo,
   onConectar,
@@ -23,13 +25,22 @@ export default function ModalVincularDispositivo({
   const [ipLocal, setIpLocal] = useState('192.168.18.23');
 
   const calcularUrlTerminal = (ip) => {
+    let base = '';
     if (typeof window !== 'undefined') {
       const { hostname, origin } = window.location;
       if (!hostname.includes('localhost') && !hostname.includes('127.0.0.1') && !hostname.startsWith('192.168.') && !hostname.startsWith('10.')) {
-        return `${origin}/terminal-movil`;
+        base = `${origin}/terminal-movil`;
+      } else {
+        base = `http://${ip || ipLocal}:5173/terminal-movil`;
       }
+    } else {
+      base = `http://${ip || ipLocal}:5173/terminal-movil`;
     }
-    return `http://${ip || ipLocal}:5173/terminal-movil`;
+    const params = new URLSearchParams();
+    if (monto > 0) params.set('monto', Number(monto).toFixed(2));
+    if (ticketId) params.set('ticket', ticketId);
+    const qs = params.toString();
+    return qs ? `${base}?${qs}` : base;
   };
 
   const urlTerminal = calcularUrlTerminal(ipLocal);
@@ -97,9 +108,25 @@ export default function ModalVincularDispositivo({
 
         {/* Contenido: Código QR y Enlace */}
         <div className="p-6 space-y-4 text-center">
+          {monto > 0 && (
+            <div className="p-3 bg-purple-50 dark:bg-purple-950/40 rounded-2xl border border-purple-200 dark:border-purple-800/60 flex items-center justify-between text-left">
+              <div>
+                <span className="text-[10px] font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wider block">
+                  Total a Cobrar en Mostrador
+                </span>
+                <span className="text-xl font-black font-mono text-[#732282] dark:text-purple-300">
+                  S/ {Number(monto).toFixed(2)}
+                </span>
+              </div>
+              <span className="text-xs font-black text-purple-700 bg-purple-100 dark:bg-purple-900/60 px-2.5 py-1 rounded-full border border-purple-200 dark:border-purple-800">
+                Yape / Tarjeta
+              </span>
+            </div>
+          )}
+
           <div className="space-y-1">
             <p className="text-xs font-semibold text-slate-600 dark:text-neutral-300">
-              Escanee este código con la cámara de su celular para usarlo como punto de cobro:
+              Escanee este código con la cámara de su celular para abrir las opciones de pago (Yape / Plin o Tarjeta):
             </p>
           </div>
 

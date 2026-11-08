@@ -1343,10 +1343,12 @@ export default function Pos() {
         </div>
       </div>
 
-      {/* Modal de Vinculación de Dispositivo USB */}
+      {/* Modal de Vinculación de Dispositivo USB / Móvil */}
       <ModalVincularDispositivo
         isOpen={modalVincularAbierto}
         onClose={() => setModalVincularAbierto(false)}
+        monto={totalCalculadoUI}
+        ticketId={ticketIdActual.current}
         dispositivoConectado={dispositivoUsbConectado}
         nombreDispositivo={nombreDispositivoUsb}
         onConectar={(nombre) => {
@@ -1662,6 +1664,200 @@ export default function Pos() {
                 <span>Aprobar Cobro de Tarjeta</span>
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Modal con las Opciones de Pago (Yape / Plin y Tarjeta) en Móvil o Manual en PC */}
+      {modalOpcionesPagoAbierto && (
+        <div
+          className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setModalOpcionesPagoAbierto(false);
+          }}
+        >
+          <div className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-3xl shadow-2xl border border-neutral-200 dark:border-neutral-800 p-5 sm:p-6 text-neutral-900 dark:text-white animate-in zoom-in-95 duration-200 flex flex-col max-h-[92vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-neutral-100 dark:border-neutral-800">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-2xl bg-purple-100 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 flex items-center justify-center text-[#732282] dark:text-purple-300">
+                  <Smartphone className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black uppercase tracking-wider text-neutral-900 dark:text-white">
+                    Opciones de Pago
+                  </h3>
+                  <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
+                    Seleccione Yape / Plin o Tarjeta
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setModalOpcionesPagoAbierto(false)}
+                className="p-1.5 rounded-xl text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Total a Pagar */}
+            <div className="mt-4 p-3 bg-purple-50/70 dark:bg-purple-950/40 rounded-2xl border border-purple-200 dark:border-purple-900/50 flex items-center justify-between">
+              <div>
+                <span className="text-[10px] font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wider block">
+                  Total de la Venta
+                </span>
+                <span className="text-2xl font-black font-mono text-[#732282] dark:text-purple-300">
+                  {formatearMoneda(totalCalculadoUI)}
+                </span>
+              </div>
+              <span className="text-xs font-bold px-2.5 py-1 bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-300 rounded-full border border-purple-200 dark:border-purple-800">
+                {subMetodoOtros === 'TARJETA' ? 'Tarjeta' : 'Yape / Plin'}
+              </span>
+            </div>
+
+            {/* Selector de Pestañas: Yape / Plin vs Tarjeta */}
+            <div className="mt-4 p-1 bg-neutral-100 dark:bg-neutral-800/80 rounded-xl grid grid-cols-2 gap-1 text-xs font-bold">
+              <button
+                type="button"
+                onClick={() => {
+                  setSubMetodoOtros('YAPE_PLIN');
+                  setMetodoPago('YAPE_PLIN');
+                }}
+                className={`py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                  subMetodoOtros === 'YAPE_PLIN'
+                    ? 'bg-[#732282] text-white shadow-xs'
+                    : 'text-neutral-600 dark:text-neutral-300 hover:bg-white/60 dark:hover:bg-neutral-700/60'
+                }`}
+              >
+                <QrCode className="w-3.5 h-3.5" />
+                <span>Yape / Plin</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSubMetodoOtros('TARJETA');
+                  setMetodoPago('TARJETA');
+                }}
+                className={`py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                  subMetodoOtros === 'TARJETA'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-neutral-600 dark:text-neutral-300 hover:bg-white/60 dark:hover:bg-neutral-700/60'
+                }`}
+              >
+                <CreditCard className="w-3.5 h-3.5" />
+                <span>Tarjeta</span>
+              </button>
+            </div>
+
+            {/* Pestaña: Yape / Plin */}
+            {subMetodoOtros === 'YAPE_PLIN' && (
+              <div className="mt-4 space-y-3">
+                <div className="p-3 bg-white dark:bg-neutral-950 rounded-2xl border border-purple-100 dark:border-purple-900/60 text-center">
+                  <img
+                    src="/media/qr-yape.jpg"
+                    alt="QR Yape Botica Nova Salud"
+                    className="w-40 h-40 mx-auto object-contain rounded-xl border border-purple-200"
+                  />
+                  <div className="mt-2 text-xs">
+                    <span className="text-neutral-400 block text-[10px] uppercase font-bold">Número de Destino</span>
+                    <span className="font-mono font-black text-sm text-neutral-900 dark:text-white">+51 955 545 561</span>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-[11px] font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-wider">
+                    N° de Operación Yape / Plin:
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      maxLength={8}
+                      value={numeroOperacionYape}
+                      onChange={(e) => setNumeroOperacionYape(e.target.value.replace(/\D/g, ''))}
+                      placeholder="Ej. 849201"
+                      className="flex-1 px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm font-mono font-bold text-neutral-900 dark:text-white focus:ring-1 focus:ring-[#732282] focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={simularPagoYape}
+                      className="px-3 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 text-xs font-bold text-neutral-700 dark:text-neutral-300 transition cursor-pointer"
+                    >
+                      Generar Op.
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    const opFinal = numeroOperacionYape || String(Math.floor(100000 + Math.random() * 900000));
+                    setNumeroOperacionYape(opFinal);
+                    setModalOpcionesPagoAbierto(false);
+                    handleCobrar(e, 'YAPE_PLIN', opFinal);
+                  }}
+                  disabled={cobrando || items.length === 0}
+                  className="w-full mt-2 py-3 px-3 bg-[#732282] hover:bg-[#5b1968] text-white rounded-xl text-xs font-black shadow-md shadow-purple-700/20 flex items-center justify-center space-x-1.5 transition cursor-pointer disabled:opacity-50"
+                >
+                  <Check className="w-4 h-4 stroke-[3]" />
+                  <span>Aprobar Cobro Yape (Completar Venta)</span>
+                </button>
+              </div>
+            )}
+
+            {/* Pestaña: Tarjeta */}
+            {subMetodoOtros === 'TARJETA' && (
+              <div className="mt-4 space-y-3">
+                <div className="space-y-1.5">
+                  <label className="block text-[11px] font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-wider">
+                    Marca / Tipo de Tarjeta:
+                  </label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {['VISA', 'MASTERCARD', 'AMEX', 'OTRA'].map((m) => (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => setMarcaTarjeta(m)}
+                        className={`py-2 px-1 rounded-xl text-xs font-bold transition border cursor-pointer ${
+                          marcaTarjeta === m
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                            : 'bg-neutral-50 dark:bg-neutral-950 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100'
+                        }`}
+                      >
+                        {m}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-[11px] font-bold text-neutral-600 dark:text-neutral-300 uppercase tracking-wider">
+                    N° de Voucher / Referencia POS:
+                  </label>
+                  <input
+                    type="text"
+                    value={voucherTarjeta}
+                    onChange={(e) => setVoucherTarjeta(e.target.value)}
+                    placeholder="Ej. OP-482910 o N° de ref."
+                    className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm font-mono font-bold text-neutral-900 dark:text-white focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    const vchFinal = voucherTarjeta || `VCH-${Math.floor(10000 + Math.random() * 90000)}`;
+                    setVoucherTarjeta(vchFinal);
+                    setModalOpcionesPagoAbierto(false);
+                    handleCobrar(e, 'TARJETA', vchFinal);
+                  }}
+                  disabled={cobrando || items.length === 0}
+                  className="w-full mt-2 py-3 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black shadow-md shadow-blue-700/20 flex items-center justify-center space-x-1.5 transition cursor-pointer disabled:opacity-50"
+                >
+                  <Check className="w-4 h-4 stroke-[3]" />
+                  <span>Aprobar Cobro Tarjeta (Completar Venta)</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Smartphone,
   CreditCard,
@@ -15,6 +16,10 @@ import { posDisplay } from '../utils/posDisplayChannel.js';
 import { formatearMoneda } from '../utils/formateadores.js';
 
 export default function TerminalMovil() {
+  const [searchParams] = useSearchParams();
+  const montoUrl = parseFloat(searchParams.get('monto') || '0');
+  const ticketUrl = searchParams.get('ticket') || '';
+
   const [metodoActivo, setMetodoActivo] = useState('YAPE_PLIN'); // 'YAPE_PLIN' | 'TARJETA'
   const [estadoPos, setEstadoPos] = useState({
     modo: 'REPOSO',
@@ -151,7 +156,7 @@ export default function TerminalMovil() {
     setTimeout(() => setNotificacionLocal(null), 3500);
   };
 
-  const total = Number(estadoPos.total) || 0;
+  const total = (Number(estadoPos.total) > 0 ? Number(estadoPos.total) : montoUrl) || 0;
   const items = Array.isArray(estadoPos.items) ? estadoPos.items : [];
 
   return (
