@@ -176,20 +176,11 @@ export default function ClientPortal() {
         }
       });
 
-      // Cargar ficha de salud personalizada (desde local o desde PostgreSQL)
+      // Sincronizar botiquín y ficha de salud desde la base de datos central de PostgreSQL
+      useWishlist.getState().syncWithServer(client.dni);
+
       try {
-        const fichaGuardada = localStorage.getItem(`novasalud_ficha_${client.dni}`);
-        if (fichaGuardada) {
-          const parsed = JSON.parse(fichaGuardada);
-          setFichaSalud({
-            alergias: Array.isArray(parsed?.alergias) ? parsed.alergias : [],
-            condiciones: Array.isArray(parsed?.condiciones) ? parsed.condiciones : [],
-            grupoSanguineo: parsed?.grupoSanguineo || 'O+',
-            contactoEmergenciaNombre: parsed?.contactoEmergenciaNombre || '',
-            contactoEmergenciaTelefono: parsed?.contactoEmergenciaTelefono || '',
-            observaciones: parsed?.observaciones || '',
-          });
-        } else if ((client as any).fichaSalud) {
+        if ((client as any).fichaSalud) {
           const fs = (client as any).fichaSalud;
           setFichaSalud({
             alergias: Array.isArray(fs?.alergias) ? fs.alergias : [],
@@ -388,14 +379,13 @@ export default function ClientPortal() {
     if (!activeClient) return;
 
     try {
-      localStorage.setItem(`novasalud_ficha_${activeClient.dni}`, JSON.stringify(fichaSalud));
       await updateClientProfile({
         dni: activeClient.dni,
         fichaSalud: fichaSalud as any
       });
       notificarExito(
         'Ficha de Salud Guardada',
-        'Tu historial de alergias y cuidados fue registrado en tu cuenta y sincronizado en la base de datos.'
+        'Tu historial de alergias y cuidados fue registrado en tu cuenta y sincronizado en la base de datos central.'
       );
     } catch (err) {
       notificarError('Error al Guardar', 'No se pudo guardar la ficha de salud.');
@@ -475,8 +465,10 @@ export default function ClientPortal() {
     return <AuthSwitch onLoginSuccess={(client) => setActiveClient(client)} />;
   }
 
-  // Puntos salud estimados
-  const puntosSalud = orders.length * 25 + 50;
+  // Puntos salud respaldados en la base de datos central
+  const puntosSalud = (activeClient.puntos !== undefined && activeClient.puntos > 0)
+    ? activeClient.puntos
+    : (orders.length * 25 + 50);
 
   // Items de navegación lateral y móvil con metadata completa
   const navItems = [

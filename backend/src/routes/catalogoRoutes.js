@@ -12,6 +12,8 @@ router.post('/cliente/registro', catalogoController.registrarCliente);
 router.post('/cliente/login', catalogoController.loginCliente);
 router.put('/cliente/perfil', catalogoController.actualizarPerfilCliente);
 router.get('/cliente/pedidos/:dni', catalogoController.obtenerPedidosCliente);
+router.get('/cliente/botiquin/:dni', catalogoController.obtenerBotiquinCliente);
+router.put('/cliente/botiquin', catalogoController.actualizarBotiquinCliente);
 
 // Control de estados de entrega y trazabilidad para Cajero / Admin y Motorizado
 router.put('/pedido/estado', catalogoController.actualizarEstadoPedido);

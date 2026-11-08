@@ -58,6 +58,8 @@ export interface ClientProfile {
   avatar?: string;
   password?: string;
   fichaSalud?: any;
+  botiquin?: any[];
+  puntos?: number;
   createdAt?: number;
 }
 
@@ -120,7 +122,7 @@ export function getCustomerOrders(clientIdentifier?: string | { dni?: string; em
   }
 }
 
-function getApiBaseUrl(): string {
+export function getApiBaseUrl(): string {
   if ((import.meta as any).env?.VITE_API_URL) return (import.meta as any).env.VITE_API_URL;
   if (typeof window !== 'undefined') {
     const { hostname } = window.location;
@@ -354,6 +356,7 @@ export async function updateClientProfile(data: {
   avatar?: string;
   password?: string;
   fichaSalud?: any;
+  botiquin?: any[];
 }): Promise<{ success: boolean; message: string; client?: ClientProfile }> {
   try {
     const cleanDni = data.dni.trim();
@@ -377,6 +380,7 @@ export async function updateClientProfile(data: {
       reference: data.reference !== undefined ? data.reference.trim() : current.reference,
       avatar: data.avatar !== undefined ? data.avatar : current.avatar,
       fichaSalud: data.fichaSalud !== undefined ? data.fichaSalud : current.fichaSalud,
+      botiquin: data.botiquin !== undefined ? data.botiquin : current.botiquin,
     };
     if (data.password) {
       updatedClient.password = data.password;
@@ -397,6 +401,7 @@ export async function updateClientProfile(data: {
           telefono: updatedClient.phone,
           direccion: updatedClient.address,
           distrito: updatedClient.district,
+          botiquin: updatedClient.botiquin,
           password: data.password || undefined,
           fichaMedica: {
             ...(updatedClient.fichaSalud || {}),
@@ -584,6 +589,8 @@ export async function loginClient(
 
       if (json.client) {
         saveActiveClient(json.client);
+        // Sincronizar inmediatamente todas las compras desde PostgreSQL en este nuevo dispositivo
+        fetchCustomerOrdersFromServer(json.client).catch(() => {});
         return {
           success: true,
           message: json.mensaje || `¡Bienvenido(a) de nuevo, ${json.client.name.split(' ')[0]}!`,

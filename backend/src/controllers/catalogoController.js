@@ -49,6 +49,23 @@ export const obtenerPedidosCliente = asyncHandler(async (req, res) => {
   });
 });
 
+export const obtenerBotiquinCliente = asyncHandler(async (req, res) => {
+  const botiquin = await catalogoService.obtenerBotiquinCliente(req.params.dni);
+  return res.status(200).json({
+    ok: true,
+    botiquin
+  });
+});
+
+export const actualizarBotiquinCliente = asyncHandler(async (req, res) => {
+  const botiquin = await catalogoService.actualizarBotiquinCliente(req.body);
+  return res.status(200).json({
+    ok: true,
+    mensaje: 'Botiquín actualizado y sincronizado en la base de datos.',
+    botiquin
+  });
+});
+
 export const actualizarEstadoPedido = asyncHandler(async (req, res) => {
   const { orderId, nuevoEstado, dni, ventaId } = req.body;
   const result = await catalogoService.actualizarEstadoPedidoDelivery({ orderId, nuevoEstado, dni, ventaId });

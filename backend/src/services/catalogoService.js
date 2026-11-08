@@ -265,7 +265,8 @@ export async function registrarPedidoWebPublico({
   ruc,
   razonSocial,
   correlativo,
-  total
+  total,
+  ordenCompleta
 }) {
   const admin = await prisma.usuario.findFirst({
     where: { rol: 'ADMIN' }
@@ -341,7 +342,7 @@ export async function registrarPedidoWebPublico({
           : {};
         const pedidosPrevios = Array.isArray(fichaActual.pedidos) ? fichaActual.pedidos : [];
 
-        const nuevoPedido = data.ordenCompleta || {
+        const nuevoPedido = ordenCompleta || {
           id: correlativo ? `NS-${correlativo}` : `NS-2026-${nuevaVenta.id}`,
           serieNumero: correlativo || `B001-${String(nuevaVenta.id).padStart(8, '0')}`,
           tipoComprobante: tipoComprobante || 'BOLETA',
@@ -377,12 +378,17 @@ export async function registrarPedidoWebPublico({
           ...pedidosPrevios.filter(p => p.id !== nuevoPedido.id && p.serieNumero !== nuevoPedido.serieNumero)
         ];
 
+        const puntosPrevios = typeof fichaActual.puntos === 'number'
+          ? fichaActual.puntos
+          : Math.max(50, pedidosPrevios.length * 25 + 50);
+
         await prisma.cliente.update({
           where: { dni: cleanDni },
           data: {
             fichaMedica: {
               ...fichaActual,
-              pedidos: pedidosActualizados
+              pedidos: pedidosActualizados,
+              puntos: puntosPrevios + 25
             }
           }
         });
@@ -431,6 +437,11 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
           distrito: distrito ? String(distrito).trim() : existenteDni.distrito,
         }
       });
+      const ventasCount = await prisma.venta.count({ where: { clienteDoc: cleanDni } });
+      const puntosGuardados = (actualizado.fichaMedica && typeof actualizado.fichaMedica.puntos === 'number')
+        ? actualizado.fichaMedica.puntos
+        : Math.max(50, ventasCount * 25 + 50);
+
       return {
         id: actualizado.dni,
         dni: actualizado.dni,
@@ -441,6 +452,8 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
         district: actualizado.distrito || 'Juliaca Cercado',
         avatar: (actualizado.fichaMedica && actualizado.fichaMedica.avatar) || null,
         fichaSalud: actualizado.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
+        botiquin: Array.isArray(actualizado.botiquin) ? actualizado.botiquin : [],
+        puntos: puntosGuardados,
         createdAt: actualizado.createdAt
       };
     }
@@ -484,6 +497,8 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
     district: nuevo.distrito || 'Juliaca Cercado',
     avatar: null,
     fichaSalud: nuevo.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
+    botiquin: [],
+    puntos: 50,
     createdAt: nuevo.createdAt
   };
 }
@@ -523,6 +538,11 @@ export async function loginCliente({ identifier, password }) {
     }
   }
 
+  const ventasCount = await prisma.venta.count({ where: { clienteDoc: cliente.dni } });
+  const puntosGuardados = (cliente.fichaMedica && typeof cliente.fichaMedica.puntos === 'number')
+    ? cliente.fichaMedica.puntos
+    : Math.max(50, ventasCount * 25 + 50);
+
   return {
     id: cliente.dni,
     dni: cliente.dni,
@@ -533,6 +553,8 @@ export async function loginCliente({ identifier, password }) {
     district: cliente.distrito || 'Juliaca Cercado',
     avatar: (cliente.fichaMedica && cliente.fichaMedica.avatar) || null,
     fichaSalud: cliente.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
+    botiquin: Array.isArray(cliente.botiquin) ? cliente.botiquin : [],
+    puntos: puntosGuardados,
     createdAt: cliente.createdAt
   };
 }
@@ -577,6 +599,11 @@ export async function actualizarPerfilCliente({ dni, nombre, email, telefono, di
     data: dataToUpdate
   });
 
+  const ventasCount = await prisma.venta.count({ where: { clienteDoc: cleanDni } });
+  const puntosGuardados = (actualizado.fichaMedica && typeof actualizado.fichaMedica.puntos === 'number')
+    ? actualizado.fichaMedica.puntos
+    : Math.max(50, ventasCount * 25 + 50);
+
   return {
     id: actualizado.dni,
     dni: actualizado.dni,
@@ -587,6 +614,8 @@ export async function actualizarPerfilCliente({ dni, nombre, email, telefono, di
     district: actualizado.distrito || 'Juliaca Cercado',
     avatar: (actualizado.fichaMedica && actualizado.fichaMedica.avatar) || null,
     fichaSalud: actualizado.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
+    botiquin: Array.isArray(actualizado.botiquin) ? actualizado.botiquin : [],
+    puntos: puntosGuardados,
     createdAt: actualizado.createdAt
   };
 }
@@ -863,3 +892,43 @@ export async function listarPedidosDeliveryAdmin() {
     };
   });
 }
+
+/**
+ * Obtener botiquín habitual (medicamentos frecuentes) de un cliente desde PostgreSQL
+ */
+export async function obtenerBotiquinCliente(dni) {
+  const cleanDni = String(dni || '').trim();
+  if (!cleanDni) return [];
+
+  const cliente = await prisma.cliente.findUnique({
+    where: { dni: cleanDni }
+  });
+
+  if (!cliente || !Array.isArray(cliente.botiquin)) {
+    return [];
+  }
+
+  return cliente.botiquin;
+}
+
+/**
+ * Actualizar botiquín habitual (medicamentos frecuentes) de un cliente en PostgreSQL
+ */
+export async function actualizarBotiquinCliente({ dni, botiquin = [] }) {
+  const cleanDni = String(dni || '').trim();
+  if (!cleanDni) {
+    throw new ErrorNegocio('DNI de cliente requerido.', 400);
+  }
+
+  const itemsLimpios = Array.isArray(botiquin) ? botiquin : [];
+
+  const actualizado = await prisma.cliente.update({
+    where: { dni: cleanDni },
+    data: {
+      botiquin: itemsLimpios
+    }
+  });
+
+  return Array.isArray(actualizado.botiquin) ? actualizado.botiquin : [];
+}
+
