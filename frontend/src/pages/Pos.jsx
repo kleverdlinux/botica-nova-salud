@@ -218,22 +218,18 @@ export default function Pos() {
       if (mensaje.tipo === 'PRODUCTO_ESCANEADO') {
         procesarCodigoEscaneado(mensaje.payload.codigo);
       } else if (mensaje.tipo === 'PAGO_MOVIL_CONFIRMADO') {
-        const { numeroOperacion, monto, clienteDoc: docM, clienteNom: nomM } = mensaje.payload || {};
+        const { numeroOperacion, monto } = mensaje.payload || {};
         setMetodoPago('YAPE_PLIN');
         setNumeroOperacionYape(numeroOperacion);
-        if (docM && !clienteDoc) setClienteDoc(docM);
-        if (nomM && !clienteNom) setClienteNom(nomM);
         toast.success(`Pago Yape recibido: S/ ${monto} (Op: ${numeroOperacion})`);
-        handleCobrarRef.current?.(null, 'YAPE_PLIN', numeroOperacion, docM, nomM);
+        handleCobrarRef.current?.(null, 'YAPE_PLIN', numeroOperacion);
       } else if (mensaje.tipo === 'PAGO_TARJETA_APROBADO') {
-        const { voucher, monto, clienteDoc: docM, clienteNom: nomM } = mensaje.payload || {};
+        const { voucher, monto } = mensaje.payload || {};
         const vchFinal = voucher || 'VCH-APROBADO';
         setMetodoPago('TARJETA');
         setVoucherTarjeta(vchFinal);
-        if (docM && !clienteDoc) setClienteDoc(docM);
-        if (nomM && !clienteNom) setClienteNom(nomM);
         toast.success(`Cobro con Tarjeta aprobado: S/ ${monto || totalCalculadoUI}`);
-        handleCobrarRef.current?.(null, 'TARJETA', vchFinal, docM, nomM);
+        handleCobrarRef.current?.(null, 'TARJETA', vchFinal);
       } else if (mensaje.tipo === 'CAMBIAR_METODO_PAGO') {
         const metodo = mensaje.payload.metodoPago;
         setMetodoPago(metodo);
@@ -242,7 +238,7 @@ export default function Pos() {
       }
     });
     return () => unsuscribe();
-  }, [items, totalCalculadoUI, clienteDoc, clienteNom]);
+  }, [items, totalCalculadoUI]);
 
   // Sondeo continuo de respaldo para pagos de Tarjeta y Yape (Garantía ante micro-desconexiones en Render / Wi-Fi)
   useEffect(() => {
@@ -253,23 +249,19 @@ export default function Pos() {
         const pago = await posDisplay.consultarPagoPendiente();
         if (pago && pago.payload && activo) {
           await posDisplay.marcarPagoProcesado(pago.id);
-          const { voucher, numeroOperacion, monto, clienteDoc: docM, clienteNom: nomM } = pago.payload;
+          const { voucher, numeroOperacion, monto } = pago.payload;
           if (pago.tipo === 'PAGO_TARJETA_APROBADO') {
             const vch = voucher || 'VCH-APROBADO';
             setMetodoPago('TARJETA');
             setVoucherTarjeta(vch);
-            if (docM && !clienteDoc) setClienteDoc(docM);
-            if (nomM && !clienteNom) setClienteNom(nomM);
             toast.success(`Cobro con Tarjeta aprobado desde terminal: S/ ${monto || totalCalculadoUI}`);
-            handleCobrarRef.current?.(null, 'TARJETA', vch, docM, nomM);
+            handleCobrarRef.current?.(null, 'TARJETA', vch);
           } else if (pago.tipo === 'PAGO_MOVIL_CONFIRMADO') {
             const op = numeroOperacion || 'OP-CONFIRMADA';
             setMetodoPago('YAPE_PLIN');
             setNumeroOperacionYape(op);
-            if (docM && !clienteDoc) setClienteDoc(docM);
-            if (nomM && !clienteNom) setClienteNom(nomM);
             toast.success(`Pago Yape confirmado desde terminal: S/ ${monto || totalCalculadoUI}`);
-            handleCobrarRef.current?.(null, 'YAPE_PLIN', op, docM, nomM);
+            handleCobrarRef.current?.(null, 'YAPE_PLIN', op);
           }
         }
       } catch (e) {}
@@ -279,7 +271,7 @@ export default function Pos() {
       activo = false;
       clearInterval(intervalId);
     };
-  }, [items, totalCalculadoUI, clienteDoc, clienteNom]);
+  }, [items, totalCalculadoUI]);
 
   // Sincronización en tiempo real con la Pantalla de Cliente / Visor Externo
   useEffect(() => {
@@ -292,7 +284,9 @@ export default function Pos() {
         modo: 'REPOSO',
         items: [],
         total: 0,
-        ticketId: ticketIdActual.current
+        ticketId: ticketIdActual.current,
+        clienteNom: '',
+        clienteDoc: ''
       });
       setYapeEnviadoADispositivo(false);
       setTarjetaEnviadaADispositivo(false);
@@ -306,10 +300,11 @@ export default function Pos() {
         items: items.map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, precio: i.precio })),
         total: totalCalculadoUI,
         ticketId: ticketIdActual.current,
-        clienteNom: clienteNom || (tipoComprobante === 'FACTURA' ? 'Empresa' : 'Cliente General')
+        clienteNom: clienteNom ? clienteNom.trim() : '',
+        clienteDoc: clienteDoc ? clienteDoc.trim() : ''
       });
     }
-  }, [items, totalCalculadoUI, metodoPago, yapeEnviadoADispositivo, tarjetaEnviadaADispositivo, clienteNom, tipoComprobante, ventaCompletada]);
+  }, [items, totalCalculadoUI, metodoPago, yapeEnviadoADispositivo, tarjetaEnviadaADispositivo, clienteNom, clienteDoc, tipoComprobante, ventaCompletada]);
 
   // Generar código QR dinámico de Yape / Plin accesible desde el celular por Wi-Fi o Producción
   useEffect(() => {
@@ -1262,11 +1257,15 @@ export default function Pos() {
           venta={ventaCompletada}
           onClose={() => {
             setVentaCompletada(null);
+            setClienteDoc('');
+            setClienteNom('');
             posDisplay.enviarEstado({
               modo: 'REPOSO',
               items: [],
               total: 0,
-              ticketId: ticketIdActual.current
+              ticketId: ticketIdActual.current,
+              clienteNom: '',
+              clienteDoc: ''
             });
           }}
         />

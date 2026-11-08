@@ -48,6 +48,13 @@ export default function TerminalMovil() {
   const [cardCvv, setCardCvv] = useState('');
   const [cardHolder, setCardHolder] = useState(clienteUrl || '');
 
+  // Limpiar parámetros de la URL inmediatamente al montar para evitar montos y datos residuales entre ventas
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.search) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+
   // 1. Cargar estado inicial y suscribirse a eventos de la Laptop (SSE y BroadcastChannel)
   useEffect(() => {
     const inicial = posDisplay.obtenerEstadoActual();
@@ -101,25 +108,32 @@ export default function TerminalMovil() {
             setSesionFinalizada(false);
             ultimaVentaCerradaRef.current = null;
           }
-          setEstadoPos((prev) => ({
-            ...prev,
-            ...payload,
-            total: Number(payload.total)
-          }));
-          if (payload.clienteNom && !cardHolder) {
-            setCardHolder(payload.clienteNom);
-          }
+          const nom = payload.clienteNom ? String(payload.clienteNom).trim() : '';
+          const doc = payload.clienteDoc ? String(payload.clienteDoc).trim() : '';
+          setEstadoPos({
+            modo: payload.modo || 'CARRITO',
+            total: Number(payload.total) || 0,
+            items: Array.isArray(payload.items) ? payload.items : [],
+            ticketId: payload.ticketId || ticketUrl || 'TKT-001',
+            clienteNom: nom,
+            clienteDoc: doc
+          });
+          setCardHolder(nom);
           if (payload.modo === 'TARJETA') {
             setMetodoActivo('TARJETA');
           } else if (payload.modo === 'YAPE_PLIN') {
             setMetodoActivo('YAPE_PLIN');
           }
         } else if (payload.modo === 'REPOSO' && !pagoCompletado) {
-          setEstadoPos((prev) => ({
-            ...prev,
-            ...payload,
-            total: 0
-          }));
+          setEstadoPos({
+            modo: 'REPOSO',
+            total: 0,
+            items: [],
+            ticketId: payload.ticketId || '',
+            clienteNom: '',
+            clienteDoc: ''
+          });
+          setCardHolder('');
         }
       } else if (mensaje.tipo === 'CAMBIAR_METODO_PAGO') {
         const metodo = mensaje.payload?.metodoPago;
@@ -157,8 +171,8 @@ export default function TerminalMovil() {
             metodo: estado.metodoPago || metodoActivo,
             referencia: estado.comprobante || 'VCH-APROBADO',
             ticket: estado.ticketId || ticketUrl || 'TKT-001',
-            cliente: estado.clienteNom || cardHolder || clienteUrl || 'Cliente General',
-            clienteDoc: estado.clienteDoc || docUrl || '',
+            cliente: estado.clienteNom ? String(estado.clienteNom).trim() : 'Cliente General',
+            clienteDoc: estado.clienteDoc ? String(estado.clienteDoc).trim() : '',
             hora: new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
             fecha: new Date().toLocaleDateString('es-PE'),
             items: Array.isArray(estado.items) ? estado.items : []
@@ -172,16 +186,31 @@ export default function TerminalMovil() {
             setSesionFinalizada(false);
             ultimaVentaCerradaRef.current = null;
           }
-          setEstadoPos((prev) => ({
-            ...prev,
-            ...estado
-          }));
-          if (estado.clienteNom && !cardHolder) {
-            setCardHolder(estado.clienteNom);
-          }
+          const nom = estado.clienteNom ? String(estado.clienteNom).trim() : '';
+          const doc = estado.clienteDoc ? String(estado.clienteDoc).trim() : '';
+          setEstadoPos({
+            modo: estado.modo || 'CARRITO',
+            total: Number(estado.total) || 0,
+            items: Array.isArray(estado.items) ? estado.items : [],
+            ticketId: estado.ticketId || ticketUrl || 'TKT-001',
+            clienteNom: nom,
+            clienteDoc: doc
+          });
+          setCardHolder(nom);
           if (estado.modo === 'TARJETA' || estado.modo === 'YAPE_PLIN') {
             setMetodoActivo(estado.modo);
           }
+        } else if ((estado.modo === 'REPOSO' || Number(estado.total) === 0) && !pagoCompletado) {
+          // El servidor o laptop está en reposo o el carrito está vacío: limpiar rigurosamente
+          setEstadoPos({
+            modo: 'REPOSO',
+            total: 0,
+            items: [],
+            ticketId: estado.ticketId || '',
+            clienteNom: '',
+            clienteDoc: ''
+          });
+          setCardHolder('');
         }
       } catch (e) {}
     };
@@ -229,8 +258,8 @@ export default function TerminalMovil() {
     if (total <= 0) return;
 
     const op = String(Math.floor(100000 + Math.random() * 900000));
-    const nomCliente = estadoPos.clienteNom || clienteUrl || 'Cliente General';
-    const docCliente = estadoPos.clienteDoc || docUrl || '';
+    const nomCliente = estadoPos.clienteNom ? String(estadoPos.clienteNom).trim() : '';
+    const docCliente = estadoPos.clienteDoc ? String(estadoPos.clienteDoc).trim() : '';
 
     posDisplay.notificarPagoMovil({
       numeroOperacion: op,
@@ -245,7 +274,7 @@ export default function TerminalMovil() {
       metodo: 'YAPE_PLIN',
       referencia: `OP-${op}`,
       ticket: estadoPos.ticketId || ticketUrl || 'TKT-001',
-      cliente: nomCliente,
+      cliente: nomCliente || 'Cliente General',
       clienteDoc: docCliente,
       hora: new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
       fecha: new Date().toLocaleDateString('es-PE'),
@@ -258,8 +287,8 @@ export default function TerminalMovil() {
     if (total <= 0) return;
 
     const voucher = `VCH-${Math.floor(10000 + Math.random() * 90000)}`;
-    const nomCliente = cardHolder || estadoPos.clienteNom || clienteUrl || 'Cliente General';
-    const docCliente = estadoPos.clienteDoc || docUrl || '';
+    const nomCliente = cardHolder.trim() || (estadoPos.clienteNom ? String(estadoPos.clienteNom).trim() : '');
+    const docCliente = estadoPos.clienteDoc ? String(estadoPos.clienteDoc).trim() : '';
 
     posDisplay.notificarPagoTarjeta({
       voucher,
@@ -273,7 +302,7 @@ export default function TerminalMovil() {
       metodo: 'TARJETA',
       referencia: voucher,
       ticket: estadoPos.ticketId || ticketUrl || 'TKT-001',
-      cliente: nomCliente,
+      cliente: nomCliente || 'Cliente General',
       clienteDoc: docCliente,
       hora: new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
       fecha: new Date().toLocaleDateString('es-PE'),
@@ -291,9 +320,12 @@ export default function TerminalMovil() {
     setCardNumber('');
     setCardExpiry('');
     setCardCvv('');
+    setCardHolder('');
     setMostrarDetalle(false);
 
-    // Limpiar en React Router los searchParams inmediatamente para que montoUrl pase a 0
+    if (typeof window !== 'undefined' && window.location.search) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
     setSearchParams({}, { replace: true });
 
     // Reiniciar estado POS local a REPOSO limpio
@@ -311,21 +343,24 @@ export default function TerminalMovil() {
       modo: 'REPOSO',
       total: 0,
       items: [],
-      ticketId: ''
+      ticketId: '',
+      clienteNom: '',
+      clienteDoc: ''
     });
   };
 
-  // Total protegido: si ya se finalizó la sesión, el total cae estrictamente a 0 en tiempo real
-  const montoUrlEfectivo = sesionFinalizada ? 0 : montoUrl;
-  const total = (pagoCompletado || sesionFinalizada)
+  // Total estrictamente controlado: si está en reposo, o la sesión finalizó, es 0
+  const total = (pagoCompletado || sesionFinalizada || estadoPos.modo === 'REPOSO')
     ? 0
-    : (Number(estadoPos.total) > 0
-        ? Number(estadoPos.total)
-        : (montoUrlEfectivo > 0 ? montoUrlEfectivo : 0));
+    : (Number(estadoPos.total) || 0);
 
   const items = Array.isArray(estadoPos.items) ? estadoPos.items : [];
-  const nombreMostrado = estadoPos.clienteNom || clienteUrl || cardHolder;
-  const docMostrado = estadoPos.clienteDoc || docUrl;
+  const nombreMostrado = (!sesionFinalizada && estadoPos.modo !== 'REPOSO' && estadoPos.clienteNom)
+    ? String(estadoPos.clienteNom).trim()
+    : '';
+  const docMostrado = (!sesionFinalizada && estadoPos.modo !== 'REPOSO' && estadoPos.clienteDoc)
+    ? String(estadoPos.clienteDoc).trim()
+    : '';
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-800 flex flex-col font-sans select-none">
@@ -548,11 +583,11 @@ export default function TerminalMovil() {
             </div>
 
             {/* Identificación del Cliente si fue ingresada en Mostrador */}
-            {nombreMostrado && (
-              <div className="mt-2 bg-white rounded-2xl p-3 border border-slate-200 shadow-xs text-xs flex items-center justify-between">
+            {Boolean(nombreMostrado || docMostrado) && (
+              <div className="mt-2 bg-white rounded-2xl p-3 border border-slate-200 shadow-xs text-xs flex items-center justify-between animate-in fade-in duration-150">
                 <div>
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">Cliente Mostrador</span>
-                  <span className="font-bold text-slate-800">{nombreMostrado}</span>
+                  <span className="font-bold text-slate-800">{nombreMostrado || 'Cliente'}</span>
                 </div>
                 {docMostrado && (
                   <span className="font-mono font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200 text-[11px]">

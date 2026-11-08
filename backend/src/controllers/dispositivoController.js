@@ -108,9 +108,17 @@ export const emitirEvento = (req, res) => {
     timestamp: Date.now()
   };
 
-  // Si actualiza el estado del cobro, guardarlo en memoria
+  // Si actualiza el estado del cobro, reemplazar estrictamente en memoria sin retener datos de clientes anteriores
   if (tipo === 'ACTUALIZAR_ESTADO') {
-    ultimoEstado = { ...ultimoEstado, ...payload, timestamp: Date.now() };
+    ultimoEstado = {
+      modo: payload.modo || 'REPOSO',
+      items: Array.isArray(payload.items) ? payload.items : [],
+      total: Number(payload.total) || 0,
+      ticketId: payload.ticketId || '',
+      clienteNom: payload.clienteNom ? String(payload.clienteNom).trim() : '',
+      clienteDoc: payload.clienteDoc ? String(payload.clienteDoc).trim() : '',
+      timestamp: Date.now()
+    };
   }
 
   // Si es confirmación de pago digital o tarjeta desde el celular, persistir como pago pendiente
