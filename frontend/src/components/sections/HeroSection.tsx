@@ -20,7 +20,7 @@ const HeroSection: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
           className="text-subheading-sm md:text-subheading-md lg:text-subheading font-medium text-foreground max-w-[468px]"
         >
-          Atención farmacéutica personalizada, medicamentos certificados y seguimiento clínico en Lima.
+          Atención farmacéutica personalizada, medicamentos certificados y seguimiento clínico en Juliaca.
         </motion.p>
       </div>
       
@@ -31,8 +31,8 @@ const HeroSection: React.FC = () => {
         className="flex flex-wrap justify-between gap-10 mt-28 text-sm max-md:mt-10"
       >
         {[
-          { city: "Lima", greeting: "Atención Presencial · Tópico" },
-          { city: "Delivery Exprés Lima Este", greeting: "Cadena de Frío Garantizada" },
+          { city: "Juliaca", greeting: "Atención Presencial · Tópico" },
+          { city: "Delivery Exprés San Román", greeting: "Cadena de Frío Garantizada" },
           { city: "Químico Farmacéutico", greeting: "Orientación Médica Colegiada" }
         ].map((location, i) => (
           <motion.div 

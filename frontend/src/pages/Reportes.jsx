@@ -153,7 +153,7 @@ export default function Reportes() {
   const exportarLotesPDF = () => {
     printProfessionalReport({
       title: 'Reporte Sanitario de Lotes & Control FEFO (DIGEMID)',
-      subtitle: 'Vigilancia Farmacéutica Oficial - Botica Nova Salud (Lima, Perú)',
+      subtitle: 'Vigilancia Farmacéutica Oficial - Botica Nova Salud (Juliaca - Puno, Perú)',
       metaInfo: [
         { label: 'Lotes Monitoreados', value: `${productos.length} lotes farmacéuticos` },
         { label: 'Criterio de Rotación', value: 'FEFO (First Expired, First Out)' },

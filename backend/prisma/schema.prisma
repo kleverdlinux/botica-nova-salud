@@ -109,7 +109,7 @@ model Cliente {
   email       String   @unique
   telefono    String?
   direccion   String?
-  distrito    String?  @default("Lima Cercado")
+  distrito    String?  @default("Juliaca Cercado")
   password    String
   fichaMedica Json?    @default("{}")
   botiquin    Json?    @default("[]")

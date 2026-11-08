@@ -48,14 +48,14 @@ const AboutSection: React.FC = () => {
           
           {/* Mobile text - visible only on mobile */}
           <p className="block md:hidden pt-6 text-heading-sm font-semibold text-foreground">
-            Botica Nova Salud nació en Lima con la misión de brindar atención farmacéutica profesional, medicamentos originales certificados por DIGEMID y orientación clínica con calidez y rigor sanitario para cada familia.
+            Botica Nova Salud nació en Juliaca con la misión de brindar atención farmacéutica profesional, medicamentos originales certificados por DIGEMID y orientación clínica con calidez y rigor sanitario para cada familia.
           </p>
           
           {/* Tablet text - visible only on tablet */}
-          <p className="hidden md:block lg:hidden pt-6 text-heading-md font-semibold text-foreground py-0">                                            Botica Nova Salud nació en Lima con la misión de brindar atención farmacéutica profesional, medicamentos originales certificados por DIGEMID y orientación clínica con calidez y rigor sanitario para cada familia.</p>
+          <p className="hidden md:block lg:hidden pt-6 text-heading-md font-semibold text-foreground py-0">                                            Botica Nova Salud nació en Juliaca con la misión de brindar atención farmacéutica profesional, medicamentos originales certificados por DIGEMID y orientación clínica con calidez y rigor sanitario para cada familia.</p>
           
           {/* Desktop text with CSS float spacer */}
-          <p className="hidden lg:block pt-0 text-heading font-semibold text-foreground">                                        Botica Nova Salud nació en Lima con la misión de brindar atención farmacéutica profesional, medicamentos originales certificados por DIGEMID y orientación clínica con calidez y rigor sanitario para cada familia.</p>
+          <p className="hidden lg:block pt-0 text-heading font-semibold text-foreground">                                        Botica Nova Salud nació en Juliaca con la misión de brindar atención farmacéutica profesional, medicamentos originales certificados por DIGEMID y orientación clínica con calidez y rigor sanitario para cada familia.</p>
         </motion.div>
       </div>
     </section>;

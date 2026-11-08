@@ -216,7 +216,7 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
 👤 *Cliente:* ${titular}
 🪪 *DNI / RUC:* ${numDoc}
 📱 *Teléfono:* ${order.customer.phone}
-📍 *Entrega:* ${order.customer.address} (${order.customer.district || 'Lima Cercado'})
+📍 *Entrega:* ${order.customer.address} (${order.customer.district || 'Juliaca Cercado'})
 
 🛍️ *DETALLE DE MEDICAMENTOS Y PRODUCTOS:*
 ${itemsListText}
@@ -224,7 +224,7 @@ ${itemsListText}
 💰 *RESUMEN DE PAGO:*
 • Op. Gravada: S/ ${subtotalNeto}
 • I.G.V. (18%): S/ ${igvCalculado}
-• Delivery Lima: ${order.shipping === 0 ? 'Gratis' : `S/ ${(Number(order.shipping) || 0).toFixed(2)}`}
+• Delivery Juliaca: ${order.shipping === 0 ? 'Gratis' : `S/ ${(Number(order.shipping) || 0).toFixed(2)}`}
 💳 *TOTAL PAGADO:* *S/ ${(Number(order.total) || 0).toFixed(2)}*
 💳 *Método de Pago:* ${order.paymentDetails}
 
@@ -297,7 +297,7 @@ Para seguimiento de tu despacho ingresa a tu panel de cliente en Botica Nova Sal
                     BOTICA NOVA SALUD E.I.R.L.
                   </div>
                   <div className="text-[10px] text-zinc-500 leading-tight">
-                    Av. Principal 1248, Lima · Perú<br />
+                    Jr. Mariano Núñez 485, Cercado de Juliaca · San Román, Puno · Perú<br />
                     Central: +51 955 545 561 · farmacia@boticanovasalud.pe<br />
                     Dirección Técnica: Q.F. Regente Colegiada CQFP
                   </div>
@@ -464,7 +464,7 @@ Para seguimiento de tu despacho ingresa a tu panel de cliente en Botica Nova Sal
                     <span>S/ {igvCalculado}</span>
                   </div>
                   <div className="flex justify-between text-zinc-600">
-                    <span>Delivery Lima:</span>
+                    <span>Delivery Juliaca:</span>
                     <span className="text-emerald-700 font-bold">
                       {order.shipping === 0
                         ? 'S/ 0.00 (Gratis)'
@@ -514,9 +514,9 @@ Para seguimiento de tu despacho ingresa a tu panel de cliente en Botica Nova Sal
                     <strong className="font-mono text-[#0d9488]">{order.serieNumero}</strong>
                   </div>
                   <div className="flex justify-between text-zinc-600">
-                    <span className="text-[11px]">Despacho Lima:</span>
+                    <span className="text-[11px]">Despacho Juliaca:</span>
                     <span className="font-bold text-zinc-800 text-[11px]">
-                      {order.customer.district || 'Lima Cercado'}
+                      {order.customer.district || 'Juliaca Cercado'}
                     </span>
                   </div>
                 </div>

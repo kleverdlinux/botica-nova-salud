@@ -21,7 +21,7 @@ export const Checkout = () => {
             No hay productos en tu pedido
           </h1>
           <p className="text-zinc-500 mb-6 max-w-md mx-auto text-xs leading-relaxed">
-            Añade medicamentos o productos de salud antes de tramitar el despacho a domicilio en Lima.
+            Añade medicamentos o productos de salud antes de tramitar el despacho a domicilio en Juliaca.
           </p>
           <Button
             asChild

@@ -40,7 +40,7 @@ export const BrandModal: React.FC<BrandModalProps> = ({
               </div>
               <div className="min-w-0">
                 <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#0d9488] truncate">
-                  Botica Nova Salud • Sede Lima
+                  Botica Nova Salud • Sede Juliaca
                 </div>
                 <h2 className="text-base sm:text-xl font-black text-zinc-900 leading-tight truncate">
                   Nosotros & Dónde Ubicarnos
@@ -117,7 +117,7 @@ export const BrandModal: React.FC<BrandModalProps> = ({
                   Una botica orientada a cuidar la salud de tu familia
                 </h3>
                 <p className="text-zinc-600 leading-relaxed text-sm">
-                  <strong>Botica Nova Salud</strong> nació con la misión de ser un espacio de confianza, orientación y salud accesible en Lima. Frente a la proliferación de medicamentos de dudosa procedencia y la automedicación indiscriminada, nos consolidamos como una botica ética que adquiere sus existencias exclusivamente de laboratorios autorizados y distribuidores formales con registro sanitario DIGEMID.
+                  <strong>Botica Nova Salud</strong> nació con la misión de ser un espacio de confianza, orientación y salud accesible en Juliaca y la región Puno. Frente a la proliferación de medicamentos de dudosa procedencia y la automedicación indiscriminada, nos consolidamos como una botica ética que adquiere sus existencias exclusivamente de laboratorios autorizados y distribuidores formales con registro sanitario DIGEMID.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4 border-y border-zinc-200">
@@ -187,7 +187,7 @@ export const BrandModal: React.FC<BrandModalProps> = ({
                       loading="lazy"
                       allowFullScreen
                       referrerPolicy="no-referrer-when-downgrade"
-                      src="https://maps.google.com/maps?q=-12.046374,-77.042793&hl=es&z=15&output=embed"
+                      src="https://maps.google.com/maps?q=-15.4981,-70.1333&hl=es&z=16&output=embed"
                       className="w-full h-full"
                     />
                     <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm px-3.5 py-2 rounded-lg border border-zinc-200 shadow-md flex items-center gap-2 text-xs">
@@ -196,9 +196,9 @@ export const BrandModal: React.FC<BrandModalProps> = ({
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-xs text-zinc-500 px-1">
-                    <span>Av. Principal 1248, Lima • Fácil acceso peatonal y vehicular</span>
+                    <span>Jr. Mariano Núñez 485, Cercado de Juliaca • Fácil acceso peatonal y vehicular</span>
                     <a
-                      href="https://maps.google.com/?q=Av.+Principal+1248,+Lima"
+                      href="https://maps.google.com/?q=Jr.+Mariano+Nu%C3%B1ez+485,+Juliaca,+Puno"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[#0d9488] font-bold hover:underline flex items-center gap-1"
@@ -218,8 +218,8 @@ export const BrandModal: React.FC<BrandModalProps> = ({
                       </div>
                       <div>
                         <h4 className="text-xs font-black uppercase text-zinc-900">Dirección Oficial</h4>
-                        <p className="text-xs text-zinc-600 mt-0.5">Av. Principal 1248, Lima, Perú</p>
-                        <p className="text-[11px] text-zinc-400 mt-0.5">Frente a la Alameda Comercial, zona céntrica con estacionamiento.</p>
+                        <p className="text-xs text-zinc-600 mt-0.5">Jr. Mariano Núñez 485, Cercado de Juliaca · San Román, Puno</p>
+                        <p className="text-[11px] text-zinc-400 mt-0.5">A 2 cuadras de la Plaza de Armas de Juliaca, en pleno corazón comercial con fácil acceso.</p>
                       </div>
                     </div>
 

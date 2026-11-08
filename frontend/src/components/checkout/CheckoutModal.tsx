@@ -60,7 +60,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     dni: '',
     address: '',
     reference: '',
-    district: 'Lima Cercado',
+    district: 'Juliaca Cercado',
     notes: '',
   });
 
@@ -85,7 +85,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           phone: client.phone || prev.phone,
           dni: client.dni || prev.dni,
           address: client.address || prev.address,
-          district: client.district || prev.district || 'Lima Cercado',
+          district: client.district || prev.district || 'Juliaca Cercado',
         }));
       }
     }
@@ -107,7 +107,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   };
 
   const subtotal = getSubtotal();
-  const shipping = 0; // Despacho gratis en Lima
+  const shipping = 0; // Despacho gratis en Juliaca
   const total = subtotal + shipping;
 
   const validarFormularioEntrega = () => {
@@ -148,7 +148,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     }
 
     if (!formData.address.trim()) {
-      toast.error('Por favor ingresa la dirección de entrega en Lima.');
+      toast.error('Por favor ingresa la dirección de entrega en Juliaca / San Román.');
       return false;
     }
 
@@ -289,25 +289,24 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     }
   };
 
-  const distritosLima = [
-    'Lima Cercado',
-    'San Miguel',
-    'Pueblo Libre',
-    'Jesús María',
-    'Magdalena del Mar',
-    'Breña',
-    'Lince',
-    'Miraflores',
-    'San Isidro',
-    'Surquillo',
-    'Santiago de Surco',
-    'San Borja',
-    'Barranco',
-    'La Victoria',
-    'Chorrillos',
-    'Rímac',
-    'Los Olivos',
-    'San Martín de Porres',
+  const distritosJuliaca = [
+    'Juliaca Cercado',
+    'San Miguel (Juliaca)',
+    'Urb. Santa Adriana',
+    'Urb. La Rinconada',
+    'Urb. Taparachi',
+    'Urb. San Isidro',
+    'Urb. Santa Catalina',
+    'Urb. Bellavista',
+    'Barrio Cerro Colorado',
+    'Barrio Tupac Amaru',
+    'Hospital Carlos Monge Medrano',
+    'Mercado Manco Cápac / Laguna Temporal',
+    'Salida a Puno / Av. Huancané',
+    'Salida a Cusco / Circunvalación',
+    'Salida a Huancané',
+    'Caracoto (San Román)',
+    'Puno Ciudad (Ruta Interurbana 45 min)',
   ];
 
   return (
@@ -336,7 +335,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     </span>
                   </div>
                   <p className="text-[11px] text-zinc-500 font-medium">
-                    Despacho exprés con cadena de frío en Lima Cercado y distritos
+                    Despacho exprés con cadena de frío en Juliaca, San Román y zonas de cobertura
                   </p>
                 </div>
               </div>
@@ -549,7 +548,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     <div className="flex items-center gap-1.5 pb-1.5 mb-2 border-b border-zinc-100">
                       <MapPin className="w-3.5 h-3.5 text-[#0d9488]" />
                       <span className="text-[11px] font-black uppercase tracking-wider text-zinc-900">
-                        2. Dirección de Entrega en Lima
+                        2. Dirección de Entrega en Juliaca
                       </span>
                     </div>
 
@@ -571,7 +570,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     <div className="grid grid-cols-2 gap-2.5 mt-2">
                       <div>
                         <label className="block text-[10px] font-extrabold uppercase text-zinc-500 mb-0.5">
-                          Distrito (Lima) *
+                          Zona / Sector (Juliaca) *
                         </label>
                         <select
                           name="district"
@@ -579,7 +578,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                           onChange={handleInputChange}
                           className="w-full h-8 px-2 rounded border border-zinc-300 text-xs text-zinc-900 bg-white focus:outline-none focus:border-[#0d9488] transition-colors cursor-pointer"
                         >
-                          {distritosLima.map((d) => (
+                          {distritosJuliaca.map((d) => (
                             <option key={d} value={d}>
                               {d}
                             </option>
@@ -621,7 +620,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div className="pt-2 border-t border-zinc-100 flex items-center justify-between text-[10px] text-zinc-400">
                   <span className="flex items-center gap-1">
                     <Truck className="w-3 h-3 text-[#0d9488]" />
-                    Entrega Promedio: 45 min en Lima
+                    Entrega Promedio: 45 min en Juliaca
                   </span>
                   <span>Lotes y Vencimiento 100% Verificados</span>
                 </div>
@@ -675,7 +674,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       <span className="font-bold text-zinc-900">S/ {subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between items-center text-zinc-600">
-                      <span>Envío a domicilio (Lima):</span>
+                      <span>Envío a domicilio (Juliaca):</span>
                       <span className="font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[10px] uppercase">
                         GRATIS
                       </span>

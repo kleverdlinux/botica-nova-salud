@@ -215,8 +215,8 @@ export function imprimirComprobanteA4({ venta, esFactura = false, orientacion = 
       <div class="empresa-nombre">Botica Nova Salud</div>
       <div class="empresa-sub">
         <strong>BOTICA NOVA SALUD E.I.R.L.</strong><br>
-        Jr. Huancavelica 450 - Lima Cercado, Lima - Perú<br>
-        Teléfono: (01) 445-8920 &bull; Celular / WhatsApp: 955 545 561<br>
+        Jr. Mariano Núñez 485 - Cercado de Juliaca, San Román, Puno - Perú<br>
+        Teléfono: (051) 321-450 &bull; Celular / WhatsApp: 955 545 561<br>
         Email: atencion@boticanovasalud.pe &bull; Web: www.boticanovasalud.pe
       </div>
     </div>
@@ -233,7 +233,7 @@ export function imprimirComprobanteA4({ venta, esFactura = false, orientacion = 
     <div><span class="label">FECHA DE EMISIÓN:</span> ${fechaEmision}</div>
     <div><span class="label">${etiquetaDoc}:</span> <strong>${clienteDoc || 'SIN DOCUMENTO'}</strong></div>
     <div><span class="label">MONEDA:</span> SOLES (PEN)</div>
-    <div><span class="label">DIRECCIÓN:</span> LIMA, PERÚ</div>
+    <div><span class="label">DIRECCIÓN:</span> JULIACA, PUNO, PERÚ</div>
     <div><span class="label">FORMA DE PAGO:</span> ${venta.metodoPago || 'EFECTIVO (CONTADO)'}</div>
     <div><span class="label">CAJERO:</span> ${venta.usuario?.nombre || 'Administrador'}</div>
     <div><span class="label">N° TICKET INTERNO:</span> ${venta.ticket || `T-${String(venta.id).padStart(6, '0')}`}</div>
@@ -316,7 +316,7 @@ export function imprimirComprobanteA4({ venta, esFactura = false, orientacion = 
   </div>
 
   <div class="footer-nota">
-    Botica Nova Salud &bull; Sistema Maestro Farmacéutico &bull; Sede Central: Jr. Huancavelica 450, Lima &bull; Consultas: 955 545 561
+    Botica Nova Salud &bull; Sistema Maestro Farmacéutico &bull; Sede Central: Jr. Mariano Núñez 485, Juliaca &bull; Consultas: 955 545 561
   </div>
 
   <script>

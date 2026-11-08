@@ -38,7 +38,7 @@ const suggestions = [
   {
     icon: Users,
     label: "Conocer Botica Nova Salud",
-    description: "Nuestra historia, atención en Lima y certificación DIGEMID",
+    description: "Nuestra historia, atención en Juliaca y certificación DIGEMID",
     action: "about",
   },
   {
@@ -55,7 +55,7 @@ const navigation = [
   { icon: ShoppingCart, label: "Carrito de Compras", type: "route", target: "/cart" },
   { icon: Briefcase, label: "Especialidades Farmacéuticas", type: "scroll", target: "projects" },
   { icon: Users, label: "Servicios Clínicos", type: "scroll", target: "services" },
-  { icon: Info, label: "Nosotros & Sede Lima", type: "scroll", target: "about" },
+  { icon: Info, label: "Nosotros & Sede Juliaca", type: "scroll", target: "about" },
   { icon: LayoutDashboard, label: "Sistema POS & Inventario (Personal)", type: "route", target: "/app/pos" },
 ];
 

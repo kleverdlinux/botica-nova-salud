@@ -75,7 +75,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ onOpenCommandMenu }) 
     { 
       letter: "D", 
       title: "Delivery Exprés con Cadena de Frío", 
-      shortDescription: "Despacho rápido y seguro en Lima Metropolitana y alrededores.",
+      shortDescription: "Despacho rápido y seguro en Juliaca, San Román y alrededores.",
       fullDescription: "Si no puedes salir de casa, llevamos tus medicamentos a la puerta. Empleamos contenedores térmicos con monitoreo de temperatura para insulinas, colirios y vacunas, garantizando su estabilidad biológica intacta.",
       image: "/media/srv-delivery-expres.png"
     }

@@ -319,8 +319,8 @@ export async function registrarPedidoWebPublico({
   const docFinal = tipoComprobante === 'FACTURA' ? (ruc || clienteDoc) : clienteDoc;
   const nomFinal = tipoComprobante === 'FACTURA' && razonSocial ? razonSocial : clienteNom;
   const nombreConOrigen = nomFinal
-    ? `${nomFinal} [Web Delivery - ${distrito || 'Lima'}]`
-    : `Cliente Web [${distrito || 'Lima'}]`;
+    ? `${nomFinal} [Web Delivery - ${distrito || 'Juliaca'}]`
+    : `Cliente Web [${distrito || 'Juliaca'}]`;
 
   const nuevaVenta = await ventaService.crearVenta({
     items: dbItems,
@@ -375,8 +375,8 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
         name: actualizado.nombre,
         email: actualizado.email,
         phone: actualizado.telefono || '',
-        address: actualizado.direccion || 'Lima',
-        district: actualizado.distrito || 'Lima Cercado',
+        address: actualizado.direccion || 'Juliaca',
+        district: actualizado.distrito || 'Juliaca Cercado',
         avatar: (actualizado.fichaMedica && actualizado.fichaMedica.avatar) || null,
         fichaSalud: actualizado.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
         createdAt: actualizado.createdAt
@@ -403,8 +403,8 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
       nombre: cleanNombre,
       email: finalEmail,
       telefono: telefono ? String(telefono).trim() : '',
-      direccion: direccion ? String(direccion).trim() : 'Lima',
-      distrito: distrito ? String(distrito).trim() : 'Lima Cercado',
+      direccion: direccion ? String(direccion).trim() : 'Juliaca',
+      distrito: distrito ? String(distrito).trim() : 'Juliaca Cercado',
       password: hashedPassword,
       fichaMedica: { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
       botiquin: [],
@@ -418,8 +418,8 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
     name: nuevo.nombre,
     email: nuevo.email,
     phone: nuevo.telefono || '',
-    address: nuevo.direccion || 'Lima',
-    district: nuevo.distrito || 'Lima Cercado',
+    address: nuevo.direccion || 'Juliaca',
+    district: nuevo.distrito || 'Juliaca Cercado',
     avatar: null,
     fichaSalud: nuevo.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
     createdAt: nuevo.createdAt
@@ -467,8 +467,8 @@ export async function loginCliente({ identifier, password }) {
     name: cliente.nombre,
     email: cliente.email,
     phone: cliente.telefono || '',
-    address: cliente.direccion || 'Lima',
-    district: cliente.distrito || 'Lima Cercado',
+    address: cliente.direccion || 'Juliaca',
+    district: cliente.distrito || 'Juliaca Cercado',
     avatar: (cliente.fichaMedica && cliente.fichaMedica.avatar) || null,
     fichaSalud: cliente.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
     createdAt: cliente.createdAt
@@ -507,8 +507,8 @@ export async function actualizarPerfilCliente({ dni, nombre, email, telefono, di
     name: actualizado.nombre,
     email: actualizado.email,
     phone: actualizado.telefono || '',
-    address: actualizado.direccion || 'Lima',
-    district: actualizado.distrito || 'Lima Cercado',
+    address: actualizado.direccion || 'Juliaca',
+    district: actualizado.distrito || 'Juliaca Cercado',
     avatar: (actualizado.fichaMedica && actualizado.fichaMedica.avatar) || null,
     fichaSalud: actualizado.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
     createdAt: actualizado.createdAt

@@ -41,8 +41,8 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
     email: "",
     phone: "",
     password: "",
-    address: "Lima Cercado",
-    district: "Lima Cercado",
+    address: "Juliaca Cercado",
+    district: "Juliaca Cercado",
   });
 
   const handleSignInSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -99,8 +99,8 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
         dni: registerData.dni,
         email: registerData.email,
         phone: registerData.phone || "999999999",
-        address: registerData.address || "Lima",
-        district: registerData.district || "Lima Cercado",
+        address: registerData.address || "Juliaca",
+        district: registerData.district || "Juliaca Cercado",
         password: registerData.password,
       });
 
@@ -134,8 +134,8 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
           dni: "72345678",
           email: "maria.quispe@gmail.com",
           phone: "955545561",
-          address: "Av. Arequipa 1840, Dpto 502",
-          district: "Lince",
+          address: "Jr. Mariano Núñez 485, Int. 2",
+          district: "Juliaca Cercado",
           password: "demo123Password"
         });
         if (reg.client) {

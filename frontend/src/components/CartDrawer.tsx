@@ -96,7 +96,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 Tu carrito está vacío
               </h3>
               <p className="text-xs text-zinc-500 max-w-xs leading-relaxed mb-6">
-                Añade medicamentos, productos éticos o fórmulas de salud para recibirlos con despacho express en Lima.
+                Añade medicamentos, productos éticos o fórmulas de salud para recibirlos con despacho express en Juliaca y Puno.
               </p>
               <button
                 type="button"
@@ -206,7 +206,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 <span className="font-bold text-zinc-900">S/ {subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span>Envío a domicilio (Lima):</span>
+                <span>Envío a domicilio (Juliaca):</span>
                 <span className="font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[10px] uppercase tracking-wide">
                   GRATIS
                 </span>
@@ -237,7 +237,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               <span>•</span>
               <span className="flex items-center gap-1">
                 <Truck className="w-3.5 h-3.5 text-teal-600" />
-                Delivery Exprés Lima
+                Delivery Exprés Juliaca
               </span>
             </div>
           </div>

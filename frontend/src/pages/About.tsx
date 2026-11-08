@@ -12,7 +12,7 @@ const About = () => {
         <div className="absolute inset-0">
           <img
             src="/media/hero-farmaceutica.png"
-            alt="Botica Nova Salud - Profesionales Farmacéuticos en Lima"
+            alt="Botica Nova Salud - Profesionales Farmacéuticos en Juliaca - Puno"
             className="w-full h-full object-cover object-top"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-charcoal/85 via-charcoal/40 to-charcoal/20" />
@@ -34,7 +34,7 @@ const About = () => {
               <span className="text-white/80 font-semibold">con Calidez Humana</span>
             </h1>
             <p className="text-sm md:text-base text-white/80 leading-relaxed">
-              En Lima, brindamos atención farmacéutica ética, medicamentos 100% certificados por DIGEMID y seguimiento personalizado para tu salud y la de tu familia.
+              En Juliaca y toda la región Puno, brindamos atención farmacéutica ética, medicamentos 100% certificados por DIGEMID y seguimiento personalizado para tu salud y la de tu familia.
             </p>
           </motion.div>
         </div>
@@ -91,7 +91,7 @@ const About = () => {
                 Origen & Vocación
               </p>
               <h3 className="font-sans font-bold text-2xl md:text-3xl text-foreground tracking-tight">
-                Creciendo junto a las familias de Lima
+                Creciendo junto a las familias de Juliaca y el altiplano puneño
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Botica Nova Salud nació con el propósito de transformar la experiencia de farmacia comunitaria: no solo entregamos medicamentos, sino que acompañamos a cada paciente explicando posología, interacciones y buenas prácticas de conservación.
@@ -158,7 +158,7 @@ const About = () => {
               Sede Física & Atención Presencial
             </span>
             <h2 className="font-sans font-bold text-3xl md:text-4xl text-foreground tracking-tight">
-              Dónde Ubicarnos en Lima
+              Dónde Ubicarnos en Juliaca
             </h2>
             <p className="text-sm text-muted-foreground max-w-xl mx-auto mt-2">
               Visítanos para orientación farmacéutica directa, compra de medicamentos o atención en nuestro tópico clínico.
@@ -176,7 +176,7 @@ const About = () => {
                   loading="lazy"
                   allowFullScreen
                   referrerPolicy="no-referrer-when-downgrade"
-                  src="https://maps.google.com/maps?q=-12.046374,-77.042793&hl=es&z=15&output=embed"
+                  src="https://maps.google.com/maps?q=-15.4981,-70.1333&hl=es&z=16&output=embed"
                   className="w-full h-full"
                 />
                 <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm px-3.5 py-2 rounded-lg border border-border shadow-md flex items-center gap-2 text-xs">
@@ -185,9 +185,9 @@ const About = () => {
                 </div>
               </div>
               <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
-                <span>Av. Principal 1248, Lima • Fácil acceso y estacionamiento</span>
+                <span>Jr. Mariano Núñez 485, Cercado de Juliaca • Fácil acceso y estacionamiento</span>
                 <a
-                  href="https://maps.google.com/?q=Av.+Principal+1248,+Lima"
+                  href="https://maps.google.com/?q=Jr.+Mariano+Nu%C3%B1ez+485,+Juliaca,+Puno"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary font-bold hover:underline flex items-center gap-1"
@@ -206,8 +206,8 @@ const About = () => {
                   </div>
                   <div>
                     <h4 className="text-xs font-black uppercase text-foreground">Dirección Oficial</h4>
-                    <p className="text-sm text-foreground font-semibold mt-0.5">Av. Principal 1248, Lima, Perú</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Frente a la Alameda Comercial, zona céntrica con rampa de accesibilidad.</p>
+                    <p className="text-sm text-foreground font-semibold mt-0.5">Jr. Mariano Núñez 485, Cercado de Juliaca · San Román, Puno</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">A 2 cuadras de la Plaza de Armas de Juliaca, en pleno corazón comercial con fácil acceso.</p>
                   </div>
                 </div>
 
@@ -248,7 +248,7 @@ const About = () => {
             ¿Tienes alguna consulta sobre tu medicación?
           </h2>
           <p className="text-sm text-white/70 max-w-lg mx-auto leading-relaxed">
-            Visítanos en nuestra sede de Lima o contáctanos por WhatsApp para consultas sobre stock, precios y delivery exprés.
+            Visítanos en nuestra sede central de Juliaca o contáctanos por WhatsApp para consultas sobre stock, precios y delivery exprés.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Button

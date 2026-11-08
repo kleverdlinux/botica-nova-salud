@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 const Cart = () => {
   const { items, updateQuantity, removeItem, getSubtotal, openCheckout } = useCart();
   const subtotal = getSubtotal();
-  const shipping = 0; // Despacho gratis en Lima
+  const shipping = 0; // Despacho gratis en Juliaca
   const total = subtotal + shipping;
 
   if (items.length === 0) {
@@ -168,7 +168,7 @@ const Cart = () => {
                     <span className="font-semibold text-foreground">S/ {(Number(subtotal) || 0).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-baseline">
-                    <span className="text-muted-foreground">Envío a domicilio (Lima):</span>
+                    <span className="text-muted-foreground">Envío a domicilio (Juliaca):</span>
                     <span className="font-semibold text-foreground">
                       <span className="text-emerald-600 dark:text-emerald-400 font-bold uppercase text-xs">Gratis</span>
                     </span>

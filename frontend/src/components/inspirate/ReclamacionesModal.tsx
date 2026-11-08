@@ -93,7 +93,7 @@ export const ReclamacionesModal: React.FC<ReclamacionesModalProps> = ({ isOpen, 
                 <div className="p-4 bg-zinc-50 border border-zinc-200 rounded-lg text-xs text-zinc-600 max-w-md mx-auto text-left space-y-1.5 mt-4">
                   <p><strong>Razón Social:</strong> BOTICA NOVA SALUD E.I.R.L.</p>
                   <p><strong>RUC:</strong> 20608945123</p>
-                  <p><strong>Sede:</strong> Av. Principal 1248, Lima</p>
+                  <p><strong>Sede:</strong> Jr. Mariano Núñez 485, Cercado de Juliaca, San Román, Puno</p>
                   <p><strong>Plazo de respuesta:</strong> Máximo 15 días hábiles conforme a normativa.</p>
                 </div>
               </div>
@@ -113,7 +113,7 @@ export const ReclamacionesModal: React.FC<ReclamacionesModalProps> = ({ isOpen, 
                   <Building2 className="w-4 h-4 text-[#0d9488] flex-shrink-0" />
                   <span><strong>BOTICA NOVA SALUD E.I.R.L.</strong> • RUC: 20608945123</span>
                 </div>
-                <span>Av. Principal 1248, Lima</span>
+                <span>Jr. Mariano Núñez 485, Juliaca</span>
               </div>
 
               {/* 1. Datos del Consumidor Reclamante */}
@@ -197,7 +197,7 @@ export const ReclamacionesModal: React.FC<ReclamacionesModalProps> = ({ isOpen, 
                     <input
                       type="text"
                       required
-                      placeholder="Ej: Av. Los Sauces 450, Lima"
+                      placeholder="Ej: Jr. Mariano Núñez 450, Juliaca"
                       value={formData.domicilio}
                       onChange={(e) => setFormData({ ...formData, domicilio: e.target.value })}
                       className="w-full px-3 py-2 text-xs border border-zinc-300 rounded-md focus:outline-none focus:border-[#0d9488]"

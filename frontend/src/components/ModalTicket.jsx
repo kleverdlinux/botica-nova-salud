@@ -118,8 +118,8 @@ export default function ModalTicket({ venta, onClose }) {
             <div className="text-center pb-2.5 border-b border-dashed border-black">
               <h2 className="text-base font-black tracking-tight uppercase">Botica Nova Salud</h2>
               <p className="text-[10px] font-semibold text-slate-800">R.U.C. 20100055231</p>
-              <p className="text-[10px] text-slate-700">Jr. Huancavelica 450 - Lima, Perú</p>
-              <p className="text-[10px] text-slate-700">Central Telefónica: (01) 445-8920</p>
+              <p className="text-[10px] text-slate-700">Jr. Mariano Núñez 485 - Juliaca, Puno, Perú</p>
+              <p className="text-[10px] text-slate-700">Central Telefónica: (051) 321-450</p>
               <div className="mt-1 pt-1 border-t border-dotted border-black/40">
                 <span className="font-black text-[11px] tracking-wider uppercase bg-slate-100 px-2.5 py-0.5 rounded border border-slate-300">
                   {tipoComprobante}

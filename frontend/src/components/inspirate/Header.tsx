@@ -739,7 +739,7 @@ export const Header: React.FC<HeaderProps> = ({
                   </div>
                   <div className="space-y-3 text-xs text-zinc-700">
                     <p className="leading-relaxed">
-                      <strong>Botica Nova Salud</strong> nació en Lima con la vocación de brindar dispensación ética y orientación farmacéutica responsable.
+                      <strong>Botica Nova Salud</strong> nació en Juliaca con la vocación de brindar dispensación ética y orientación farmacéutica responsable.
                     </p>
                     <ul className="space-y-2">
                       <li className="flex items-center gap-2">
@@ -774,17 +774,17 @@ export const Header: React.FC<HeaderProps> = ({
                   <div className="flex items-center gap-2 pb-2 border-b border-zinc-200">
                     <MapPin className="w-4 h-4 text-[#0d9488]" />
                     <span className="text-[12px] font-black tracking-wider uppercase text-zinc-950">
-                      Dónde Ubicarnos (Sede Lima)
+                      Dónde Ubicarnos (Sede Juliaca)
                     </span>
                   </div>
                   <div className="space-y-3 text-xs text-zinc-700">
                     <div className="bg-zinc-50 p-3 rounded-lg border border-zinc-200 space-y-1.5">
                       <div className="flex items-center gap-1.5 font-bold text-zinc-900">
                         <Navigation className="w-3.5 h-3.5 text-[#0d9488]" />
-                        <span>Av. Principal 1248, Lima</span>
+                        <span>Jr. Mariano Núñez 485, Juliaca</span>
                       </div>
                       <p className="text-[11px] text-zinc-500 leading-snug">
-                        Frente a la Alameda Comercial. Con rampa de acceso y estacionamiento.
+                        A 2 cuadras de la Plaza de Armas. Con rampa de acceso y fácil estacionamiento.
                       </p>
                     </div>
                     <div className="flex items-start gap-2">
@@ -821,7 +821,7 @@ export const Header: React.FC<HeaderProps> = ({
                       </span>
                     </div>
                     <div className="text-xs text-zinc-600 space-y-1">
-                      <p>• Delivery Express a todo Lima</p>
+                      <p>• Delivery Express a todo Juliaca y San Román</p>
                       <p>• Retiro presencial sin costo en botica</p>
                     </div>
                   </div>

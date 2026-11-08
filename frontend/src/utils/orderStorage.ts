@@ -306,7 +306,7 @@ export async function updateClientProfile(data: {
       email: data.email || '',
       phone: data.phone || '',
       address: data.address || '',
-      district: data.district || 'Lima Cercado',
+      district: data.district || 'Juliaca Cercado',
     };
 
     const updatedClient: ClientProfile = {
@@ -421,8 +421,8 @@ export async function registerClient(data: {
           nombre: cleanName,
           email: cleanEmail,
           telefono: data.phone?.trim() || '',
-          direccion: data.address?.trim() || 'Lima',
-          distrito: data.district?.trim() || 'Lima Cercado',
+          direccion: data.address?.trim() || 'Juliaca',
+          distrito: data.district?.trim() || 'Juliaca Cercado',
           password: data.password || cleanDni,
           esAutoRegistro: Boolean(data.esAutoRegistro)
         })
@@ -470,7 +470,7 @@ export async function registerClient(data: {
       email: cleanEmail,
       phone: data.phone.trim(),
       address: data.address.trim(),
-      district: data.district?.trim() || 'Lima',
+      district: data.district?.trim() || 'Juliaca Cercado',
       password: data.password || '',
       createdAt: Date.now(),
     };

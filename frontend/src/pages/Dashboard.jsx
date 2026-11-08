@@ -624,7 +624,7 @@ function DashboardAdmin() {
     if (!data) return;
     printProfessionalReport({
       title: 'Reporte Ejecutivo de Inventario & Situación Sanitaria',
-      subtitle: 'Botica Nova Salud - Sistema de Control y Vigilancia Farmacéutica (Lima, Perú)',
+      subtitle: 'Botica Nova Salud - Sistema de Control y Vigilancia Farmacéutica (Juliaca - Puno, Perú)',
       metaInfo: [
         { label: 'Fármacos en Catálogo', value: `${totalFármacos} ítems reales` },
         { label: 'Stock Total Físico', value: `${totalUnidades.toLocaleString()} unidades` },

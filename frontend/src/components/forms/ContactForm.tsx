@@ -144,7 +144,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onBack, onClose }) => {
             id="contact-message"
             value={formData.message}
             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-            placeholder="Indícanos los medicamentos requeridos, dudas sobre la toma o si necesitas delivery en Lima..."
+            placeholder="Indícanos los medicamentos requeridos, dudas sobre la toma o si necesitas delivery en Juliaca..."
             rows={4}
             maxLength={2000}
             aria-invalid={!!errors.message}

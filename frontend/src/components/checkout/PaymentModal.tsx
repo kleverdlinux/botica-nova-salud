@@ -311,7 +311,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     </div>
                     <div className="truncate">
                       <span className="block text-xs font-black text-zinc-900 truncate">
-                        Contra Entrega en Lima
+                        Contra Entrega en Juliaca
                       </span>
                       <span className="text-[10px] text-zinc-500 block truncate">
                         Efectivo con vuelto o POS al recibir
@@ -598,7 +598,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 </div>
               )}
 
-              {/* 3. SECCIÓN CONTRA ENTREGA EN LIMA */}
+              {/* 3. SECCIÓN CONTRA ENTREGA EN JULIACA */}
               {selectedMethod === 'CONTRA_ENTREGA' && (
                 <div className="space-y-3 animate-in fade-in duration-150">
                   <div className="flex items-center justify-between pb-1.5 border-b border-zinc-100">

@@ -185,7 +185,7 @@ export function printProfessionalReport(options: PrintReportOptions): void {
           <div class="logo-title">NOVA<span>SALUD</span></div>
           <div class="pharmacy-info">
             BOTICA NOVA SALUD E.I.R.L. · RUC: 20601234567<br />
-            Av. Principal 1248, Lima · Regente Químico Farmacéutico CQFP
+            Jr. Mariano Núñez 485, Cercado de Juliaca · San Román, Puno · Regente Químico Farmacéutico CQFP
           </div>
         </div>
         <div class="report-badge">

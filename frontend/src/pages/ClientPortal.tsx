@@ -59,25 +59,24 @@ import { Input } from '@/components/ui/input';
 import AuthSwitch from '@/components/ui/auth-switch';
 import { notificarExito, notificarAdvertencia, notificarError, confirmarAccion } from '@/utils/alertaSweet';
 
-const DISTRITOS_LIMA = [
-  'Lima Cercado',
-  'Breña',
-  'Jesús María',
-  'Lince',
-  'Magdalena del Mar',
-  'Miraflores',
-  'Pueblo Libre',
-  'San Isidro',
-  'San Borja',
-  'Santiago de Surco',
-  'San Miguel',
-  'Barranco',
-  'La Molina',
-  'Los Olivos',
-  'Independencia',
-  'Ate',
-  'Chorrillos',
-  'Surquillo',
+const DISTRITOS_JULIACA = [
+  'Juliaca Cercado',
+  'San Miguel (Juliaca)',
+  'Urb. Santa Adriana',
+  'Urb. La Rinconada',
+  'Urb. Taparachi',
+  'Urb. San Isidro',
+  'Urb. Santa Catalina',
+  'Urb. Bellavista',
+  'Barrio Cerro Colorado',
+  'Barrio Tupac Amaru',
+  'Hospital Carlos Monge Medrano',
+  'Mercado Manco Cápac / Laguna Temporal',
+  'Salida a Puno / Av. Huancané',
+  'Salida a Cusco / Circunvalación',
+  'Salida a Huancané',
+  'Caracoto (San Román)',
+  'Puno Ciudad (Ruta Interurbana 45 min)',
 ];
 
 interface FichaSaludPaciente {
@@ -124,7 +123,7 @@ export default function ClientPortal() {
     email: '',
     phone: '',
     address: '',
-    district: 'Lima Cercado',
+    district: 'Juliaca Cercado',
     reference: '',
   });
 
@@ -157,7 +156,7 @@ export default function ClientPortal() {
         email: client.email || '',
         phone: client.phone || '',
         address: client.address || '',
-        district: client.district || 'Lima Cercado',
+        district: client.district || 'Juliaca Cercado',
         reference: (client as any).reference || '',
       });
       setOrders(getCustomerOrders(client));
@@ -199,7 +198,7 @@ export default function ClientPortal() {
           email: client.email || '',
           phone: client.phone || '',
           address: client.address || '',
-          district: client.district || 'Lima Cercado',
+          district: client.district || 'Juliaca Cercado',
           reference: client.reference || '',
         });
         setOrders(getCustomerOrders(client));
@@ -471,7 +470,7 @@ export default function ClientPortal() {
       shortTitle: 'Mis Datos',
       icon: User,
       badgeText: 'SUNAT',
-      subtitle: activeClient?.district || 'Lima Cercado',
+      subtitle: activeClient?.district || 'Juliaca Cercado',
       description: 'Dirección de despacho a domicilio y datos de emisión',
       accentColor: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 border-amber-200 dark:border-amber-800',
     },
@@ -1070,14 +1069,14 @@ export default function ClientPortal() {
           </div>
           <div className="space-y-1.5">
             <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300">
-              Distrito de Lima *
+              Zona / Sector de Juliaca *
             </label>
             <select
               value={profileForm.district}
               onChange={(e) => setProfileForm({ ...profileForm, district: e.target.value })}
               className="w-full text-xs rounded-xl h-10 border border-neutral-200 dark:border-neutral-700 px-3 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:border-[#0d9488] focus:outline-none"
             >
-              {DISTRITOS_LIMA.map((d) => (
+              {DISTRITOS_JULIACA.map((d) => (
                 <option key={d} value={d}>
                   {d}
                 </option>
@@ -1214,7 +1213,7 @@ export default function ClientPortal() {
                       {activeClient.name}
                     </h2>
                     <p className="text-[10.5px] text-neutral-400 dark:text-neutral-500 truncate">
-                      {activeClient.district || 'Lima Cercado'}
+                      {activeClient.district || 'Juliaca Cercado'}
                     </p>
                   </div>
                 </div>
@@ -1392,7 +1391,7 @@ export default function ClientPortal() {
                   </div>
                 </div>
 
-                {/* Tarjeta 4: Ámbar Cálido (Entrega Lima) */}
+                {/* Tarjeta 4: Ámbar Cálido (Entrega Juliaca) */}
                 <div className="bg-white dark:bg-neutral-900 p-3.5 sm:p-4 rounded-3xl border border-neutral-200 dark:border-neutral-800 shadow-xs flex flex-col justify-between hover:border-amber-300 dark:hover:border-amber-700 transition min-h-[96px]">
                   <div className="flex items-center justify-between mb-1">
                     <div className="w-7 h-7 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 dark:bg-amber-950/60 dark:text-amber-400 dark:border-amber-900/50 flex items-center justify-center shrink-0">
@@ -1402,10 +1401,10 @@ export default function ClientPortal() {
                   </div>
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 block">
-                      Entrega Lima
+                      Entrega Juliaca
                     </span>
                     <span className="text-xs sm:text-sm font-bold text-neutral-900 dark:text-white block truncate leading-tight mt-1">
-                      {activeClient.district || 'Lima Cercado'}
+                      {activeClient.district || 'Juliaca Cercado'}
                     </span>
                   </div>
                   <div className="mt-1">
@@ -1485,7 +1484,7 @@ export default function ClientPortal() {
               </div>
               <div className="bg-neutral-50 dark:bg-neutral-800/60 px-1.5 py-1 rounded-lg border border-neutral-200/60 dark:border-neutral-800 min-w-0">
                 <span className="text-neutral-400 block text-[7.5px] uppercase font-bold">Entrega</span>
-                <span className="font-bold text-neutral-900 dark:text-white truncate block">{activeClient.district || 'Lima Cercado'}</span>
+                <span className="font-bold text-neutral-900 dark:text-white truncate block">{activeClient.district || 'Juliaca Cercado'}</span>
               </div>
             </div>
           </div>
@@ -1566,7 +1565,7 @@ export default function ClientPortal() {
               </div>
             </button>
 
-            {/* Tarjeta 4: Entrega Lima (Ámbar) */}
+            {/* Tarjeta 4: Entrega Juliaca (Ámbar) */}
             <button
               type="button"
               onClick={() => {
@@ -1585,7 +1584,7 @@ export default function ClientPortal() {
               </div>
               <div className="mt-0.5">
                 <span className="text-xs font-black text-neutral-900 dark:text-white leading-tight block truncate">
-                  {activeClient.district || 'Lima Cercado'}
+                  {activeClient.district || 'Juliaca Cercado'}
                 </span>
                 <span className="text-[9.5px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 block truncate mt-0.5">
                   Zona de Entrega
@@ -1873,7 +1872,7 @@ export default function ClientPortal() {
                     {selectedDetailOrder.customer.address}
                   </p>
                   <p className="text-[11px] text-neutral-500">
-                    Distrito: <strong>{selectedDetailOrder.customer.district || 'Lima Cercado'}</strong>
+                    Distrito: <strong>{selectedDetailOrder.customer.district || 'Juliaca Cercado'}</strong>
                   </p>
                   {selectedDetailOrder.customer.reference && (
                     <p className="text-[10px] text-neutral-400 italic">

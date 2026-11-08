@@ -167,7 +167,7 @@ export default function Ventas() {
           <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
             {esAdmin
               ? 'Listado histórico completo de transacciones emitidas en Botica Nova Salud'
-              : 'Tus ventas emitidas durante el turno de hoy en horario oficial Lima'}
+              : 'Tus ventas emitidas durante el turno de hoy en horario oficial Perú'}
           </p>
         </div>
 

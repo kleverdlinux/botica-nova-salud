@@ -20,7 +20,7 @@ const PERSONA = {
   practice: 'Brand identities, clinical systems, pharmaceutical care.',
   email: 'farmacia@boticanovasalud.pe',
   phone: '+51 999 888 777',
-  location: 'Av. Principal 1248, Zona Comercial, Lima, Perú',
+  location: 'Jr. Mariano Núñez 485, Cercado de Juliaca, San Román, Puno, Perú',
   regente: 'Q.F. Regente Colegiada · Matrícula CQFP Activa'
 };
 
@@ -861,7 +861,7 @@ export default function LandingCatalogo() {
               </div>
 
               <div className="flex flex-col sm:flex-row justify-between items-center text-xs font-mono text-[#949494] border-t border-[#222222] pt-6">
-                <span>BOTICA NOVA SALUD · SEDE LIMA</span>
+                <span>BOTICA NOVA SALUD · SEDE JULIACA</span>
                 <span>WHATSAPP DIRECTO: {PERSONA.phone}</span>
               </div>
             </div>

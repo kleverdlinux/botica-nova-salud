@@ -130,7 +130,7 @@ export const ServicesModal: React.FC<ServicesModalProps> = ({
             </div>
             <div className="min-w-0">
               <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#0d9488] truncate">
-                Tópico Clínico & Asesoría Profesional • Sede Lima
+                Tópico Clínico & Asesoría Profesional • Sede Juliaca
               </div>
               <h2 className="text-base sm:text-xl font-black text-zinc-900 leading-tight truncate">
                 Servicios Farmacéuticos Nova Salud

@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
     <HalftoneWordmarkFooter
       wordmark="nova salud"
       label="BOTICA NOVA SALUD"
-      meta="©2026 · Av. Principal 1248, Lima · Q.F. Regente Colegiada CQFP"
+      meta="©2026 · Jr. Mariano Núñez 485, Juliaca · San Román, Puno · Q.F. Regente Colegiada CQFP"
       preset="light"
       height="100vh"
       className="min-h-screen"

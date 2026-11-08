@@ -294,7 +294,7 @@ const ProductDetail = () => {
                 <div className="flex flex-col items-center">
                   <Truck className="w-4 h-4 text-primary mb-1" />
                   <span className="text-[10px] font-semibold text-foreground uppercase tracking-wider">
-                    Delivery Lima
+                    Delivery Juliaca
                   </span>
                   <span className="text-[9px] text-muted-foreground">Envío Rápido y Seguro</span>
                 </div>

@@ -67,7 +67,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({ onBack, onClose }) => {
     { 
       value: 'integral', 
       label: 'Plan Integral + Signos Vitales & Delivery', 
-      description: 'Medicación completa, toma de presión/glucosa semanal y delivery exprés en Lima', 
+      description: 'Medicación completa, toma de presión/glucosa semanal y delivery exprés en Juliaca', 
       dailyCost: 5.8 
     },
   ];

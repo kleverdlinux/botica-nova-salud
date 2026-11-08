@@ -244,7 +244,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
           <div className="p-4 bg-zinc-50 border border-zinc-200 rounded-xl space-y-3 mt-4">
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-[#0d9488]" />
-              <span className="text-xs font-bold text-zinc-900">Av. Principal 1248, Lima</span>
+              <span className="text-xs font-bold text-zinc-900">Jr. Mariano Núñez 485, Juliaca</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-zinc-600">
               <Clock className="w-4 h-4 text-[#0d9488]" />
@@ -266,7 +266,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
         {/* Bottom Bar */}
         <div className="w-full pt-4 sm:pt-6 border-t border-zinc-200 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-2">
           <span>© 2026 Botica Nova Salud • Farmacia Ética & Dispensación Profesional</span>
-          <span>Atención Presencial en Lima & Delivery Express</span>
+          <span>Atención Presencial en Juliaca & Delivery Express</span>
         </div>
       </div>
     </div>

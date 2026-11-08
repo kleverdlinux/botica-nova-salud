@@ -315,7 +315,7 @@ export default function VisorCliente() {
 
       {/* Pie del Visor */}
       <footer className="px-8 py-3 border-t border-slate-800 bg-slate-950/80 text-center text-xs text-slate-500">
-        Botica Nova Salud • Farmacia & Bioquímica • RUC 20100055231 • Lima, Perú
+        Botica Nova Salud • Farmacia & Bioquímica • RUC 20100055231 • Juliaca, Puno, Perú
       </footer>
     </div>
   );
