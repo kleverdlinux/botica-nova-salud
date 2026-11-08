@@ -1426,10 +1426,6 @@ export default function ClientPortal() {
               <span className="font-black text-sm sm:text-base tracking-tight text-neutral-950 dark:text-white truncate">
                 NOVA SALUD
               </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-teal-50 dark:bg-teal-950/60 text-[#0d9488] dark:text-teal-400 border border-teal-200 dark:border-teal-800 shrink-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></span>
-                <span>Portal Paciente</span>
-              </span>
             </div>
           </div>
 

@@ -447,14 +447,7 @@ export default function Pos() {
       {/* 1. Cabecera Ejecutiva del POS */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 bg-white dark:bg-black p-3.5 sm:p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs">
         <div>
-          <div className="hidden sm:flex items-center space-x-2">
-            <span className="text-xs font-mono font-bold text-teal-600 dark:text-teal-400">
-              Botica Nova Salud / Terminal POS
-            </span>
-            <span className="text-neutral-300 dark:text-neutral-700">•</span>
-            <span className="text-xs text-neutral-500 font-medium">120 Fármacos Activos</span>
-          </div>
-          <h1 className="text-lg sm:text-xl font-black text-neutral-900 dark:text-white tracking-tight flex items-center space-x-2 sm:space-x-2.5 mt-0.5">
+          <h1 className="text-lg sm:text-xl font-black text-neutral-900 dark:text-white tracking-tight flex items-center space-x-2 sm:space-x-2.5">
             <div className="p-1 sm:p-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800/60 text-teal-600 dark:text-teal-400 shrink-0">
               <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>

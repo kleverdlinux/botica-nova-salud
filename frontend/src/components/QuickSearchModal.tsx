@@ -189,3 +189,4 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({ isOpen, onCl
     </Dialog>
   );
 };
+

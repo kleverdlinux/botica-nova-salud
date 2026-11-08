@@ -511,15 +511,6 @@ export default function Inventario() {
       {/* 1. Header Principal y Acciones Rápidas */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 bg-white dark:bg-neutral-900 p-3.5 sm:p-5 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs">
         <div>
-          <div className="hidden sm:flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-neutral-400 mb-1">
-            <span className="text-[#0d9488] font-bold">Botica Nova Salud</span>
-            <span>/</span>
-            <span>Gestión de Inventario</span>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-800/60">
-              <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse mr-1"></span>
-              Sincronizado con Tienda Web ({total} fármacos activos)
-            </span>
-          </div>
           <h1 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center space-x-2 sm:space-x-2.5">
             <Package className="w-5 h-5 sm:w-6 sm:h-6 text-[#0d9488] shrink-0" />
             <span>Sistema Maestro de Inventario & Farmacia</span>

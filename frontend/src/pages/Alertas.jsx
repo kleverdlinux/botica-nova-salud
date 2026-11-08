@@ -80,17 +80,6 @@ export default function Alertas() {
       {/* 1. Encabezado Oficial */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 bg-white dark:bg-neutral-900 p-3.5 sm:p-5 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs">
         <div>
-          <div className="hidden sm:flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-neutral-400 mb-1">
-            <span className="text-[#0d9488] dark:text-teal-400 font-bold">Botica Nova Salud</span>
-            <span>/</span>
-            <span>Alertas Sanitarias & Control de Existencias</span>
-            {conteos.vencidos > 0 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800 animate-pulse">
-                <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1"></span>
-                {conteos.vencidos} lote(s) caducado(s)
-              </span>
-            )}
-          </div>
           <h1 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center space-x-2 sm:space-x-2.5">
             <ShieldAlert className="w-5 h-5 sm:w-6 sm:h-6 text-[#0d9488] dark:text-teal-400 shrink-0" />
             <span>Monitoreo de Alertas Sanitarias y Stock Físico</span>
