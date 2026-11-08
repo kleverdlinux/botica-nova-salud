@@ -209,6 +209,9 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
 <head>
   <meta charset="utf-8" />
   <title>Comprobante ${order.serieNumero}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   ${estilos}
   <style>
     @page {
@@ -220,9 +223,17 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
       padding: 0 !important;
       background: #ffffff !important;
       color: #18181b !important;
-      font-family: inherit;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
+    }
+    *, *::before, *::after {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    .font-mono, [class*="font-mono"], .font-mono * {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
     }
     #seccion-boleta-imprimible {
       width: 100% !important;
@@ -249,7 +260,7 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
 </html>`);
       doc.close();
 
-      setTimeout(() => {
+      const triggerPrint = () => {
         try {
           iframe.contentWindow?.focus();
           iframe.contentWindow?.print();
@@ -261,9 +272,19 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
             try {
               iframe.remove();
             } catch {}
-          }, 2500);
+          }, 3000);
         }
-      }, 350);
+      };
+
+      if (doc.fonts && typeof doc.fonts.ready?.then === 'function') {
+        doc.fonts.ready.then(() => {
+          setTimeout(triggerPrint, 150);
+        }).catch(() => {
+          setTimeout(triggerPrint, 350);
+        });
+      } else {
+        setTimeout(triggerPrint, 350);
+      }
     } catch (e) {
       console.error('Fallback a window.print:', e);
       window.print();
