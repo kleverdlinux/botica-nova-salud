@@ -25,10 +25,10 @@ export default function TerminalMovil() {
 
   const [metodoActivo, setMetodoActivo] = useState('YAPE_PLIN'); // 'YAPE_PLIN' | 'TARJETA'
   const [estadoPos, setEstadoPos] = useState({
-    modo: 'REPOSO',
-    total: 0,
+    modo: montoUrl > 0 ? 'CARRITO' : 'REPOSO',
+    total: montoUrl > 0 ? montoUrl : 0,
     items: [],
-    ticketId: '',
+    ticketId: ticketUrl || 'TKT-001',
     clienteNom: ''
   });
 
@@ -43,26 +43,14 @@ export default function TerminalMovil() {
   const [cardCvv, setCardCvv] = useState('');
   const [cardHolder, setCardHolder] = useState('');
 
-  // Cargar estado inicial y suscribirse a la Laptop
+  // 1. Cargar estado inicial y suscribirse a eventos de la Laptop (SSE y BroadcastChannel)
   useEffect(() => {
     const inicial = posDisplay.obtenerEstadoActual();
-    if (inicial) {
+    if (inicial && Number(inicial.total) > 0) {
       setEstadoPos(inicial);
       if (inicial.modo === 'TARJETA') setMetodoActivo('TARJETA');
       if (inicial.modo === 'YAPE_PLIN') setMetodoActivo('YAPE_PLIN');
       if (inicial.clienteNom) setCardHolder(inicial.clienteNom);
-      if (inicial.modo === 'EXITO') {
-        setPagoCompletado({
-          monto: Number(inicial.total) || montoUrl,
-          metodo: inicial.metodoPago || 'TARJETA',
-          referencia: inicial.comprobante || 'VCH-APROBADO',
-          ticket: inicial.ticketId || ticketUrl || 'TKT-001',
-          cliente: inicial.clienteNom || 'Cliente General',
-          hora: new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-          fecha: new Date().toLocaleDateString('es-PE'),
-          items: Array.isArray(inicial.items) ? inicial.items : []
-        });
-      }
     }
 
     const unsuscribe = posDisplay.suscribir((mensaje) => {
@@ -71,7 +59,7 @@ export default function TerminalMovil() {
       if (mensaje.tipo === 'ACTUALIZAR_ESTADO' || mensaje.tipo === 'ESTADO_ACTUAL') {
         const payload = mensaje.payload || {};
 
-        // 1. Si la laptop finalizó la venta con éxito
+        // Si la laptop finalizó la venta con éxito
         if (payload.modo === 'EXITO') {
           setPagoCompletado((prev) => ({
             monto: Number(payload.total) || prev?.monto || (Number(estadoPos.total) > 0 ? Number(estadoPos.total) : montoUrl) || 0,
@@ -86,13 +74,20 @@ export default function TerminalMovil() {
           return;
         }
 
-        // 2. Si ya hay un pago completado en pantalla, mantener el voucher sin que un REPOSO lo borre
+        // Si ya hay un pago completado en pantalla, mantener el voucher sin que un REPOSO lo borre
         if (payload.modo === 'REPOSO' && pagoCompletado) {
           setEstadoPos(payload);
           return;
         }
 
-        setEstadoPos(payload);
+        // Si trae información de carrito o cambio de estado
+        if (Number(payload.total) > 0 || (Array.isArray(payload.items) && payload.items.length > 0) || payload.modo === 'REPOSO') {
+          setEstadoPos((prev) => ({
+            ...prev,
+            ...payload,
+            total: Number(payload.total) > 0 ? Number(payload.total) : (prev.total > 0 ? prev.total : montoUrl)
+          }));
+        }
 
         if (payload.clienteNom && !cardHolder) {
           setCardHolder(payload.clienteNom);
@@ -113,6 +108,56 @@ export default function TerminalMovil() {
 
     return () => unsuscribe();
   }, [cardHolder, pagoCompletado, estadoPos.total, estadoPos.items, metodoActivo, montoUrl, ticketUrl]);
+
+  // 2. Sondeo continuo HTTP REST de alta confiabilidad (Garantía de sincronización Celular <-> Laptop en Render / Wi-Fi)
+  useEffect(() => {
+    let activo = true;
+
+    const sincronizarConServidor = async () => {
+      if (!activo) return;
+      try {
+        const estado = await posDisplay.consultarEstadoServidor();
+        if (!activo || !estado) return;
+
+        // Si la venta se completó en la laptop
+        if (estado.modo === 'EXITO') {
+          setPagoCompletado((prev) => prev || {
+            monto: Number(estado.total) || montoUrl,
+            metodo: estado.metodoPago || metodoActivo,
+            referencia: estado.comprobante || 'VCH-APROBADO',
+            ticket: estado.ticketId || ticketUrl || 'TKT-001',
+            cliente: estado.clienteNom || cardHolder || 'Cliente General',
+            hora: new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+            fecha: new Date().toLocaleDateString('es-PE'),
+            items: Array.isArray(estado.items) ? estado.items : []
+          });
+          return;
+        }
+
+        // Si el servidor tiene datos activos de la venta en curso
+        if (Number(estado.total) > 0 || (Array.isArray(estado.items) && estado.items.length > 0)) {
+          setEstadoPos((prev) => ({
+            ...prev,
+            ...estado
+          }));
+          if (estado.clienteNom && !cardHolder) {
+            setCardHolder(estado.clienteNom);
+          }
+          if (estado.modo === 'TARJETA' || estado.modo === 'YAPE_PLIN') {
+            setMetodoActivo(estado.modo);
+          }
+        }
+      } catch (e) {}
+    };
+
+    sincronizarConServidor();
+    const interval = setInterval(sincronizarConServidor, 2000);
+
+    return () => {
+      activo = false;
+      clearInterval(interval);
+    };
+  }, [pagoCompletado, montoUrl, ticketUrl, cardHolder, metodoActivo]);
 
   // Cambiar método de cobro
   const seleccionarMetodo = (metodo) => {
@@ -220,15 +265,24 @@ export default function TerminalMovil() {
     setCardCvv('');
     setNotificacionLocal(null);
     setMostrarDetalle(false);
+    setEstadoPos({
+      modo: 'REPOSO',
+      total: 0,
+      items: [],
+      ticketId: '',
+      clienteNom: ''
+    });
     if (typeof window !== 'undefined' && window.history?.replaceState) {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   };
 
-  // Cálculo protegido del total: Si el POS está en reposo y no hay pago completado, total es 0
-  const total = (estadoPos.modo === 'REPOSO' && !pagoCompletado)
+  // Total protegido: Prioriza monto del estado POS activo o monto de la URL del QR
+  const total = pagoCompletado
     ? 0
-    : (Number(estadoPos.total) > 0 ? Number(estadoPos.total) : (pagoCompletado ? 0 : montoUrl)) || 0;
+    : (Number(estadoPos.total) > 0
+        ? Number(estadoPos.total)
+        : (montoUrl > 0 ? montoUrl : 0));
 
   const items = Array.isArray(estadoPos.items) ? estadoPos.items : [];
 
@@ -259,7 +313,7 @@ export default function TerminalMovil() {
               Ticket
             </span>
             <span className="text-xs font-mono font-black text-slate-800">
-              {pagoCompletado?.ticket || estadoPos.ticketId || 'POS-001'}
+              {pagoCompletado?.ticket || estadoPos.ticketId || ticketUrl || 'POS-001'}
             </span>
           </div>
         </div>
@@ -432,6 +486,10 @@ export default function TerminalMovil() {
                 {items.length > 0 ? (
                   <span className="text-[11px] text-teal-700 font-semibold">
                     {items.length} {items.length === 1 ? 'producto' : 'productos'} en mostrador
+                  </span>
+                ) : total > 0 ? (
+                  <span className="text-[11px] text-teal-700 font-semibold">
+                    Cuenta activa vinculada desde caja
                   </span>
                 ) : (
                   <span className="text-[11px] text-amber-600 font-semibold">

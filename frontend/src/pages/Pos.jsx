@@ -1013,6 +1013,15 @@ export default function Pos() {
                     onClick={() => {
                       setGrupoMetodo('OTROS');
                       setMetodoPago(subMetodoOtros);
+                      if (totalCalculadoUI > 0) {
+                        posDisplay.enviarEstado({
+                          modo: subMetodoOtros === 'TARJETA' ? 'TARJETA' : 'YAPE_PLIN',
+                          items: items.map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, precio: i.precio })),
+                          total: totalCalculadoUI,
+                          ticketId: ticketIdActual.current,
+                          clienteNom: clienteNom || ''
+                        });
+                      }
                       if (esMovil) {
                         // EN CELULAR / TABLET: Se abre directamente el modal con las opciones de pago
                         setModalOpcionesPagoAbierto(true);
@@ -1111,7 +1120,18 @@ export default function Pos() {
                   <div className="flex items-center gap-2 pt-0.5">
                     <button
                       type="button"
-                      onClick={() => setModalVincularAbierto(true)}
+                      onClick={() => {
+                        if (totalCalculadoUI > 0) {
+                          posDisplay.enviarEstado({
+                            modo: subMetodoOtros === 'TARJETA' ? 'TARJETA' : 'YAPE_PLIN',
+                            items: items.map((i) => ({ nombre: i.nombre, cantidad: i.cantidad, precio: i.precio })),
+                            total: totalCalculadoUI,
+                            ticketId: ticketIdActual.current,
+                            clienteNom: clienteNom || ''
+                          });
+                        }
+                        setModalVincularAbierto(true);
+                      }}
                       className="flex-1 py-2 px-3 bg-[#732282] hover:bg-[#5b1968] text-white rounded-xl text-xs font-black transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
                     >
                       <QrCode className="w-3.5 h-3.5" />

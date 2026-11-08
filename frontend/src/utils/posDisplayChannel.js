@@ -208,6 +208,18 @@ class PosDisplayManager {
     }
   }
 
+  // Consultar estado actual del POS en el servidor por HTTP REST (sincronización inmediata celular <-> laptop)
+  async consultarEstadoServidor() {
+    try {
+      const res = await fetch(`${getApiBaseUrl()}/dispositivos/estado`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data?.estado || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   // Marcar pago como procesado en el servidor para evitar duplicados
   async marcarPagoProcesado(id) {
     try {

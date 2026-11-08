@@ -9,6 +9,7 @@ import {
   Check
 } from 'lucide-react';
 import toast from '../utils/alertaSweet.js';
+import { posDisplay } from '../utils/posDisplayChannel.js';
 
 export default function ModalVincularDispositivo({
   isOpen,
@@ -37,7 +38,7 @@ export default function ModalVincularDispositivo({
       base = `http://${ip || ipLocal}:5173/terminal-movil`;
     }
     const params = new URLSearchParams();
-    if (monto > 0) params.set('monto', Number(monto).toFixed(2));
+    if (Number(monto) > 0) params.set('monto', Number(monto).toFixed(2));
     if (ticketId) params.set('ticket', ticketId);
     const qs = params.toString();
     return qs ? `${base}?${qs}` : base;
@@ -47,6 +48,14 @@ export default function ModalVincularDispositivo({
 
   useEffect(() => {
     if (!isOpen) return;
+
+    if (Number(monto) > 0) {
+      posDisplay.enviarEstado({
+        modo: 'CARRITO',
+        total: Number(monto),
+        ticketId: ticketId
+      });
+    }
 
     fetch('/api/dispositivos/info-conexion')
       .then((r) => r.json())
