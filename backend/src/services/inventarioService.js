@@ -190,13 +190,36 @@ export async function obtenerKardexGlobal({ page = 1, limit = 40, tipo, busqueda
     where.tipo = tipo;
   }
   if (busqueda && busqueda.trim()) {
-    const q = busqueda.trim();
-    where.producto = {
-      OR: [
-        { nombre: { contains: q, mode: 'insensitive' } },
-        { codigoBarras: { equals: q } }
-      ]
-    };
+    const tokens = busqueda.trim().split(/\s+/).filter(Boolean);
+    if (tokens.length === 1) {
+      const t = tokens[0];
+      where.producto = {
+        OR: [
+          { nombre: { startsWith: t, mode: 'insensitive' } },
+          { codigoBarras: { startsWith: t, mode: 'insensitive' } },
+          ...(t.length >= 3 ? [{ principioActivo: { startsWith: t, mode: 'insensitive' } }] : [])
+        ]
+      };
+    } else if (tokens.length > 1) {
+      const first = tokens[0];
+      where.producto = {
+        AND: [
+          {
+            OR: [
+              { nombre: { startsWith: first, mode: 'insensitive' } },
+              { principioActivo: { startsWith: first, mode: 'insensitive' } }
+            ]
+          },
+          ...tokens.slice(1).map(p => ({
+            OR: [
+              { nombre: { contains: p, mode: 'insensitive' } },
+              { codigoBarras: { contains: p, mode: 'insensitive' } },
+              { principioActivo: { contains: p, mode: 'insensitive' } }
+            ]
+          }))
+        ]
+      };
+    }
   }
 
   const [total, movimientos] = await Promise.all([

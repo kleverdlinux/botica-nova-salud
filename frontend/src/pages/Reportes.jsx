@@ -465,12 +465,37 @@ export default function Reportes() {
     }
   ];
 
-  // Datos filtrados para la previsualización en vivo
-  const productosFiltrados = productos.filter(p =>
-    p.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
-    p.categoria?.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
-    p.codigoBarras?.includes(busqueda)
-  );
+  // Datos filtrados para la previsualización en vivo con precisión estricta
+  const productosFiltrados = productos.filter(p => {
+    if (!busqueda.trim()) return true;
+    const q = busqueda.toLowerCase().trim();
+    const tokens = q.split(/\s+/).filter(Boolean);
+    const prodName = (p.nombre || '').toLowerCase();
+    const catName = (p.categoria?.nombre || '').toLowerCase();
+    const prodBar = (p.codigoBarras || '').toLowerCase();
+
+    if (tokens.length === 1) {
+      const t = tokens[0];
+      return prodName.startsWith(t) || prodBar.startsWith(t) || catName.startsWith(t);
+    }
+
+    const first = tokens[0];
+    const matchFirst = prodName.startsWith(first) || prodBar.startsWith(first) || catName.startsWith(first);
+    if (!matchFirst) return false;
+
+    const fullText = `${prodName} ${catName} ${prodBar}`;
+    return tokens.every(token => fullText.includes(token));
+  }).sort((a, b) => {
+    if (!busqueda.trim()) return 0;
+    const norm = busqueda.toLowerCase().trim();
+    const aName = (a.nombre || '').toLowerCase();
+    const bName = (b.nombre || '').toLowerCase();
+    const aStarts = aName.startsWith(norm);
+    const bStarts = bName.startsWith(norm);
+    if (aStarts && !bStarts) return -1;
+    if (!aStarts && bStarts) return 1;
+    return aName.localeCompare(bName);
+  });
 
   return (
     <div className="w-full space-y-6 pb-12 font-sans">

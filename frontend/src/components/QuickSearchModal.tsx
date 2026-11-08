@@ -33,51 +33,55 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({ isOpen, onCl
     }
   }, [isOpen]);
 
-  // Filtrado instantáneo por prefijo y relevancia
+  // Filtrado instantáneo por prefijo y relevancia estricta conforme se teclea
   const filteredProducts = useMemo(() => {
     const raw = searchTerm.trim();
     if (!raw) return [];
 
     const norm = normalizeText(raw);
     const tokens = norm.split(/\s+/).filter(Boolean);
-    const isShort = norm.length <= 2;
+    if (tokens.length === 0) return [];
 
     return products
       .filter((p) => {
         const prodName = normalizeText(p.name);
         const prodMat = normalizeText(p.materials || '');
 
-        if (norm.length === 1) {
-          // Para 1 sola letra (ej: "P" o "A"): el medicamento DEBE iniciar exactamente con esa letra
-          return prodName.startsWith(norm);
+        // 1. Si es una sola palabra o prefijo (ej: "a", "ac", "acc", "accu", "glu", "val", "pan", "par"):
+        if (tokens.length === 1) {
+          const t = tokens[0];
+          // El nombre comercial DEBE iniciar con el prefijo tecleado
+          if (prodName.startsWith(t)) return true;
+          // O si es principio activo (ej: busca "paracetamol" y el producto se llama "Panadol"), debe iniciar con ese término
+          if (t.length >= 3 && prodMat.startsWith(t)) return true;
+          return false;
         }
 
-        if (norm.length === 2) {
-          // Para 2 letras (ej: "Pa" o "Am"): coincidencia por inicio de nombre o inicio de palabra
-          const nameWords = prodName.split(/\s+/);
-          return prodName.startsWith(norm) || nameWords.some((w) => w.startsWith(norm));
+        // 2. Si son múltiples palabras (ej: "accu chek", "panadol antigripal", "glucometro digital"):
+        // El primer término debe coincidir con el inicio del nombre o del principio activo
+        const first = tokens[0];
+        const nameStartsWithFirst = prodName.startsWith(first);
+        const matStartsWithFirst = prodMat.startsWith(first);
+        if (!nameStartsWithFirst && !matStartsWithFirst) {
+          return false;
         }
 
-        const fullText = normalizeText(
-          `${p.name} ${p.materials || ''} ${p.description || ''} ${p.collection || ''}`
-        );
+        // Y todos los términos tecleados deben estar presentes en el texto del producto
+        const fullText = `${prodName} ${prodMat} ${normalizeText(p.description || '')}`;
         return tokens.every((token) => fullText.includes(token));
       })
       .sort((a, b) => {
         const nameA = normalizeText(a.name);
         const nameB = normalizeText(b.name);
 
+        // 1. Prioridad máxima: el nombre comercial inicia exactamente con el texto buscado
         const aStarts = nameA.startsWith(norm);
         const bStarts = nameB.startsWith(norm);
         if (aStarts && !bStarts) return -1;
         if (!aStarts && bStarts) return 1;
 
-        const aWord = nameA.split(/\s+/).some((w) => w.startsWith(norm));
-        const bWord = nameB.split(/\s+/).some((w) => w.startsWith(norm));
-        if (aWord && !bWord) return -1;
-        if (!aWord && bWord) return 1;
-
-        return a.name.localeCompare(b.name);
+        // 2. Si ambos inician (o ninguno), orden alfabético estricto de la A a la Z
+        return nameA.localeCompare(nameB);
       })
       .slice(0, 8); // Top 8 resultados más relevantes
   }, [searchTerm]);

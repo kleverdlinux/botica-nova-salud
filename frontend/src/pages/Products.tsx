@@ -134,15 +134,20 @@ const Products = () => {
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '');
 
-        if (norm.length === 1) {
-          // Para 1 sola letra (ej: "P" o "A"): el producto DEBE iniciar exactamente con esa letra
-          return prodName.startsWith(norm);
+        // 1. Si es un solo término (ej: "a", "ac", "acc", "accu", "glu", "val", "pan"):
+        if (tokens.length === 1) {
+          const t = tokens[0];
+          if (prodName.startsWith(t)) return true;
+          if (t.length >= 3 && prodMat.startsWith(t)) return true;
+          return false;
         }
 
-        if (norm.length === 2) {
-          // Para 2 letras (ej: "Pa" o "Am"): coincidencia por inicio de nombre o inicio de palabra
-          const nameWords = prodName.split(/\s+/);
-          return prodName.startsWith(norm) || nameWords.some((w) => w.startsWith(norm));
+        // 2. Si son múltiples palabras (ej: "accu chek", "panadol anti"):
+        const first = tokens[0];
+        const nameStartsWithFirst = prodName.startsWith(first);
+        const matStartsWithFirst = prodMat.startsWith(first);
+        if (!nameStartsWithFirst && !matStartsWithFirst) {
+          return false;
         }
 
         const fullText = (
@@ -183,11 +188,6 @@ const Products = () => {
             const bStarts = nameB.startsWith(norm);
             if (aStarts && !bStarts) return -1;
             if (!aStarts && bStarts) return 1;
-
-            const aWord = nameA.split(/\s+/).some((w) => w.startsWith(norm));
-            const bWord = nameB.split(/\s+/).some((w) => w.startsWith(norm));
-            if (aWord && !bWord) return -1;
-            if (!aWord && bWord) return 1;
 
             return a.name.localeCompare(b.name);
           });

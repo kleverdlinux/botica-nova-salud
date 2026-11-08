@@ -249,29 +249,30 @@ export default function Inventario() {
 
     if (lotesBusqueda.trim()) {
       const q = lotesBusqueda.toLowerCase().trim();
-      const isShort = q.length <= 2;
+      const tokens = q.split(/\s+/).filter(Boolean);
       const prodName = (prod.nombre || '').toLowerCase();
       const prodPrincipio = (prod.principioActivo || '').toLowerCase();
       const prodLote = (prod.lote || '').toLowerCase();
       const prodBar = (prod.codigoBarras || '').toLowerCase();
 
-      if (q.length === 1) {
-        // Para 1 sola letra (ej: "A" o "P"): el nombre comercial debe iniciar exactamente con esa letra
-        const matchesOne = prodName.startsWith(q) || prodLote.startsWith(q) || prodBar.startsWith(q);
-        if (!matchesOne) return false;
-      } else if (q.length === 2) {
-        // Para 2 letras (ej: "Am" o "Pa"): inicio de nombre o inicio de palabra
-        const nameWords = prodName.split(/\s+/);
-        const priWords = prodPrincipio.split(/\s+/);
-        const matchesShort =
-          prodName.startsWith(q) ||
-          nameWords.some((w) => w.startsWith(q)) ||
-          priWords.some((w) => w.startsWith(q)) ||
-          prodLote.startsWith(q) ||
-          prodBar.startsWith(q);
-        if (!matchesShort) return false;
-      } else {
-        const tokens = q.split(/\s+/).filter(Boolean);
+      // 1. Si es un solo término (ej: "a", "ac", "acc", "accu", "glu", "val"):
+      if (tokens.length === 1) {
+        const t = tokens[0];
+        const matchName = prodName.startsWith(t);
+        const matchLote = prodLote.startsWith(t);
+        const matchBar = prodBar.startsWith(t);
+        const matchPrincipio = t.length >= 3 && prodPrincipio.startsWith(t);
+        if (!matchName && !matchLote && !matchBar && !matchPrincipio) return false;
+      } else if (tokens.length > 1) {
+        // 2. Si son múltiples palabras (ej: "accu chek", "paracetamol 500"):
+        const first = tokens[0];
+        const matchFirst =
+          prodName.startsWith(first) ||
+          prodLote.startsWith(first) ||
+          prodBar.startsWith(first) ||
+          prodPrincipio.startsWith(first);
+        if (!matchFirst) return false;
+
         const fullText = `${prodName} ${prodPrincipio} ${prod.laboratorio || ''} ${prodLote} ${prodBar}`.toLowerCase();
         const matchesAll = tokens.every((token) => fullText.includes(token));
         if (!matchesAll) return false;
@@ -281,7 +282,7 @@ export default function Inventario() {
     return true;
   });
 
-  // Ordenar lotes por relevancia si hay búsqueda activa
+  // Ordenar lotes por relevancia estricta si hay búsqueda activa
   if (lotesBusqueda.trim()) {
     const normLoteQ = lotesBusqueda.toLowerCase().trim();
     lotesFiltrados.sort((a, b) => {
@@ -292,11 +293,6 @@ export default function Inventario() {
       const bStarts = bName.startsWith(normLoteQ);
       if (aStarts && !bStarts) return -1;
       if (!aStarts && bStarts) return 1;
-
-      const aWord = aName.split(/\s+/).some((w) => w.startsWith(normLoteQ));
-      const bWord = bName.split(/\s+/).some((w) => w.startsWith(normLoteQ));
-      if (aWord && !bWord) return -1;
-      if (!aWord && bWord) return 1;
 
       return aName.localeCompare(bName);
     });

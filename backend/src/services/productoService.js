@@ -35,46 +35,42 @@ export async function buscarProductosPOS(termino) {
   // Garantizar que no haya medicamentos caducados en estado activo antes de consultar
   await sincronizarCaducidadAutomatica();
 
-  const isOneChar = query.length === 1;
-  const isTwoChar = query.length === 2;
+  const tokens = query.split(/\s+/).filter(Boolean);
   let whereCond;
 
-  if (isOneChar) {
-    // Para 1 sola letra (ej: "A" o "P"): SOLO fármacos cuyo nombre empiece exactamente con esa letra
+  if (tokens.length === 1) {
+    const t = tokens[0];
+    // Coincidencia estricta por prefijo del nombre o código (y principio si >= 3 caracteres)
     whereCond = {
       activo: true,
       stock: { gt: 0 },
       OR: [
-        { nombre: { startsWith: query, mode: 'insensitive' } },
-        { codigoBarras: { startsWith: query, mode: 'insensitive' } }
-      ]
-    };
-  } else if (isTwoChar) {
-    // Para 2 letras (ej: "Am" o "Pa"): fármacos cuyo nombre o palabras comiencen con ese prefijo
-    whereCond = {
-      activo: true,
-      stock: { gt: 0 },
-      OR: [
-        { nombre: { startsWith: query, mode: 'insensitive' } },
-        { nombre: { contains: ` ${query}`, mode: 'insensitive' } },
-        { principioActivo: { startsWith: query, mode: 'insensitive' } },
-        { codigoBarras: { startsWith: query, mode: 'insensitive' } }
+        { nombre: { startsWith: t, mode: 'insensitive' } },
+        { codigoBarras: { startsWith: t, mode: 'insensitive' } },
+        ...(t.length >= 3 ? [{ principioActivo: { startsWith: t, mode: 'insensitive' } }] : [])
       ]
     };
   } else {
-    // Búsqueda multi-token para términos de 3 o más letras
-    const palabras = query.split(/\s+/).filter(Boolean);
+    // Multi-token: el primer término debe iniciar el nombre o principio activo
+    const first = tokens[0];
     whereCond = {
       activo: true,
       stock: { gt: 0 },
-      AND: palabras.map(p => ({
-        OR: [
-          { nombre: { contains: p, mode: 'insensitive' } },
-          { codigoBarras: { contains: p, mode: 'insensitive' } },
-          { principioActivo: { contains: p, mode: 'insensitive' } },
-          { laboratorio: { contains: p, mode: 'insensitive' } }
-        ]
-      }))
+      AND: [
+        {
+          OR: [
+            { nombre: { startsWith: first, mode: 'insensitive' } },
+            { principioActivo: { startsWith: first, mode: 'insensitive' } }
+          ]
+        },
+        ...tokens.slice(1).map(p => ({
+          OR: [
+            { nombre: { contains: p, mode: 'insensitive' } },
+            { principioActivo: { contains: p, mode: 'insensitive' } },
+            { codigoBarras: { contains: p, mode: 'insensitive' } }
+          ]
+        }))
+      ]
     };
   }
 
@@ -159,33 +155,32 @@ export async function listarProductos({ rol, activoQuery, page = 1, limit = 20, 
   }
 
   if (busqueda && busqueda.trim()) {
-    const q = busqueda.trim();
-    const isShort = q.length <= 2;
-
-    if (q.length === 1) {
-      // Para 1 sola letra (ej: "A" o "P"): SOLO fármacos cuyo nombre empiece con dicha letra
+    const tokens = busqueda.trim().split(/\s+/).filter(Boolean);
+    if (tokens.length === 1) {
+      const t = tokens[0];
       where.OR = [
-        { nombre: { startsWith: q, mode: 'insensitive' } },
-        { codigoBarras: { startsWith: q, mode: 'insensitive' } }
+        { nombre: { startsWith: t, mode: 'insensitive' } },
+        { codigoBarras: { startsWith: t, mode: 'insensitive' } },
+        ...(t.length >= 3 ? [{ principioActivo: { startsWith: t, mode: 'insensitive' } }] : [])
       ];
-    } else if (q.length === 2) {
-      // Para 2 letras (ej: "Am" o "Pa"): prefijos de nombre o palabra
-      where.OR = [
-        { nombre: { startsWith: q, mode: 'insensitive' } },
-        { nombre: { contains: ` ${q}`, mode: 'insensitive' } },
-        { principioActivo: { startsWith: q, mode: 'insensitive' } },
-        { codigoBarras: { startsWith: q, mode: 'insensitive' } }
+    } else if (tokens.length > 1) {
+      const first = tokens[0];
+      where.AND = [
+        {
+          OR: [
+            { nombre: { startsWith: first, mode: 'insensitive' } },
+            { principioActivo: { startsWith: first, mode: 'insensitive' } }
+          ]
+        },
+        ...tokens.slice(1).map(p => ({
+          OR: [
+            { nombre: { contains: p, mode: 'insensitive' } },
+            { codigoBarras: { contains: p, mode: 'insensitive' } },
+            { principioActivo: { contains: p, mode: 'insensitive' } },
+            { laboratorio: { contains: p, mode: 'insensitive' } }
+          ]
+        }))
       ];
-    } else {
-      const palabras = q.split(/\s+/).filter(Boolean);
-      where.AND = palabras.map(p => ({
-        OR: [
-          { nombre: { contains: p, mode: 'insensitive' } },
-          { codigoBarras: { contains: p, mode: 'insensitive' } },
-          { principioActivo: { contains: p, mode: 'insensitive' } },
-          { laboratorio: { contains: p, mode: 'insensitive' } }
-        ]
-      }));
     }
   }
 

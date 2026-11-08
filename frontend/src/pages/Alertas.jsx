@@ -62,29 +62,49 @@ export default function Alertas() {
   const conteos = alertas?.conteos || { bajoStock: 0, porVencer: 0, vencidos: 0 };
   const listaBruta = alertas ? alertas[tabActiva] || [] : [];
 
-  // Filtrado local por buscador inteligente
+  // Filtrado local por buscador inteligente estricto
   const listaFiltrada = listaBruta.filter((p) => {
     if (!busqueda.trim()) return true;
     const q = busqueda.toLowerCase().trim();
-    if (q.length <= 2) {
-      const matchPrefix = (str) => {
-        if (!str) return false;
-        return str.toLowerCase().split(/\s+/).some((w) => w.startsWith(q));
-      };
-      return (
-        matchPrefix(p.nombre) ||
-        matchPrefix(p.principioActivo) ||
-        (p.codigoBarras && p.codigoBarras.startsWith(q)) ||
-        (p.lote && p.lote.toLowerCase().startsWith(q))
-      );
+    const tokens = q.split(/\s+/).filter(Boolean);
+    const prodName = (p.nombre || '').toLowerCase();
+    const prodPrincipio = (p.principioActivo || '').toLowerCase();
+    const prodLote = (p.lote || '').toLowerCase();
+    const prodBar = (p.codigoBarras || '').toLowerCase();
+
+    // 1. Un solo término o prefijo (ej: "a", "ac", "acc", "accu", "glu", "val")
+    if (tokens.length === 1) {
+      const t = tokens[0];
+      const matchName = prodName.startsWith(t);
+      const matchLote = prodLote.startsWith(t);
+      const matchBar = prodBar.startsWith(t);
+      const matchPrincipio = t.length >= 3 && prodPrincipio.startsWith(t);
+      return matchName || matchLote || matchBar || matchPrincipio;
     }
-    return (
-      p.nombre?.toLowerCase().includes(q) ||
-      p.principioActivo?.toLowerCase().includes(q) ||
-      p.lote?.toLowerCase().includes(q) ||
-      p.codigoBarras?.toLowerCase().includes(q) ||
-      p.laboratorio?.toLowerCase().includes(q)
-    );
+
+    // 2. Múltiples palabras: el primer término debe iniciar el nombre o código
+    const first = tokens[0];
+    const matchFirst =
+      prodName.startsWith(first) ||
+      prodLote.startsWith(first) ||
+      prodBar.startsWith(first) ||
+      prodPrincipio.startsWith(first);
+    if (!matchFirst) return false;
+
+    const fullText = `${prodName} ${prodPrincipio} ${p.laboratorio || ''} ${prodLote} ${prodBar}`.toLowerCase();
+    return tokens.every((token) => fullText.includes(token));
+  }).sort((a, b) => {
+    if (!busqueda.trim()) return 0;
+    const norm = busqueda.toLowerCase().trim();
+    const aName = (a.nombre || '').toLowerCase();
+    const bName = (b.nombre || '').toLowerCase();
+
+    const aStarts = aName.startsWith(norm);
+    const bStarts = bName.startsWith(norm);
+    if (aStarts && !bStarts) return -1;
+    if (!aStarts && bStarts) return 1;
+
+    return aName.localeCompare(bName);
   });
 
   return (
