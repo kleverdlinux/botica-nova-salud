@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight, ChevronDown, Check } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { ProductCard } from "@/components/ProductCard";
 import { products, collections, getCollectionBySlug } from "@/data/products";
@@ -43,6 +43,19 @@ const Products = () => {
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [visibleCount, setVisibleCount] = useState(24);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Cerrar menú desplegable al hacer clic fuera
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsCategoryDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Al cambiar de categoría o filtro, resetear visibleCount a 24
   useEffect(() => {
@@ -186,7 +199,103 @@ const Products = () => {
       <section className="py-3.5 border-b border-zinc-200 sticky top-[58px] bg-white/95 backdrop-blur-md z-40 shadow-xs">
         <div className="container-full space-y-3">
           {/* Navegación por Categorías */}
-          <div className="flex flex-wrap items-center gap-2">
+
+          {/* 1. VISTA MÓVIL: Botón 'TODOS' + Contenedor Desplegable Compacto de Categorías */}
+          <div className="flex md:hidden items-center gap-2 w-full">
+            {/* Botón TODOS */}
+            <button
+              type="button"
+              onClick={() => {
+                handleFilterChange("all");
+                setIsCategoryDropdownOpen(false);
+              }}
+              className={cn(
+                "px-3.5 py-2 text-[11px] font-extrabold tracking-wider uppercase transition-all duration-200 border rounded-xl shrink-0 cursor-pointer shadow-2xs",
+                activeCollection === "all"
+                  ? "bg-[#0d9488] text-white border-[#0d9488]"
+                  : "bg-white text-zinc-700 border-zinc-200 hover:border-[#0d9488] hover:text-[#0d9488]"
+              )}
+            >
+              Todos
+            </button>
+
+            {/* Contenedor de Desglose de Categorías */}
+            <div className="relative flex-1 min-w-0" ref={dropdownRef}>
+              <button
+                type="button"
+                data-category-toggle="true"
+                onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+                className={cn(
+                  "w-full px-3 py-2 text-xs font-bold transition-all duration-200 border rounded-xl flex items-center justify-between gap-1.5 cursor-pointer shadow-2xs",
+                  activeCollection !== "all"
+                    ? "bg-teal-50/90 text-[#0d9488] border-teal-300"
+                    : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-300"
+                )}
+              >
+                <div className="flex items-center gap-1.5 min-w-0 truncate">
+                  <span className="text-[10px] uppercase font-black text-neutral-400 shrink-0">
+                    Categoría:
+                  </span>
+                  <span className="font-extrabold text-neutral-900 truncate">
+                    {currentCollection ? currentCollection.name : "Seleccionar..."}
+                  </span>
+                </div>
+                <ChevronDown
+                  className={cn(
+                    "w-4 h-4 shrink-0 transition-transform duration-200 text-neutral-400",
+                    isCategoryDropdownOpen && "rotate-180 text-[#0d9488]"
+                  )}
+                />
+              </button>
+
+              {/* Menú Desplegable con las 6 Categorías */}
+              {isCategoryDropdownOpen && (
+                <>
+                  {/* Backdrop para cerrar al tocar afuera en móvil */}
+                  <div
+                    className="fixed inset-0 z-40 bg-black/20 backdrop-blur-2xs"
+                    onClick={() => setIsCategoryDropdownOpen(false)}
+                  />
+                  <div className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white rounded-2xl shadow-xl border border-neutral-200 py-1.5 animate-in fade-in zoom-in-95 duration-150 max-h-[60vh] overflow-y-auto">
+                    <div className="px-3 py-1.5 border-b border-neutral-100 flex items-center justify-between text-[10px] font-black uppercase text-neutral-400 tracking-wider">
+                      <span>Categorías de Farmacia</span>
+                      <span>{collections.length} disponibles</span>
+                    </div>
+                    <div className="p-1 space-y-0.5">
+                      {collections.map((collection) => {
+                        const isSelected = activeCollection === collection.slug;
+                        return (
+                          <button
+                            key={collection.id}
+                            type="button"
+                            data-category-item={collection.slug}
+                            onClick={() => {
+                              handleFilterChange(collection.slug);
+                              setIsCategoryDropdownOpen(false);
+                            }}
+                            className={cn(
+                              "w-full px-3 py-2 text-left text-xs font-bold rounded-xl transition flex items-center justify-between gap-2 cursor-pointer",
+                              isSelected
+                                ? "bg-[#0d9488] text-white shadow-2xs"
+                                : "text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
+                            )}
+                          >
+                            <span className="truncate">{collection.name}</span>
+                            {isSelected && (
+                              <Check className="w-3.5 h-3.5 shrink-0 stroke-[2.5]" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* 2. VISTA DESKTOP / PC: Píldoras horizontales directas (Intacto como estaba) */}
+          <div className="hidden md:flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => handleFilterChange("all")}
