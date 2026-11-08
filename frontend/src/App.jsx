@@ -43,6 +43,7 @@ const Pos = lazyConReintento(() => import('./pages/Pos.jsx'));
 const Inventario = lazyConReintento(() => import('./pages/Inventario.jsx'));
 const Alertas = lazyConReintento(() => import('./pages/Alertas.jsx'));
 const Ventas = lazyConReintento(() => import('./pages/Ventas.jsx'));
+const Citas = lazyConReintento(() => import('./pages/Citas.jsx'));
 const Dashboard = lazyConReintento(() => import('./pages/Dashboard.jsx'));
 const Usuarios = lazyConReintento(() => import('./pages/Usuarios.jsx'));
 const Reportes = lazyConReintento(() => import('./pages/Reportes.jsx'));
@@ -163,6 +164,14 @@ export default function App() {
                       element={
                         <RutaProtegida rolesPermitidos={['ADMIN', 'CAJERO']}>
                           <Ventas />
+                        </RutaProtegida>
+                      }
+                    />
+                    <Route
+                      path="citas"
+                      element={
+                        <RutaProtegida rolesPermitidos={['ADMIN', 'CAJERO']}>
+                          <Citas />
                         </RutaProtegida>
                       }
                     />

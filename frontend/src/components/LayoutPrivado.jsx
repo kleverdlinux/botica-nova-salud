@@ -20,6 +20,7 @@ import {
   ChevronRight,
   History,
   Calendar,
+  CalendarClock,
   Layers,
   ExternalLink,
   Sun,
@@ -451,6 +452,30 @@ export default function LayoutPrivado() {
                   )}
                   <ReceiptText className={`w-4 h-4 stroke-[2.2] shrink-0 ${isActive ? 'text-[#0d9488] dark:text-teal-400' : ''}`} />
                   <span>{esCajero ? 'Mis Ventas del Turno' : 'Historial de Comprobantes'}</span>
+                </>
+              )}
+            </NavLink>
+          )}
+
+          {/* MÓDULO 5.1: Citas de Tópico Clínico (ADMIN y CAJERO) */}
+          {(esAdmin || esCajero) && (
+            <NavLink
+              to="/app/citas"
+              className={({ isActive }) =>
+                `relative flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  isActive
+                    ? 'bg-teal-50/90 dark:bg-teal-950/40 text-[#0d9488] dark:text-teal-300 shadow-2xs'
+                    : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-neutral-900 dark:hover:text-white'
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-[#0d9488] dark:bg-teal-400 rounded-r-full" />
+                  )}
+                  <CalendarClock className={`w-4 h-4 stroke-[2.2] shrink-0 ${isActive ? 'text-[#0d9488] dark:text-teal-400' : ''}`} />
+                  <span>Citas de Tópico</span>
                 </>
               )}
             </NavLink>

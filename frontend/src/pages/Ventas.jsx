@@ -59,6 +59,7 @@ export default function Ventas() {
   const [pedidosDelivery, setPedidosDelivery] = useState([]);
   const [cargandoDelivery, setCargandoDelivery] = useState(false);
   const [cambiandoEstadoId, setCambiandoEstadoId] = useState(null);
+  const [pedidoDetalleModal, setPedidoDetalleModal] = useState(null);
 
   // Venta seleccionada para ver detalle y reimprimir
   const [ventaSeleccionada, setVentaSeleccionada] = useState(null);
@@ -421,201 +422,92 @@ export default function Ventas() {
             ) : (
               pedidosDelivery.map((pedido) => {
                 const esCambiando = cambiandoEstadoId === pedido.orderId || cambiandoEstadoId === pedido.ventaId;
+                const totalItemsCount = pedido.items?.reduce((acc, it) => acc + (it.cantidad || 1), 0) || 0;
+
                 return (
                   <div
                     key={pedido.orderId || pedido.ventaId}
-                    className="bg-white dark:bg-neutral-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-neutral-800 shadow-xs space-y-3 hover:border-teal-300 dark:hover:border-teal-700 transition"
+                    className="bg-white dark:bg-neutral-900 rounded-xl px-4 py-3 border border-slate-200 dark:border-neutral-800 shadow-2xs hover:border-teal-400 dark:hover:border-teal-600 transition flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs"
                   >
-                    {/* Fila 1: Cabecera del Pedido */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-neutral-800">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono font-black text-slate-900 dark:text-white text-sm bg-slate-100 dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700">
-                          {pedido.orderId}
-                        </span>
-                        <span className="font-mono text-xs text-teal-700 dark:text-teal-400 font-bold bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded border border-teal-200 dark:border-teal-800">
-                          {pedido.serieNumero}
-                        </span>
-                        <span className="text-xs text-slate-400 dark:text-neutral-500 flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5" />
-                          <span>{formatearFechaHoraLima(pedido.fecha)}</span>
-                        </span>
+                    {/* Bloque Izquierdo: Identificadores, Cliente y Total */}
+                    <div className="flex flex-wrap items-center gap-2.5 min-w-0">
+                      <span className="font-mono font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-neutral-800 px-2 py-0.5 rounded text-xs border border-slate-200 dark:border-neutral-700">
+                        {pedido.orderId}
+                      </span>
+                      <span className="font-mono text-[11px] text-teal-700 dark:text-teal-400 font-bold bg-teal-50 dark:bg-teal-950/60 px-1.5 py-0.5 rounded border border-teal-200 dark:border-teal-800">
+                        {pedido.serieNumero}
+                      </span>
+                      <span className="text-[11px] text-slate-400 dark:text-neutral-500 font-medium">
+                        {formatearFechaHoraLima(pedido.fecha)}
+                      </span>
+                      <span className="text-slate-300 dark:text-neutral-700 hidden sm:inline">•</span>
+                      <div className="font-bold text-slate-900 dark:text-white truncate max-w-[180px] sm:max-w-[220px]">
+                        {pedido.clienteNom}
                       </div>
-
-                      {/* Selector de Estado Interactivo */}
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-slate-500 dark:text-neutral-400">
-                          Estado Delivery:
+                      {pedido.telefono && (
+                        <span className="text-[11px] text-slate-500 dark:text-neutral-400 font-mono hidden md:inline">
+                          ({pedido.telefono})
                         </span>
-                        <select
-                          value={pedido.status || 'EN_PREPARACION'}
-                          disabled={esCambiando}
-                          onChange={(e) =>
-                            handleCambiarEstado(
-                              pedido.orderId,
-                              e.target.value,
-                              pedido.clienteDoc,
-                              pedido.ventaId
-                            )
-                          }
-                          className={`text-xs font-black rounded-xl px-3 py-1.5 border transition cursor-pointer outline-hidden ${
-                            pedido.status === 'ENTREGADO'
-                              ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700'
-                              : pedido.status === 'EN_CAMINO'
-                              ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-700'
-                              : pedido.status === 'CANCELADO'
-                              ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-700'
-                              : 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700'
-                          }`}
-                        >
-                          <option value="EN_PREPARACION">🟡 En Preparación (Tópico)</option>
-                          <option value="EN_CAMINO">🔵 En Ruta (Motorizado)</option>
-                          <option value="ENTREGADO">🟢 Entregado Conforme</option>
-                          <option value="CANCELADO">🔴 Cancelado</option>
-                        </select>
-                      </div>
+                      )}
+                      <span className="text-slate-300 dark:text-neutral-700 hidden sm:inline">•</span>
+                      <span className="text-[11px] text-slate-500 dark:text-neutral-400">
+                        {totalItemsCount} producto(s)
+                      </span>
+                      <span className="font-mono font-black text-sm text-[#0d9488] dark:text-teal-400 ml-1">
+                        {formatearMoneda(pedido.total)}
+                      </span>
                     </div>
 
-                    {/* Fila 2: Datos de Entrega y Cliente en Juliaca */}
-                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
-                      {/* Cliente */}
-                      <div className="sm:col-span-4 space-y-1">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500 block">
-                          Titular / Receptor
-                        </span>
-                        <div className="font-bold text-slate-900 dark:text-white text-sm">
-                          {pedido.clienteNom}
-                        </div>
-                        {pedido.clienteDoc && (
-                          <div className="font-mono text-slate-500 dark:text-neutral-400">
-                            DNI/RUC: {pedido.clienteDoc}
-                          </div>
-                        )}
-                        {pedido.telefono && (
-                          <div className="flex items-center gap-2 pt-0.5">
-                            <span className="text-slate-600 dark:text-neutral-400 flex items-center gap-1 font-mono">
-                              <Phone className="w-3 h-3 text-emerald-600" />
-                              {pedido.telefono}
-                            </span>
-                            <a
-                              href={`https://wa.me/51${pedido.telefono.replace(/\D/g, '')}?text=${encodeURIComponent(
-                                `Hola ${pedido.clienteNom}, te saludamos de Botica Nova Salud respecto a tu pedido ${pedido.orderId}.`
-                              )}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-0.5 underline text-[11px]"
-                            >
-                              <MessageCircle className="w-3 h-3" />
-                              <span>WhatsApp</span>
-                            </a>
-                          </div>
-                        )}
-                      </div>
+                    {/* Bloque Derecho: Selector de Estado Moderno & Botones */}
+                    <div className="flex items-center gap-2 shrink-0 self-end md:self-auto">
+                      {/* Dropdown de Estado Moderno (Sin emojis toscos, paleta sutil) */}
+                      <select
+                        value={pedido.status || 'EN_PREPARACION'}
+                        disabled={esCambiando}
+                        onChange={(e) =>
+                          handleCambiarEstado(
+                            pedido.orderId,
+                            e.target.value,
+                            pedido.clienteDoc,
+                            pedido.ventaId
+                          )
+                        }
+                        className={`text-[11px] font-bold rounded-lg px-2.5 py-1.5 border transition cursor-pointer outline-none ${
+                          pedido.status === 'ENTREGADO'
+                            ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                            : pedido.status === 'EN_CAMINO'
+                            ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800'
+                            : pedido.status === 'CANCELADO'
+                            ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800'
+                            : 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                        }`}
+                      >
+                        <option value="EN_PREPARACION">En Preparación (Tópico)</option>
+                        <option value="EN_CAMINO">En Ruta (Motorizado)</option>
+                        <option value="ENTREGADO">Entregado Conforme</option>
+                        <option value="CANCELADO">Cancelado</option>
+                      </select>
 
-                      {/* Dirección de Entrega en Juliaca */}
-                      <div className="sm:col-span-5 space-y-1">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500 block">
-                          Destino de Entrega (Juliaca)
-                        </span>
-                        <div className="flex items-start gap-1.5 text-slate-800 dark:text-neutral-200 font-medium">
-                          <MapPin className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
-                          <div>
-                            <p className="font-bold">{pedido.direccion}</p>
-                            <p className="text-slate-500 dark:text-neutral-400 text-[11px]">
-                              {pedido.distrito || 'Juliaca Cercado'} · Cobertura San Román, Puno
-                            </p>
-                          </div>
-                        </div>
-                        <div className="pt-1">
-                          <span className="text-slate-500 text-[11px]">
-                            Método de Pago:{' '}
-                            <strong className="text-slate-800 dark:text-neutral-200">
-                              {pedido.metodoPago === 'YAPE_PLIN'
-                                ? 'Yape / Plin'
-                                : pedido.metodoPago === 'TARJETA'
-                                ? 'Tarjeta Débito/Crédito'
-                                : 'Contra Entrega en Efectivo'}
-                            </strong>
-                          </span>
-                        </div>
-                      </div>
+                      {/* Botón Ver Detalle */}
+                      <button
+                        type="button"
+                        onClick={() => setPedidoDetalleModal(pedido)}
+                        className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-slate-700 dark:text-neutral-200 font-bold rounded-lg text-xs inline-flex items-center gap-1.5 transition cursor-pointer border border-slate-200 dark:border-neutral-700 shadow-2xs"
+                        title="Ver detalle completo de entrega y productos"
+                      >
+                        <Eye className="w-3.5 h-3.5 text-[#0d9488] dark:text-teal-400" />
+                        <span>Ver Detalle</span>
+                      </button>
 
-                      {/* Total y Acciones Rápidas */}
-                      <div className="sm:col-span-3 flex flex-col justify-between items-start sm:items-end">
-                        <div className="text-left sm:text-right">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500 block">
-                            Total Pedido
-                          </span>
-                          <span className="text-xl font-black font-mono text-[#0d9488] block">
-                            {formatearMoneda(pedido.total)}
-                          </span>
-                        </div>
-
-                        {/* Botones de Cambio Rápido de Estado */}
-                        <div className="flex items-center gap-1.5 pt-2 flex-wrap">
-                          {pedido.status !== 'EN_CAMINO' && pedido.status !== 'ENTREGADO' && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleCambiarEstado(
-                                  pedido.orderId,
-                                  'EN_CAMINO',
-                                  pedido.clienteDoc,
-                                  pedido.ventaId
-                                )
-                              }
-                              disabled={esCambiando}
-                              className="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-bold text-[11px] flex items-center gap-1 transition cursor-pointer"
-                              title="Asignar a motorizado y despachar en ruta"
-                            >
-                              <Truck className="w-3.5 h-3.5" />
-                              <span>A Motorizado</span>
-                            </button>
-                          )}
-
-                          {pedido.status !== 'ENTREGADO' && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleCambiarEstado(
-                                  pedido.orderId,
-                                  'ENTREGADO',
-                                  pedido.clienteDoc,
-                                  pedido.ventaId
-                                )
-                              }
-                              disabled={esCambiando}
-                              className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-bold text-[11px] flex items-center gap-1 transition cursor-pointer"
-                              title="Marcar como entregado con recepción conforme"
-                            >
-                              <CheckCircle2 className="w-3.5 h-3.5" />
-                              <span>Entregado</span>
-                            </button>
-                          )}
-
-                          <button
-                            type="button"
-                            onClick={() => handleVerDetalle(pedido.ventaId)}
-                            className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-neutral-800 dark:text-neutral-300 font-bold text-[11px] flex items-center gap-1 transition cursor-pointer border border-slate-200 dark:border-neutral-700"
-                            title="Reimprimir Boleta / Ticket"
-                          >
-                            <Printer className="w-3.5 h-3.5 text-[#0d9488]" />
-                            <span>Ticket</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Fila 3: Medicamentos en el Pedido */}
-                    <div className="pt-2 border-t border-slate-100 dark:border-neutral-800 flex items-center gap-2 overflow-x-auto text-[11px]">
-                      <span className="text-slate-400 font-bold shrink-0">Fármacos:</span>
-                      {pedido.items.map((it, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2 py-0.5 rounded-md bg-slate-50 dark:bg-neutral-800 text-slate-700 dark:text-neutral-300 border border-slate-200 dark:border-neutral-700 font-medium shrink-0"
-                        >
-                          {it.cantidad}× {it.nombre} ({it.presentacion})
-                        </span>
-                      ))}
+                      {/* Botón Reimprimir Ticket */}
+                      <button
+                        type="button"
+                        onClick={() => handleVerDetalle(pedido.ventaId)}
+                        className="p-1.5 bg-white hover:bg-slate-50 dark:bg-neutral-900 hover:dark:bg-neutral-800 text-slate-600 dark:text-neutral-400 font-bold rounded-lg text-xs transition cursor-pointer border border-slate-200 dark:border-neutral-800"
+                        title="Reimprimir Ticket de Venta"
+                      >
+                        <Printer className="w-3.5 h-3.5 text-[#0d9488]" />
+                      </button>
                     </div>
                   </div>
                 );
@@ -872,6 +764,150 @@ export default function Ventas() {
         </div>
       </div>
     )}
+
+      {/* Modal de Detalle Completo del Pedido Web Delivery */}
+      {pedidoDetalleModal && (
+        <div
+          className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm p-3 sm:p-6 flex items-start sm:items-center justify-center animate-in fade-in duration-150"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setPedidoDetalleModal(null);
+          }}
+        >
+          <div className="relative w-full max-w-lg bg-white dark:bg-neutral-900 shadow-2xl rounded-2xl border border-slate-200 dark:border-neutral-800 p-5 sm:p-6 text-slate-800 dark:text-neutral-200 space-y-4 my-auto">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-neutral-800 pb-3">
+              <div className="flex items-center gap-2">
+                <Truck className="w-5 h-5 text-[#0d9488]" />
+                <div>
+                  <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                    Detalle de Pedido Delivery Web
+                  </h3>
+                  <div className="flex items-center gap-2 font-mono text-[11px] text-slate-500 mt-0.5">
+                    <span>{pedidoDetalleModal.orderId}</span>
+                    <span>•</span>
+                    <span className="text-teal-700 dark:text-teal-400 font-bold">{pedidoDetalleModal.serieNumero}</span>
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPedidoDetalleModal(null)}
+                className="w-7 h-7 rounded-full bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 text-slate-500 flex items-center justify-center cursor-pointer transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Datos del Receptor y Destino */}
+            <div className="bg-slate-50 dark:bg-neutral-950/60 p-3.5 rounded-xl border border-slate-200 dark:border-neutral-800/80 space-y-2 text-xs">
+              <div className="flex justify-between items-start">
+                <span className="text-slate-400 text-[10px] uppercase font-bold">Titular:</span>
+                <span className="font-bold text-slate-900 dark:text-white text-right">
+                  {pedidoDetalleModal.clienteNom}
+                </span>
+              </div>
+              {pedidoDetalleModal.clienteDoc && (
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400 text-[10px] uppercase font-bold">DNI/RUC:</span>
+                  <span className="font-mono text-slate-700 dark:text-neutral-300">
+                    {pedidoDetalleModal.clienteDoc}
+                  </span>
+                </div>
+              )}
+              {pedidoDetalleModal.telefono && (
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400 text-[10px] uppercase font-bold">Celular:</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-slate-800 dark:text-neutral-200 font-bold">
+                      {pedidoDetalleModal.telefono}
+                    </span>
+                    <a
+                      href={`https://wa.me/51${pedidoDetalleModal.telefono.replace(/\D/g, '')}?text=${encodeURIComponent(
+                        `Hola ${pedidoDetalleModal.clienteNom}, te saludamos de Botica Nova Salud respecto a tu pedido ${pedidoDetalleModal.orderId}.`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-0.5 text-[11px]"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>WhatsApp</span>
+                    </a>
+                  </div>
+                </div>
+              )}
+              <div className="flex justify-between items-start pt-1 border-t border-slate-200/60 dark:border-neutral-800">
+                <span className="text-slate-400 text-[10px] uppercase font-bold">Destino:</span>
+                <div className="text-right">
+                  <p className="font-bold text-slate-800 dark:text-neutral-200">{pedidoDetalleModal.direccion}</p>
+                  <p className="text-[11px] text-slate-500">{pedidoDetalleModal.distrito || 'Juliaca Cercado'} • Puno</p>
+                </div>
+              </div>
+              <div className="flex justify-between items-center pt-1 border-t border-slate-200/60 dark:border-neutral-800">
+                <span className="text-slate-400 text-[10px] uppercase font-bold">Método Pago:</span>
+                <span className="font-bold text-slate-800 dark:text-neutral-200">
+                  {pedidoDetalleModal.metodoPago === 'YAPE_PLIN'
+                    ? 'Yape / Plin'
+                    : pedidoDetalleModal.metodoPago === 'TARJETA'
+                    ? 'Tarjeta Débito/Crédito'
+                    : 'Contra Entrega en Efectivo'}
+                </span>
+              </div>
+            </div>
+
+            {/* Fármacos Pedidos */}
+            <div className="space-y-1.5">
+              <span className="text-[10px] uppercase font-extrabold tracking-wider text-slate-400 block">
+                Fármacos en el Pedido ({pedidoDetalleModal.items?.length || 0})
+              </span>
+              <div className="max-h-44 overflow-y-auto space-y-1 divide-y divide-slate-100 dark:divide-neutral-800/60 border border-slate-200 dark:border-neutral-800 rounded-xl p-2.5 bg-slate-50/50 dark:bg-neutral-950/30 text-xs">
+                {pedidoDetalleModal.items?.map((it, idx) => (
+                  <div key={idx} className="pt-1 first:pt-0 flex items-center justify-between text-slate-700 dark:text-neutral-300">
+                    <div className="truncate pr-2">
+                      <strong className="text-slate-900 dark:text-white font-mono">{it.cantidad}x</strong> {it.nombre}
+                      {it.presentacion && <span className="text-[11px] text-slate-400 ml-1">({it.presentacion})</span>}
+                    </div>
+                    <span className="font-mono font-bold text-slate-800 dark:text-neutral-200 shrink-0">
+                      {formatearMoneda((it.precio || 0) * (it.cantidad || 1))}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Total y Acciones */}
+            <div className="pt-2 border-t border-slate-100 dark:border-neutral-800 flex items-center justify-between">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                  Total Pedido
+                </span>
+                <span className="text-lg font-black font-mono text-[#0d9488]">
+                  {formatearMoneda(pedidoDetalleModal.total)}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const vId = pedidoDetalleModal.ventaId;
+                    setPedidoDetalleModal(null);
+                    if (vId) handleVerDetalle(vId);
+                  }}
+                  className="px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-slate-700 dark:text-neutral-200 font-bold rounded-xl text-xs inline-flex items-center gap-1.5 transition cursor-pointer border border-slate-200 dark:border-neutral-700"
+                >
+                  <Printer className="w-3.5 h-3.5 text-[#0d9488]" />
+                  <span>Ver Ticket</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPedidoDetalleModal(null)}
+                  className="px-4 py-2 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold rounded-xl text-xs transition cursor-pointer"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal Reutilizado para Reimprimir Ticket Térmico 80mm */}
       {ventaSeleccionada && (

@@ -1,23 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Smartphone,
   CreditCard,
   QrCode,
   CheckCircle2,
-  RefreshCw,
   ShoppingBag,
   ChevronDown,
   ChevronUp,
-  ScanLine,
   Check,
-  AlertCircle
+  ShieldCheck,
+  Lock
 } from 'lucide-react';
 import { posDisplay } from '../utils/posDisplayChannel.js';
 import { formatearMoneda } from '../utils/formateadores.js';
-import { reproducirPipScanner } from '../utils/sonidoScanner.js';
 
 export default function TerminalMovil() {
-  const [metodoActivo, setMetodoActivo] = useState('YAPE_PLIN'); // 'YAPE_PLIN' | 'TARJETA' | 'ESCANER'
+  const [metodoActivo, setMetodoActivo] = useState('YAPE_PLIN'); // 'YAPE_PLIN' | 'TARJETA'
   const [estadoPos, setEstadoPos] = useState({
     modo: 'REPOSO',
     total: 0,
@@ -30,10 +28,11 @@ export default function TerminalMovil() {
   const [mostrarDetalle, setMostrarDetalle] = useState(false);
   const [notificacionLocal, setNotificacionLocal] = useState(null);
 
-  // Escaneo manual o rápido
-  const [codigoManual, setCodigoManual] = useState('');
-  const [ultimoEscaneado, setUltimoEscaneado] = useState(null);
-  const [totalEscaneados, setTotalEscaneados] = useState(0);
+  // Estados interactivos para cobro con tarjeta
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
+  const [cardHolder, setCardHolder] = useState('');
 
   // Cargar estado inicial y suscribirse a la Laptop
   useEffect(() => {
@@ -42,6 +41,7 @@ export default function TerminalMovil() {
       setEstadoPos(inicial);
       if (inicial.modo === 'TARJETA') setMetodoActivo('TARJETA');
       if (inicial.modo === 'YAPE_PLIN') setMetodoActivo('YAPE_PLIN');
+      if (inicial.clienteNom) setCardHolder(inicial.clienteNom);
     }
 
     const unsuscribe = posDisplay.suscribir((mensaje) => {
@@ -50,6 +50,10 @@ export default function TerminalMovil() {
       if (mensaje.tipo === 'ACTUALIZAR_ESTADO' || mensaje.tipo === 'ESTADO_ACTUAL') {
         const payload = mensaje.payload || {};
         setEstadoPos(payload);
+
+        if (payload.clienteNom && !cardHolder) {
+          setCardHolder(payload.clienteNom);
+        }
 
         if (payload.modo === 'TARJETA') {
           setMetodoActivo('TARJETA');
@@ -65,14 +69,35 @@ export default function TerminalMovil() {
     });
 
     return () => unsuscribe();
-  }, []);
+  }, [cardHolder]);
 
-  // Cambiar método de cobro (sincroniza también con la laptop)
+  // Cambiar método de cobro
   const seleccionarMetodo = (metodo) => {
     setMetodoActivo(metodo);
     if (metodo === 'YAPE_PLIN' || metodo === 'TARJETA') {
       posDisplay.cambiarMetodoPago(metodo);
     }
+  };
+
+  // Formateadores de tarjeta
+  const handleCardNumberChange = (e) => {
+    const v = e.target.value.replace(/\D/g, '').slice(0, 16);
+    const formatted = v.match(/.{1,4}/g)?.join(' ') || v;
+    setCardNumber(formatted);
+  };
+
+  const handleExpiryChange = (e) => {
+    const v = e.target.value.replace(/\D/g, '').slice(0, 4);
+    if (v.length >= 3) {
+      setCardExpiry(`${v.slice(0, 2)}/${v.slice(2)}`);
+    } else {
+      setCardExpiry(v);
+    }
+  };
+
+  const handleCvvChange = (e) => {
+    const v = e.target.value.replace(/\D/g, '').slice(0, 4);
+    setCardCvv(v);
   };
 
   // Confirmar cobro Yape desde el celular
@@ -126,35 +151,6 @@ export default function TerminalMovil() {
     setTimeout(() => setNotificacionLocal(null), 3500);
   };
 
-  // Enviar código de barras escaneado al carrito de la laptop
-  const enviarCodigoAlPos = (codigo) => {
-    const limpio = String(codigo).trim();
-    if (!limpio) return;
-
-    reproducirPipScanner();
-    posDisplay.notificarProductoEscaneado(limpio);
-    setUltimoEscaneado(limpio);
-    setTotalEscaneados((prev) => prev + 1);
-
-    setNotificacionLocal({
-      tipo: 'scanner',
-      titulo: 'Medicamento Agregado',
-      detalle: `Código ${limpio} enviado al POS.`
-    });
-
-    setTimeout(() => {
-      setUltimoEscaneado(null);
-      setNotificacionLocal(null);
-    }, 2200);
-  };
-
-  const handleManualSubmit = (e) => {
-    e.preventDefault();
-    if (!codigoManual.trim()) return;
-    enviarCodigoAlPos(codigoManual.trim());
-    setCodigoManual('');
-  };
-
   const total = Number(estadoPos.total) || 0;
   const items = Array.isArray(estadoPos.items) ? estadoPos.items : [];
 
@@ -202,46 +198,33 @@ export default function TerminalMovil() {
         </div>
       )}
 
-      {/* Selector Principal de Modo de Cobro */}
+      {/* Selector Principal de Modo de Cobro: SOLO PARA PAGAR (Yape / Tarjeta) */}
       <section className="px-4 pt-3 max-w-md mx-auto w-full">
-        <div className="bg-white p-1 rounded-2xl border border-slate-200 shadow-xs grid grid-cols-3 gap-1 text-xs font-bold">
+        <div className="bg-white p-1 rounded-2xl border border-slate-200 shadow-xs grid grid-cols-2 gap-1.5 text-xs font-bold">
           <button
             type="button"
             onClick={() => seleccionarMetodo('YAPE_PLIN')}
-            className={`py-2 px-2 rounded-xl transition cursor-pointer flex flex-col items-center justify-center space-y-0.5 ${
+            className={`py-2.5 px-3 rounded-xl transition cursor-pointer flex items-center justify-center space-x-2 ${
               metodoActivo === 'YAPE_PLIN'
                 ? 'bg-purple-700 text-white shadow-xs'
                 : 'text-slate-600 hover:bg-slate-50'
             }`}
           >
             <QrCode className="w-4 h-4" />
-            <span className="text-[11px]">Yape / Plin</span>
+            <span className="text-xs">Yape / Plin</span>
           </button>
 
           <button
             type="button"
             onClick={() => seleccionarMetodo('TARJETA')}
-            className={`py-2 px-2 rounded-xl transition cursor-pointer flex flex-col items-center justify-center space-y-0.5 ${
+            className={`py-2.5 px-3 rounded-xl transition cursor-pointer flex items-center justify-center space-x-2 ${
               metodoActivo === 'TARJETA'
                 ? 'bg-blue-600 text-white shadow-xs'
                 : 'text-slate-600 hover:bg-slate-50'
             }`}
           >
             <CreditCard className="w-4 h-4" />
-            <span className="text-[11px]">Tarjeta</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => seleccionarMetodo('ESCANER')}
-            className={`py-2 px-2 rounded-xl transition cursor-pointer flex flex-col items-center justify-center space-y-0.5 ${
-              metodoActivo === 'ESCANER'
-                ? 'bg-teal-700 text-white shadow-xs'
-                : 'text-slate-600 hover:bg-slate-50'
-            }`}
-          >
-            <ScanLine className="w-4 h-4" />
-            <span className="text-[11px]">Lector ({totalEscaneados})</span>
+            <span className="text-xs">Tarjeta</span>
           </button>
         </div>
       </section>
@@ -317,20 +300,20 @@ export default function TerminalMovil() {
                 Muestre este código al cliente
               </h2>
               <p className="text-xs text-slate-500">
-                Pagar con cámara o app del celular
+                Escanear con cámara o app del celular
               </p>
             </div>
 
-            {/* Código QR Oficial Grande */}
+            {/* Código QR Oficial */}
             <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 inline-block mx-auto shadow-inner">
               <img
                 src="/media/qr-yape.jpg"
                 alt="QR Yape Botica Nova Salud"
-                className="w-56 h-56 mx-auto rounded-xl object-contain bg-white p-1.5"
+                className="w-52 h-52 mx-auto rounded-xl object-contain bg-white p-1.5"
               />
             </div>
 
-            {/* Datos Comerciales para Transferencia Directa */}
+            {/* Datos Comerciales */}
             <div className="bg-slate-50 rounded-2xl p-3 border border-slate-200 text-xs space-y-1.5 text-left font-sans">
               <div className="flex justify-between items-center">
                 <span className="text-slate-500 font-medium">Celular Yape:</span>
@@ -339,12 +322,12 @@ export default function TerminalMovil() {
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-slate-500 font-medium">Titular Oficial:</span>
+                <span className="text-slate-500 font-medium">Titular:</span>
                 <span className="font-bold text-teal-800">Botica Nova Salud</span>
               </div>
             </div>
 
-            {/* Botón de Confirmación para el Cajero */}
+            {/* Botón de Confirmación */}
             <div className="pt-1">
               <button
                 type="button"
@@ -360,108 +343,125 @@ export default function TerminalMovil() {
               </p>
             </div>
           </div>
-        ) : metodoActivo === 'TARJETA' ? (
-          // ============================== VISTA COBRO TARJETA ==============================
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-center space-y-5 animate-in zoom-in-95 duration-150">
-            <div>
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-black uppercase tracking-wider mb-2">
+        ) : (
+          // ============================== VISTA COBRO TARJETA INTERACTIVA ==============================
+          <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4 animate-in zoom-in-95 duration-150">
+            <div className="text-center">
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-black uppercase tracking-wider mb-1">
                 <span>Tarjeta Débito & Crédito</span>
               </div>
               <h2 className="text-base font-black text-slate-900">
-                Muestre el importe al cliente
+                Pagar con Tarjeta
               </h2>
               <p className="text-xs text-slate-500">
-                Terminal POS de mostrador
+                Ingrese los datos de su tarjeta o acerque al mostrador
               </p>
             </div>
 
-            {/* Ícono de Tarjeta Contactless */}
-            <div className="w-24 h-24 mx-auto rounded-3xl bg-blue-50 border-2 border-blue-200 flex items-center justify-center text-blue-600 shadow-inner">
-              <CreditCard className="w-12 h-12" />
+            {/* Tarjeta Visual Interactiva */}
+            <div className="bg-gradient-to-tr from-zinc-900 via-slate-800 to-zinc-950 text-white rounded-2xl p-4 shadow-md border border-zinc-700 space-y-3 font-mono">
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-sans font-bold">
+                  Nova Salud Pay
+                </span>
+                <span className="text-xs font-black text-teal-400">
+                  {cardNumber.startsWith('4') ? 'VISA' : 'MASTERCARD'}
+                </span>
+              </div>
+              <div className="text-base tracking-widest text-center py-1 text-zinc-100 font-bold">
+                {cardNumber || '•••• •••• •••• ••••'}
+              </div>
+              <div className="flex justify-between items-end text-[11px]">
+                <div>
+                  <span className="block text-[8px] text-zinc-400 font-sans uppercase">
+                    Titular
+                  </span>
+                  <span className="font-sans font-bold uppercase truncate max-w-[150px] block">
+                    {cardHolder || estadoPos.clienteNom || 'NOMBRE Y APELLIDO'}
+                  </span>
+                </div>
+                <div>
+                  <span className="block text-[8px] text-zinc-400 font-sans uppercase">
+                    Vence
+                  </span>
+                  <span>{cardExpiry || 'MM/AA'}</span>
+                </div>
+              </div>
             </div>
 
-            {/* Marcas Aceptadas */}
-            <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] font-bold text-slate-600">
-              <span className="px-3 py-1 rounded-lg bg-slate-100 border border-slate-200">Visa</span>
-              <span className="px-3 py-1 rounded-lg bg-slate-100 border border-slate-200">Mastercard</span>
-              <span className="px-3 py-1 rounded-lg bg-slate-100 border border-slate-200">Amex</span>
-              <span className="px-3 py-1 rounded-lg bg-slate-100 border border-slate-200">Contactless )))</span>
+            {/* Formulario de Tarjeta */}
+            <div className="space-y-2.5 text-xs">
+              <div>
+                <label className="block text-[10px] font-extrabold uppercase text-slate-600 mb-0.5">
+                  Número de Tarjeta (16 dígitos) *
+                </label>
+                <input
+                  type="text"
+                  value={cardNumber}
+                  onChange={handleCardNumberChange}
+                  placeholder="4000 1234 5678 9010"
+                  className="w-full h-9 px-3 rounded-xl border border-slate-300 text-xs text-slate-900 font-mono focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] font-extrabold uppercase text-slate-600 mb-0.5">
+                    Vencimiento (MM/AA) *
+                  </label>
+                  <input
+                    type="text"
+                    value={cardExpiry}
+                    onChange={handleExpiryChange}
+                    placeholder="12/28"
+                    className="w-full h-9 px-3 rounded-xl border border-slate-300 text-xs text-slate-900 font-mono focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-extrabold uppercase text-slate-600 mb-0.5">
+                    CVV (3 dígitos) *
+                  </label>
+                  <input
+                    type="password"
+                    maxLength={4}
+                    value={cardCvv}
+                    onChange={handleCvvChange}
+                    placeholder="•••"
+                    className="w-full h-9 px-3 rounded-xl border border-slate-300 text-xs text-slate-900 font-mono focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-extrabold uppercase text-slate-600 mb-0.5">
+                  Nombre del Titular *
+                </label>
+                <input
+                  type="text"
+                  value={cardHolder}
+                  onChange={(e) => setCardHolder(e.target.value)}
+                  placeholder="Ej: MARÍA RODRÍGUEZ"
+                  className="w-full h-9 px-3 rounded-xl border border-slate-300 text-xs text-slate-900 font-sans focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50 uppercase"
+                />
+              </div>
             </div>
 
             {/* Botón de Aprobación de Tarjeta */}
-            <div className="pt-2">
+            <div className="pt-1">
               <button
                 type="button"
                 onClick={handleConfirmarTarjetaDesdeCelular}
-                className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-2xl text-xs font-black shadow-md shadow-blue-600/20 transition cursor-pointer flex items-center justify-center space-x-2"
+                disabled={total <= 0}
+                className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-2xl text-xs font-black shadow-md shadow-blue-600/20 transition cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Check className="w-4 h-4 stroke-[3]" />
                 <span>
-                  {total > 0 ? `Aprobar Cobro de Tarjeta (S/ ${total.toFixed(2)})` : 'Aprobar Cobro de Tarjeta'}
+                  {total > 0 ? `Pagar S/ ${total.toFixed(2)} (Aprobar Cobro)` : 'Aprobar Cobro de Tarjeta'}
                 </span>
               </button>
-              <p className="text-[10px] text-slate-400 mt-2">
-                Acerque la tarjeta física al equipo de mostrador y valide la transacción.
-              </p>
-            </div>
-          </div>
-        ) : (
-          // ============================== VISTA ESCÁNER DE MEDICAMENTOS ==============================
-          <div className="space-y-4">
-            {/* Input Manual y Escáner Rápido */}
-            <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4">
-              <div>
-                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">
-                  Ingreso Rápido de Fármacos
-                </h3>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Ingrese el código de barras o use los botones de prueba directa:
-                </p>
-              </div>
-
-              <form onSubmit={handleManualSubmit} className="space-y-2">
-                <div className="flex space-x-2">
-                  <input
-                    type="text"
-                    value={codigoManual}
-                    onChange={(e) => setCodigoManual(e.target.value)}
-                    placeholder="Ej. 775000000101"
-                    className="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono font-bold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600"
-                  />
-                  <button
-                    type="submit"
-                    className="px-4 py-2.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-black transition cursor-pointer shrink-0"
-                  >
-                    Agregar
-                  </button>
-                </div>
-              </form>
-
-              {/* Botones de Medicamentos Rápidos */}
-              <div className="space-y-2 pt-1 border-t border-slate-100">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-                  Medicamentos Frecuentes (1 Toque)
-                </span>
-                <div className="grid grid-cols-2 gap-2 text-[11px] font-bold">
-                  {[
-                    { cod: '775000000101', nom: 'Paracetamol 500mg' },
-                    { cod: '775000000102', nom: 'Amoxicilina 500mg' },
-                    { cod: '775000000103', nom: 'Ibuprofeno 400mg' },
-                    { cod: '775000000104', nom: 'Omeprazol 20mg' }
-                  ].map((item) => (
-                    <button
-                      key={item.cod}
-                      type="button"
-                      onClick={() => enviarCodigoAlPos(item.cod)}
-                      className="p-2.5 rounded-xl bg-slate-50 hover:bg-teal-50 hover:text-teal-900 hover:border-teal-300 text-slate-700 border border-slate-200 transition text-left cursor-pointer"
-                    >
-                      <div className="font-black truncate">{item.nom}</div>
-                      <div className="text-[9px] font-mono text-slate-400 mt-0.5">
-                        {item.cod}
-                      </div>
-                    </button>
-                  ))}
-                </div>
+              <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 mt-2">
+                <Lock className="w-3 h-3" />
+                <span>Transacción cifrada y protegida por terminal de caja.</span>
               </div>
             </div>
           </div>
@@ -470,7 +470,7 @@ export default function TerminalMovil() {
 
       {/* Pie de Página */}
       <footer className="p-3 bg-white border-t border-slate-200 text-center text-[10px] text-slate-400">
-        Botica Nova Salud • Terminal Móvil POS (Wi-Fi Local)
+        Botica Nova Salud • Pasarela de Pago Terminal POS
       </footer>
     </div>
   );

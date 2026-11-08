@@ -3,6 +3,14 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
 
+// Autocorrección ante despliegues en producción (Render/Vercel)
+if (typeof window !== 'undefined') {
+  window.addEventListener('vite:preloadError', (event) => {
+    console.warn('Nueva versión detectada o error de carga de chunk. Recargando aplicación...');
+    window.location.reload();
+  });
+}
+
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
@@ -10,13 +18,13 @@ class ErrorBoundary extends Component {
   }
 
   static getDerivedStateFromError(error) {
-    const msg = error?.message || '';
+    const msg = String(error?.message || error || '').toLowerCase();
     const esFalloModulo =
       msg.includes('dynamically imported module') ||
-      msg.includes('Loading chunk') ||
-      msg.includes('ChunkLoadError') ||
-      msg.includes('Importing a module script failed') ||
-      msg.includes('Failed to fetch');
+      msg.includes('loading chunk') ||
+      msg.includes('chunkloaderror') ||
+      msg.includes('importing a module script failed') ||
+      msg.includes('failed to fetch');
 
     return { hasError: true, error, esActualizacion: esFalloModulo };
   }
@@ -24,13 +32,13 @@ class ErrorBoundary extends Component {
   componentDidCatch(error, errorInfo) {
     console.warn('ErrorBoundary capturó una excepción:', error?.message);
 
-    const msg = error?.message || '';
+    const msg = String(error?.message || error || '').toLowerCase();
     const esFalloModulo =
       msg.includes('dynamically imported module') ||
-      msg.includes('Loading chunk') ||
-      msg.includes('ChunkLoadError') ||
-      msg.includes('Importing a module script failed') ||
-      msg.includes('Failed to fetch');
+      msg.includes('loading chunk') ||
+      msg.includes('chunkloaderror') ||
+      msg.includes('importing a module script failed') ||
+      msg.includes('failed to fetch');
 
     // Autorecuperación instantánea ante nuevos despliegues en producción
     if (esFalloModulo && typeof window !== 'undefined') {

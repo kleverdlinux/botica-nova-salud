@@ -13,10 +13,13 @@ import {
   CheckCircle2,
   ShieldCheck,
   Eye,
-  EyeOff
+  EyeOff,
+  X,
+  Send,
+  KeyRound
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginClient, registerClient, ClientProfile } from "@/utils/orderStorage";
+import { loginClient, registerClient, solicitarRecuperacionCliente, ClientProfile } from "@/utils/orderStorage";
 import { notificarExito, notificarError, notificarAdvertencia } from "@/utils/alertaSweet";
 
 export interface AuthSwitchProps {
@@ -29,6 +32,12 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Estados de Recuperación de Contraseña
+  const [modalRecuperarAbierto, setModalRecuperarAbierto] = useState(false);
+  const [recuperarIdentificador, setRecuperarIdentificador] = useState("");
+  const [recuperarMensaje, setRecuperarMensaje] = useState("");
+  const [enviandoRecuperacion, setEnviandoRecuperacion] = useState(false);
 
   // Estados de Iniciar Sesión
   const [loginIdentifier, setLoginIdentifier] = useState("");
@@ -44,6 +53,31 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
     address: "Juliaca Cercado",
     district: "Juliaca Cercado",
   });
+
+  const handleSolicitarRecuperacion = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!recuperarIdentificador.trim()) {
+      notificarAdvertencia("Campo Requerido", "Por favor ingresa tu DNI o correo electrónico registrado.");
+      return;
+    }
+    setEnviandoRecuperacion(true);
+    try {
+      const res = await solicitarRecuperacionCliente(
+        recuperarIdentificador.trim(),
+        recuperarMensaje.trim()
+      );
+      if (res.success) {
+        notificarExito("Solicitud Enviada", res.message);
+        setModalRecuperarAbierto(false);
+        setRecuperarIdentificador("");
+        setRecuperarMensaje("");
+      } else {
+        notificarError("Error", res.message);
+      }
+    } finally {
+      setEnviandoRecuperacion(false);
+    }
+  };
 
   const handleSignInSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -629,6 +663,19 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
                 </button>
               </div>
 
+              <div className="flex justify-end w-full max-w-[360px] -mt-1 mb-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRecuperarIdentificador(loginIdentifier);
+                    setModalRecuperarAbierto(true);
+                  }}
+                  className="text-xs font-semibold text-teal-700 hover:text-teal-900 underline underline-offset-2 transition cursor-pointer"
+                >
+                  ¿Olvidaste tu contraseña?
+                </button>
+              </div>
+
               <button type="submit" className="btn" disabled={isLoading}>
                 <span>{isLoading ? "Verificando en servidor..." : "Ingresar a Mi Cuenta"}</span>
                 <ArrowRight className="w-3.5 h-3.5 stroke-[1.75]" />
@@ -790,6 +837,83 @@ export default function AuthSwitch({ onLoginSuccess, defaultMode = "signin" }: A
           </div>
         </div>
       </div>
+
+      {/* Modal de Solicitud de Restablecimiento de Contraseña para Clientes */}
+      {modalRecuperarAbierto && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-700">
+                  <KeyRound className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-800">Recuperar Contraseña</h3>
+                  <p className="text-xs text-slate-500">Solicitud al Administrador de Botica</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setModalRecuperarAbierto(false)}
+                className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSolicitarRecuperacion} className="mt-4 space-y-4">
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Ingresa tu DNI o correo registrado. El Administrador revisará tu solicitud, reasignará tu clave y te la enviará directamente a tu correo electrónico.
+              </p>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  DNI o Correo Electrónico *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={recuperarIdentificador}
+                  onChange={(e) => setRecuperarIdentificador(e.target.value)}
+                  placeholder="Ej: 76880929 o cliente@gmail.com"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Mensaje o motivo para el Administrador
+                </label>
+                <textarea
+                  rows={3}
+                  value={recuperarMensaje}
+                  onChange={(e) => setRecuperarMensaje(e.target.value)}
+                  placeholder="Ej: Hola, olvidé mi clave de acceso a mi cuenta en Botica Nova Salud. Por favor restablecerla a mi correo."
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent resize-none"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setModalRecuperarAbierto(false)}
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={enviandoRecuperacion}
+                  className="px-5 py-2 text-xs font-bold text-white bg-teal-700 hover:bg-teal-800 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>{enviandoRecuperacion ? "Enviando solicitud..." : "Enviar al Administrador"}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

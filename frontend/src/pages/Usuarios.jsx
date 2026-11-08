@@ -15,9 +15,17 @@ import {
   EyeOff,
   AlertTriangle,
   RefreshCw,
-  Package
+  Package,
+  KeyRound,
+  Send,
+  Sparkles,
+  Phone,
+  MapPin,
+  ShoppingBag,
+  X
 } from 'lucide-react';
 import { listarUsuariosApi, crearUsuarioApi, cambiarEstadoUsuarioApi } from '../api/usuariosApi.js';
+import { listarClientesWebAdminApi, reasignarPasswordClienteApi } from '../api/clientesAdminApi.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { SkeletonTable } from '../components/ui/skeleton.tsx';
 import { formatearFechaLima } from '../utils/formateadores.js';
@@ -31,7 +39,19 @@ export default function Usuarios() {
   const [filtroRol, setFiltroRol] = useState('TODOS'); // 'TODOS' | 'ADMIN' | 'CAJERO' | 'ALMACEN'
   const [filtroEstado, setFiltroEstado] = useState('TODOS'); // 'TODOS' | 'ACTIVOS' | 'INACTIVOS'
 
-  // Estados del modal de creación
+  // Pestañas: 'PERSONAL' (Personal de botica) o 'CLIENTES' (Clientes web & Recuperaciones)
+  const [tabActiva, setTabActiva] = useState('PERSONAL');
+
+  // Estados de Clientes Web y Recuperación
+  const [clientes, setClientes] = useState([]);
+  const [cargandoClientes, setCargandoClientes] = useState(false);
+  const [busquedaClientes, setBusquedaClientes] = useState('');
+  const [filtroClientesEstado, setFiltroClientesEstado] = useState('TODOS'); // 'TODOS' | 'SOLICITUD'
+  const [clienteParaClave, setClienteParaClave] = useState(null);
+  const [nuevaClaveCliente, setNuevaClaveCliente] = useState('');
+  const [enviandoClave, setEnviandoClave] = useState(false);
+
+  // Estados del modal de creación de usuario personal
   const [modalAbierto, setModalAbierto] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [mostrarPassword, setMostrarPassword] = useState(false);
@@ -59,9 +79,60 @@ export default function Usuarios() {
     }
   };
 
+  const cargarClientes = async () => {
+    setCargandoClientes(true);
+    try {
+      const data = await listarClientesWebAdminApi();
+      setClientes(data);
+    } catch (err) {
+      console.error('Error al cargar clientes web:', err);
+      toast.error('No se pudo cargar la lista de clientes web.');
+    } finally {
+      setCargandoClientes(false);
+    }
+  };
+
   useEffect(() => {
     cargarUsuarios();
+    cargarClientes();
   }, []);
+
+  const generarClaveAleatoria = () => {
+    const sufijo = Math.floor(100 + Math.random() * 900);
+    setNuevaClaveCliente(`Nova${sufijo}!`);
+  };
+
+  const handleAbrirModalReasignar = (cliente) => {
+    setClienteParaClave(cliente);
+    const sufijo = Math.floor(100 + Math.random() * 900);
+    setNuevaClaveCliente(`Nova${sufijo}!`);
+  };
+
+  const handleReasignarClaveCliente = async (e) => {
+    e.preventDefault();
+    if (!clienteParaClave) return;
+    if (!nuevaClaveCliente || nuevaClaveCliente.trim().length < 6) {
+      toast.error('La nueva contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
+    setEnviandoClave(true);
+    try {
+      const res = await reasignarPasswordClienteApi({
+        dni: clienteParaClave.dni,
+        nuevaPassword: nuevaClaveCliente.trim()
+      });
+      toast.success(res.mensaje || 'Contraseña reasignada y enviada al cliente.');
+      setClienteParaClave(null);
+      setNuevaClaveCliente('');
+      cargarClientes();
+    } catch (err) {
+      const msg = err.response?.data?.error || err.message || 'Error al reasignar contraseña.';
+      toast.error(msg);
+    } finally {
+      setEnviandoClave(false);
+    }
+  };
 
   const handleAbrirModal = () => {
     setFormData({
@@ -157,6 +228,21 @@ export default function Usuarios() {
     );
   });
 
+  const solicitudesPendientesCount = clientes.filter((c) => c.solicitudPendiente).length;
+
+  const clientesFiltrados = clientes.filter((c) => {
+    if (filtroClientesEstado === 'SOLICITUD' && !c.solicitudPendiente) return false;
+    const q = busquedaClientes.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      (c.nombre && c.nombre.toLowerCase().includes(q)) ||
+      (c.dni && c.dni.includes(q)) ||
+      (c.email && c.email.toLowerCase().includes(q)) ||
+      (c.telefono && c.telefono.includes(q)) ||
+      (c.distrito && c.distrito.toLowerCase().includes(q))
+    );
+  });
+
   return (
     <div className="w-full space-y-6 pb-12">
       {/* Encabezado y Acciones */}
@@ -167,31 +253,70 @@ export default function Usuarios() {
             <span>Gestión de Usuarios y Accesos</span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
-            Administración de cuentas autorizadas, perfiles de cajero y directores del sistema
+            Administración de cuentas autorizadas, clientes web y solicitudes de restablecimiento de contraseña
           </p>
         </div>
 
         <div className="flex items-center space-x-2.5">
           <button
-            onClick={cargarUsuarios}
-            disabled={cargando}
+            onClick={tabActiva === 'PERSONAL' ? cargarUsuarios : cargarClientes}
+            disabled={tabActiva === 'PERSONAL' ? cargando : cargandoClientes}
             className="p-2.5 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-slate-700 dark:text-neutral-200 rounded-xl shadow-xs transition cursor-pointer"
-            title="Recargar usuarios"
+            title="Recargar datos"
           >
-            <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-[#0d9488] dark:text-teal-400' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${(tabActiva === 'PERSONAL' ? cargando : cargandoClientes) ? 'animate-spin text-[#0d9488] dark:text-teal-400' : ''}`} />
           </button>
 
-          <button
-            onClick={handleAbrirModal}
-            className="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-md shadow-teal-600/20 flex items-center space-x-2 transition cursor-pointer"
-          >
-            <UserPlus className="w-4 h-4" />
-            <span>Nuevo Usuario</span>
-          </button>
+          {tabActiva === 'PERSONAL' && (
+            <button
+              onClick={handleAbrirModal}
+              className="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-md shadow-teal-600/20 flex items-center space-x-2 transition cursor-pointer"
+            >
+              <UserPlus className="w-4 h-4" />
+              <span>Nuevo Usuario</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Barra de Filtro y Métricas Rápidas */}
+      {/* Selector de Pestañas: Personal vs Clientes Web */}
+      <div className="flex items-center space-x-2 border-b border-slate-200 dark:border-neutral-800 pb-2">
+        <button
+          type="button"
+          onClick={() => setTabActiva('PERSONAL')}
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+            tabActiva === 'PERSONAL'
+              ? 'bg-teal-600 text-white shadow-xs'
+              : 'text-slate-600 dark:text-neutral-400 hover:bg-slate-100 dark:hover:bg-neutral-800'
+          }`}
+        >
+          <ShieldCheck className="w-4 h-4" />
+          <span>Personal del Sistema ({usuarios.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setTabActiva('CLIENTES')}
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+            tabActiva === 'CLIENTES'
+              ? 'bg-teal-600 text-white shadow-xs'
+              : 'text-slate-600 dark:text-neutral-400 hover:bg-slate-100 dark:hover:bg-neutral-800'
+          }`}
+        >
+          <UserCheck className="w-4 h-4" />
+          <span>Clientes Web & Recuperaciones ({clientes.length})</span>
+          {solicitudesPendientesCount > 0 && (
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-400 text-slate-900 animate-pulse">
+              {solicitudesPendientesCount} pendiente{solicitudesPendientesCount > 1 ? 's' : ''}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* VISTA 1: PERSONAL DEL SISTEMA */}
+      {tabActiva === 'PERSONAL' && (
+        <>
+          {/* Barra de Filtro y Métricas Rápidas */}
       <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1">
           <div className="relative flex-1 max-w-sm">
@@ -397,6 +522,193 @@ export default function Usuarios() {
           </div>
         )}
       </div>
+      </>
+      )}
+
+      {/* VISTA 2: CLIENTES WEB & RECUPERACIÓN DE CONTRASEÑA */}
+      {tabActiva === 'CLIENTES' && (
+        <>
+          {/* Barra de Filtro y Métricas de Clientes */}
+          <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="w-4 h-4 text-slate-400 dark:text-neutral-500 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  value={busquedaClientes}
+                  onChange={(e) => setBusquedaClientes(e.target.value)}
+                  placeholder="Buscar por DNI, nombre, correo..."
+                  className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-neutral-950 border border-slate-200 dark:border-neutral-700 rounded-xl text-xs focus:bg-white dark:focus:bg-neutral-900 focus:outline-hidden focus:ring-2 focus:ring-teal-500 text-slate-800 dark:text-neutral-100 placeholder:text-slate-400 dark:placeholder:text-neutral-500"
+                />
+              </div>
+
+              <select
+                value={filtroClientesEstado}
+                onChange={(e) => setFiltroClientesEstado(e.target.value)}
+                className="px-3 py-2 bg-slate-50 dark:bg-neutral-950 border border-slate-200 dark:border-neutral-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-neutral-300 focus:outline-none cursor-pointer"
+              >
+                <option value="TODOS">Todos los clientes web</option>
+                <option value="SOLICITUD">Solo con Solicitud de Contraseña Pendiente</option>
+              </select>
+            </div>
+
+            <div className="flex items-center space-x-3 text-xs font-semibold text-slate-600 dark:text-neutral-400 shrink-0">
+              <span className="flex items-center space-x-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
+                <span>Registrados: {clientes.length}</span>
+              </span>
+              <span className="flex items-center space-x-1.5">
+                <span className={`w-2.5 h-2.5 rounded-full inline-block ${solicitudesPendientesCount > 0 ? 'bg-amber-500' : 'bg-slate-300'}`} />
+                <span>Solicitudes Pendientes: {solicitudesPendientesCount}</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Tabla de Clientes Web */}
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs overflow-hidden">
+            {cargandoClientes ? (
+              <div className="p-4">
+                <SkeletonTable rows={4} cols={5} />
+              </div>
+            ) : clientesFiltrados.length === 0 ? (
+              <div className="py-16 text-center space-y-3">
+                <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-neutral-800 text-slate-400 flex items-center justify-center mx-auto">
+                  <UserCheck className="w-6 h-6" />
+                </div>
+                <h3 className="text-sm font-bold text-slate-800 dark:text-neutral-200">
+                  No se encontraron clientes web
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-neutral-400 max-w-sm mx-auto">
+                  No hay registros que coincidan con el término de búsqueda o filtro seleccionado.
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200 dark:border-neutral-800 bg-slate-50/75 dark:bg-neutral-950/50 text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-wider">
+                      <th className="py-3.5 px-4">Cliente / Identidad</th>
+                      <th className="py-3.5 px-4">Contacto & Ubicación</th>
+                      <th className="py-3.5 px-4">Compras Web</th>
+                      <th className="py-3.5 px-4">Solicitud de Contraseña</th>
+                      <th className="py-3.5 px-4 text-right">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-neutral-800">
+                    {clientesFiltrados.map((c) => {
+                      const tieneSolicitud = !!c.solicitudPendiente;
+                      return (
+                        <tr
+                          key={c.id || c.dni}
+                          className={`transition ${
+                            tieneSolicitud
+                              ? 'bg-amber-50/40 dark:bg-amber-950/20 hover:bg-amber-50/70'
+                              : 'hover:bg-slate-50/60 dark:hover:bg-neutral-800/40'
+                          }`}
+                        >
+                          <td className="py-3.5 px-4">
+                            <div className="flex items-center space-x-3">
+                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs ${
+                                tieneSolicitud
+                                  ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                                  : 'bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-800'
+                              }`}>
+                                {c.nombre ? c.nombre.charAt(0).toUpperCase() : 'C'}
+                              </div>
+                              <div>
+                                <span className="font-extrabold text-slate-900 dark:text-white block text-xs">
+                                  {c.nombre}
+                                </span>
+                                <span className="font-mono text-[11px] text-slate-500 dark:text-neutral-400">
+                                  DNI: {c.dni}
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+
+                          <td className="py-3.5 px-4">
+                            <div className="space-y-0.5">
+                              <span className="flex items-center space-x-1.5 text-slate-700 dark:text-neutral-300">
+                                <Mail className="w-3.5 h-3.5 text-slate-400" />
+                                <span>{c.email}</span>
+                              </span>
+                              {c.telefono && (
+                                <span className="flex items-center space-x-1.5 text-[11px] text-slate-500 dark:text-neutral-400">
+                                  <Phone className="w-3 h-3 text-slate-400" />
+                                  <span>{c.telefono}</span>
+                                </span>
+                              )}
+                              <span className="flex items-center space-x-1.5 text-[11px] text-slate-500 dark:text-neutral-400">
+                                <MapPin className="w-3 h-3 text-slate-400" />
+                                <span>{c.distrito || 'Juliaca'} - {c.direccion || 'Cercado'}</span>
+                              </span>
+                            </div>
+                          </td>
+
+                          <td className="py-3.5 px-4">
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-neutral-800 text-slate-700 dark:text-neutral-300">
+                              <ShoppingBag className="w-3 h-3 text-teal-600" />
+                              <span>{c.totalCompras || 0} compras</span>
+                            </span>
+                          </td>
+
+                          <td className="py-3.5 px-4">
+                            {tieneSolicitud ? (
+                              <div className="space-y-1.5 max-w-xs">
+                                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-700">
+                                  <AlertTriangle className="w-3 h-3 text-amber-600" />
+                                  <span>Solicita Restablecer Clave</span>
+                                </span>
+                                <div className="p-2 bg-white dark:bg-neutral-900 rounded-lg border border-amber-200 dark:border-amber-800/60 text-[11px] text-slate-700 dark:text-neutral-300 leading-snug">
+                                  "{c.solicitudPendiente.mensaje}"
+                                </div>
+                                <span className="text-[10px] text-slate-400 dark:text-neutral-500 block">
+                                  Fecha: {formatearFechaLima(c.solicitudPendiente.fecha)}
+                                </span>
+                              </div>
+                            ) : c.historialSolicitud?.estado === 'ATENDIDO' ? (
+                              <div className="space-y-0.5">
+                                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                  <CheckCircle2 className="w-3 h-3" />
+                                  <span>Atendido por Admin</span>
+                                </span>
+                                {c.historialSolicitud.fechaAtencion && (
+                                  <span className="text-[10px] text-slate-400 block">
+                                    {formatearFechaLima(c.historialSolicitud.fechaAtencion)}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-slate-400 dark:text-neutral-500 text-[11px]">
+                                Sin solicitudes
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="py-3.5 px-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => handleAbrirModalReasignar(c)}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 ml-auto cursor-pointer shadow-xs ${
+                                tieneSolicitud
+                                  ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/20 animate-pulse'
+                                  : 'bg-slate-100 hover:bg-slate-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-slate-700 dark:text-neutral-200'
+                              }`}
+                            >
+                              <KeyRound className="w-3.5 h-3.5" />
+                              <span>{tieneSolicitud ? 'Atender y Reasignar' : 'Reasignar Clave'}</span>
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
       {/* MODAL: REGISTRAR NUEVO USUARIO */}
       {modalAbierto && (
@@ -598,6 +910,120 @@ export default function Usuarios() {
                 )}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: REASIGNAR CONTRASEÑA DE CLIENTE Y ENVIAR POR GMAIL */}
+      {clienteParaClave && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-neutral-800 space-y-5 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-neutral-800 pb-3">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800 flex items-center justify-center font-bold">
+                  <KeyRound className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900 dark:text-white leading-tight">
+                    Reasignar Contraseña de Cliente
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
+                    Se enviará la nueva clave al correo del cliente
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setClienteParaClave(null)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-neutral-200 p-1 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Ficha Resumen del Cliente */}
+            <div className="bg-slate-50 dark:bg-neutral-950 p-3.5 rounded-xl border border-slate-200 dark:border-neutral-800 space-y-1.5 text-xs">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500 dark:text-neutral-400 font-semibold">Cliente:</span>
+                <span className="font-bold text-slate-800 dark:text-white">{clienteParaClave.nombre}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500 dark:text-neutral-400 font-semibold">DNI:</span>
+                <span className="font-mono text-slate-800 dark:text-white">{clienteParaClave.dni}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500 dark:text-neutral-400 font-semibold">Correo de Destino:</span>
+                <span className="font-semibold text-teal-700 dark:text-teal-400">{clienteParaClave.email}</span>
+              </div>
+
+              {clienteParaClave.solicitudPendiente && (
+                <div className="mt-2 pt-2 border-t border-slate-200 dark:border-neutral-800">
+                  <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 block mb-0.5">
+                    Mensaje enviado por el cliente:
+                  </span>
+                  <p className="text-xs italic text-slate-600 dark:text-neutral-300 bg-amber-50/60 dark:bg-amber-950/30 p-2 rounded-lg border border-amber-200 dark:border-amber-900/50">
+                    "{clienteParaClave.solicitudPendiente.mensaje}"
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <form onSubmit={handleReasignarClaveCliente} className="space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-neutral-300">
+                    Nueva Contraseña
+                  </label>
+                  <button
+                    type="button"
+                    onClick={generarClaveAleatoria}
+                    className="text-[11px] font-bold text-teal-600 hover:text-teal-700 flex items-center space-x-1 cursor-pointer"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span>Generar Automática</span>
+                  </button>
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    required
+                    value={nuevaClaveCliente}
+                    onChange={(e) => setNuevaClaveCliente(e.target.value)}
+                    placeholder="Mínimo 6 caracteres"
+                    className="w-full pl-3.5 pr-4 py-2 bg-slate-50 dark:bg-neutral-950 border border-slate-200 dark:border-neutral-700 rounded-xl text-xs font-mono font-bold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  />
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-neutral-400 mt-1">
+                  Esta clave será hasheada con bcrypt en la base de datos y se notificará por correo.
+                </p>
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-3 border-t border-slate-100 dark:border-neutral-800">
+                <button
+                  type="button"
+                  onClick={() => setClienteParaClave(null)}
+                  className="px-4 py-2 border border-slate-200 dark:border-neutral-700 hover:bg-slate-50 dark:hover:bg-neutral-800 rounded-xl text-xs font-bold text-slate-600 dark:text-neutral-300 transition cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={enviandoClave}
+                  className="px-5 py-2 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-400 text-white rounded-xl text-xs font-bold shadow-md shadow-teal-600/20 flex items-center space-x-1.5 transition cursor-pointer"
+                >
+                  {enviandoClave ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Enviando por Correo...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Guardar y Enviar al Gmail</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

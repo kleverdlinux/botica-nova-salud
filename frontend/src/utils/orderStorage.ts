@@ -679,3 +679,47 @@ export function logoutClient(): void {
     console.error('Error al cerrar sesión:', e);
   }
 }
+
+/**
+ * Solicitar al administrador el restablecimiento de contraseña
+ */
+export async function solicitarRecuperacionCliente(
+  identifier: string,
+  mensaje?: string
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const idf = identifier.trim().toLowerCase();
+    if (!idf) {
+      return { success: false, message: 'Ingresa tu DNI o correo electrónico registrado.' };
+    }
+
+    const API_BASE = getApiBaseUrl();
+    const res = await fetch(`${API_BASE}/catalogo/cliente/solicitar-recuperacion`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        identificador: idf,
+        mensaje: mensaje || 'Solicito restablecer mi contraseña de acceso.'
+      })
+    });
+
+    const json = await res.json();
+    if (!res.ok) {
+      return {
+        success: false,
+        message: json.error || json.mensaje || 'No se pudo procesar la solicitud.'
+      };
+    }
+
+    return {
+      success: true,
+      message: json.mensaje || 'Solicitud enviada al administrador exitosamente.'
+    };
+  } catch (e: any) {
+    console.error('Error al solicitar recuperación de cliente:', e);
+    return {
+      success: false,
+      message: e.message || 'Error de conexión con el servidor central.'
+    };
+  }
+}

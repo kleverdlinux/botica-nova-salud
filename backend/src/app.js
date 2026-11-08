@@ -22,6 +22,7 @@ import ventaRoutes from './routes/ventaRoutes.js';
 import alertaRoutes from './routes/alertaRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import dispositivoRoutes from './routes/dispositivoRoutes.js';
+import citaRoutes from './routes/citaRoutes.js';
 
 const app = express();
 
@@ -62,6 +63,7 @@ app.use('/api/ventas', ventaRoutes);
 app.use('/api/alertas', alertaRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/dispositivos', dispositivoRoutes);
+app.use('/api/citas', citaRoutes);
 app.use('/api', auxRoutes);
 
 // Manejador de rutas API no encontradas (404)

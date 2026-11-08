@@ -4,6 +4,7 @@ import { sincronizarCaducidadAutomatica } from './productoService.js';
 import * as ventaService from './ventaService.js';
 import bcrypt from 'bcryptjs';
 import { ErrorNegocio } from '../utils/errores.js';
+import { enviarCorreoNuevaPassword } from '../utils/mailer.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -984,5 +985,156 @@ export async function actualizarBotiquinCliente({ dni, botiquin = [] }) {
   });
 
   return Array.isArray(actualizado.botiquin) ? actualizado.botiquin : [];
+}
+
+/**
+ * Solicitar restablecimiento de contraseña de cliente (Público)
+ */
+export async function solicitarRecuperacionCliente({ identificador, mensaje }) {
+  const cleanId = String(identificador || '').trim().toLowerCase();
+  if (!cleanId) {
+    throw new ErrorNegocio('Ingresa tu DNI o correo electrónico.', 400);
+  }
+
+  const cliente = await prisma.cliente.findFirst({
+    where: {
+      OR: [
+        { dni: cleanId },
+        { email: cleanId }
+      ],
+      activo: true
+    }
+  });
+
+  if (!cliente) {
+    throw new ErrorNegocio('No se encontró ninguna cuenta activa registrada con ese DNI o correo.', 404);
+  }
+
+  const ficha = (cliente.fichaMedica && typeof cliente.fichaMedica === 'object') ? { ...cliente.fichaMedica } : {};
+  ficha.solicitudPassword = {
+    fecha: new Date().toISOString(),
+    mensaje: String(mensaje || 'Solicito restablecer mi contraseña de acceso.').trim(),
+    estado: 'PENDIENTE',
+    atendidoPor: null,
+    fechaAtencion: null
+  };
+
+  await prisma.cliente.update({
+    where: { id: cliente.id },
+    data: { fichaMedica: ficha }
+  });
+
+  return {
+    success: true,
+    mensaje: `Solicitud recibida para ${cliente.nombre}. El administrador revisará tu petición y enviará tu nueva contraseña a ${cliente.email}.`
+  };
+}
+
+/**
+ * Listar clientes web con estadísticas y solicitudes de recuperación (Panel Admin)
+ */
+export async function listarClientesAdmin() {
+  const clientes = await prisma.cliente.findMany({
+    orderBy: { createdAt: 'desc' },
+    select: {
+      id: true,
+      dni: true,
+      nombre: true,
+      email: true,
+      telefono: true,
+      direccion: true,
+      distrito: true,
+      fichaMedica: true,
+      activo: true,
+      createdAt: true,
+      updatedAt: true
+    }
+  });
+
+  const lista = await Promise.all(clientes.map(async (c) => {
+    const totalCompras = await prisma.venta.count({ where: { clienteDoc: c.dni } });
+    const solicitud = c.fichaMedica && typeof c.fichaMedica === 'object' ? c.fichaMedica.solicitudPassword : null;
+    return {
+      id: c.id,
+      dni: c.dni,
+      nombre: c.nombre,
+      email: c.email,
+      telefono: c.telefono || 'No registrado',
+      direccion: c.direccion || 'Juliaca',
+      distrito: c.distrito || 'Juliaca Cercado',
+      activo: c.activo,
+      totalCompras,
+      solicitudPendiente: solicitud && solicitud.estado === 'PENDIENTE' ? solicitud : null,
+      historialSolicitud: solicitud || null,
+      createdAt: c.createdAt
+    };
+  }));
+
+  return lista;
+}
+
+/**
+ * Reasignar contraseña a un cliente por parte del Administrador y enviar correo Gmail
+ */
+export async function reasignarPasswordClienteAdmin({ dni, nuevaPassword, adminUsuario }) {
+  const cleanDni = String(dni || '').trim();
+  const rawPass = String(nuevaPassword || '').trim();
+
+  if (!cleanDni) {
+    throw new ErrorNegocio('DNI de cliente requerido.', 400);
+  }
+  if (!rawPass || rawPass.length < 6) {
+    throw new ErrorNegocio('La nueva contraseña debe tener al menos 6 caracteres.', 400);
+  }
+
+  const cliente = await prisma.cliente.findUnique({ where: { dni: cleanDni } });
+  if (!cliente) {
+    throw new ErrorNegocio('No se encontró el cliente en la base de datos.', 404);
+  }
+
+  const hashedPassword = await bcrypt.hash(rawPass, 10);
+  const ficha = (cliente.fichaMedica && typeof cliente.fichaMedica === 'object') ? { ...cliente.fichaMedica } : {};
+
+  if (ficha.solicitudPassword) {
+    ficha.solicitudPassword = {
+      ...ficha.solicitudPassword,
+      estado: 'ATENDIDO',
+      atendidoPor: adminUsuario || 'ADMINISTRADOR',
+      fechaAtencion: new Date().toISOString()
+    };
+  }
+
+  await prisma.cliente.update({
+    where: { id: cliente.id },
+    data: {
+      password: hashedPassword,
+      fichaMedica: ficha
+    }
+  });
+
+  let correoEnviado = false;
+  let detalleEnvio = null;
+
+  try {
+    const info = await enviarCorreoNuevaPassword({
+      clienteNombre: cliente.nombre,
+      clienteEmail: cliente.email,
+      nuevaPassword: rawPass
+    });
+    correoEnviado = true;
+    detalleEnvio = info?.messageId || 'OK';
+  } catch (err) {
+    console.error('Error al enviar correo SMTP a cliente:', err);
+    detalleEnvio = err.message;
+  }
+
+  return {
+    success: true,
+    correoEnviado,
+    detalleEnvio,
+    mensaje: correoEnviado
+      ? `Contraseña reasignada exitosamente y enviada al correo ${cliente.email}.`
+      : `Contraseña actualizada en el sistema. (Aviso correo: ${detalleEnvio})`
+  };
 }
 

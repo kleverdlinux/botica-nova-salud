@@ -86,3 +86,31 @@ export const listarPedidosDelivery = asyncHandler(async (req, res) => {
     pedidos
   });
 });
+
+export const solicitarRecuperacionCliente = asyncHandler(async (req, res) => {
+  const { identificador, mensaje } = req.body;
+  const result = await catalogoService.solicitarRecuperacionCliente({ identificador, mensaje });
+  return res.status(200).json({
+    ok: true,
+    mensaje: result.mensaje
+  });
+});
+
+export const listarClientesAdmin = asyncHandler(async (req, res) => {
+  const clientes = await catalogoService.listarClientesAdmin();
+  return res.status(200).json({
+    ok: true,
+    clientes
+  });
+});
+
+export const reasignarPasswordClienteAdmin = asyncHandler(async (req, res) => {
+  const { dni, nuevaPassword } = req.body;
+  const adminUsuario = req.usuario?.nombre || 'ADMINISTRADOR';
+  const result = await catalogoService.reasignarPasswordClienteAdmin({ dni, nuevaPassword, adminUsuario });
+  return res.status(200).json({
+    ok: true,
+    ...result
+  });
+});
+
