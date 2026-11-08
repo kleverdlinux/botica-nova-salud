@@ -46,6 +46,7 @@ import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
 import {
   getCustomerOrders,
+  fetchCustomerOrdersFromServer,
   getActiveClient,
   saveActiveClient,
   updateClientProfile,
@@ -161,7 +162,14 @@ export default function ClientPortal() {
       });
       setOrders(getCustomerOrders(client));
 
-      // Cargar ficha de salud personalizada
+      // Sincronizar pedidos en segundo plano desde la base de datos central de PostgreSQL
+      fetchCustomerOrdersFromServer(client).then((serverOrders) => {
+        if (serverOrders && serverOrders.length > 0) {
+          setOrders(serverOrders);
+        }
+      });
+
+      // Cargar ficha de salud personalizada (desde local o desde PostgreSQL)
       try {
         const fichaGuardada = localStorage.getItem(`novasalud_ficha_${client.dni}`);
         if (fichaGuardada) {
@@ -173,6 +181,16 @@ export default function ClientPortal() {
             contactoEmergenciaNombre: parsed?.contactoEmergenciaNombre || '',
             contactoEmergenciaTelefono: parsed?.contactoEmergenciaTelefono || '',
             observaciones: parsed?.observaciones || '',
+          });
+        } else if ((client as any).fichaSalud) {
+          const fs = (client as any).fichaSalud;
+          setFichaSalud({
+            alergias: Array.isArray(fs?.alergias) ? fs.alergias : [],
+            condiciones: Array.isArray(fs?.condiciones) ? fs.condiciones : [],
+            grupoSanguineo: fs?.grupoSanguineo || 'O+',
+            contactoEmergenciaNombre: fs?.contactoEmergenciaNombre || '',
+            contactoEmergenciaTelefono: fs?.contactoEmergenciaTelefono || '',
+            observaciones: fs?.observaciones || '',
           });
         }
       } catch (e) {
@@ -202,6 +220,22 @@ export default function ClientPortal() {
           reference: client.reference || '',
         });
         setOrders(getCustomerOrders(client));
+        fetchCustomerOrdersFromServer(client).then((serverOrders) => {
+          if (serverOrders && serverOrders.length > 0) {
+            setOrders(serverOrders);
+          }
+        });
+        if (client.fichaSalud) {
+          const fs = client.fichaSalud;
+          setFichaSalud({
+            alergias: Array.isArray(fs?.alergias) ? fs.alergias : [],
+            condiciones: Array.isArray(fs?.condiciones) ? fs.condiciones : [],
+            grupoSanguineo: fs?.grupoSanguineo || 'O+',
+            contactoEmergenciaNombre: fs?.contactoEmergenciaNombre || '',
+            contactoEmergenciaTelefono: fs?.contactoEmergenciaTelefono || '',
+            observaciones: fs?.observaciones || '',
+          });
+        }
       } else {
         setActiveClient(null);
         setAvatarUrl(null);
@@ -213,8 +247,14 @@ export default function ClientPortal() {
       const current = getActiveClient();
       if (current) {
         setOrders(getCustomerOrders(current));
+        fetchCustomerOrdersFromServer(current).then((so) => {
+          if (so && so.length > 0) setOrders(so);
+        });
       } else if (e.detail?.customer) {
         setOrders(getCustomerOrders(e.detail.customer));
+        fetchCustomerOrdersFromServer(e.detail.customer).then((so) => {
+          if (so && so.length > 0) setOrders(so);
+        });
       }
       if (e.detail) {
         setSelectedBoletaOrder(e.detail);
@@ -336,15 +376,19 @@ export default function ClientPortal() {
   };
 
   // Guardar ficha de salud
-  const handleGuardarFichaSalud = (e: React.FormEvent) => {
+  const handleGuardarFichaSalud = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeClient) return;
 
     try {
       localStorage.setItem(`novasalud_ficha_${activeClient.dni}`, JSON.stringify(fichaSalud));
+      await updateClientProfile({
+        dni: activeClient.dni,
+        fichaSalud: fichaSalud as any
+      });
       notificarExito(
         'Ficha de Salud Guardada',
-        'Tu historial de alergias y cuidados fue registrado para validar interacciones en tus despachos.'
+        'Tu historial de alergias y cuidados fue registrado en tu cuenta y sincronizado en la base de datos.'
       );
     } catch (err) {
       notificarError('Error al Guardar', 'No se pudo guardar la ficha de salud.');

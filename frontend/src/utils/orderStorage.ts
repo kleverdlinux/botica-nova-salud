@@ -163,11 +163,64 @@ export async function syncOrderToBackend(order: CustomerOrder) {
         razonSocial: order.customer.razonSocial,
         correlativo: order.serieNumero,
         total: order.total,
+        ordenCompleta: order,
       }),
     });
   } catch (err) {
     console.warn('Backend sync warning (continuando en modo offline):', err);
   }
+}
+
+/**
+ * Consulta y sincroniza los pedidos del cliente desde la base de datos PostgreSQL
+ * fusionándolos con el almacenamiento local para que estén disponibles en cualquier dispositivo
+ */
+export async function fetchCustomerOrdersFromServer(
+  clientIdentifier?: string | { dni?: string; email?: string }
+): Promise<CustomerOrder[]> {
+  const dni = typeof clientIdentifier === 'string'
+    ? clientIdentifier.trim()
+    : (clientIdentifier?.dni || '').trim();
+
+  if (!dni) return getCustomerOrders(clientIdentifier);
+
+  try {
+    const API_BASE = getApiBaseUrl();
+    const res = await fetch(`${API_BASE}/catalogo/cliente/pedidos/${dni}`);
+    if (res.ok) {
+      const json = await res.json();
+      if (json.ok && Array.isArray(json.pedidos)) {
+        const serverOrders: CustomerOrder[] = json.pedidos;
+
+        // Fusionar con localStorage local para persistencia inmediata en la laptop / celular
+        const localOrders = getCustomerOrders();
+        const map = new Map<string, CustomerOrder>();
+
+        // 1. Agregar las del servidor (fuente de verdad en PostgreSQL)
+        for (const o of serverOrders) {
+          if (o && (o.id || o.serieNumero)) {
+            map.set(o.id || o.serieNumero, o);
+          }
+        }
+
+        // 2. Mantener las locales si existiera alguna previa
+        for (const o of localOrders) {
+          const key = o.id || o.serieNumero;
+          if (key && !map.has(key)) {
+            map.set(key, o);
+          }
+        }
+
+        const merged = Array.from(map.values());
+        localStorage.setItem(STORAGE_ORDERS_KEY, JSON.stringify(merged));
+        return merged.filter((o) => o.customer?.dni === dni || !o.customer?.dni);
+      }
+    }
+  } catch (err) {
+    console.warn('Error al sincronizar pedidos desde el servidor central:', err);
+  }
+
+  return getCustomerOrders(clientIdentifier);
 }
 
 /**

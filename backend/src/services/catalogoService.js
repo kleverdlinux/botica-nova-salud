@@ -330,6 +330,68 @@ export async function registrarPedidoWebPublico({
     clienteNom: nombreConOrigen
   });
 
+  // Si el cliente está registrado en PostgreSQL, asociar el pedido completo a su historial persistente
+  if (docFinal) {
+    try {
+      const cleanDni = String(docFinal).trim();
+      const clienteExistente = await prisma.cliente.findUnique({ where: { dni: cleanDni } });
+      if (clienteExistente) {
+        const fichaActual = (clienteExistente.fichaMedica && typeof clienteExistente.fichaMedica === 'object')
+          ? clienteExistente.fichaMedica
+          : {};
+        const pedidosPrevios = Array.isArray(fichaActual.pedidos) ? fichaActual.pedidos : [];
+
+        const nuevoPedido = data.ordenCompleta || {
+          id: correlativo ? `NS-${correlativo}` : `NS-2026-${nuevaVenta.id}`,
+          serieNumero: correlativo || `B001-${String(nuevaVenta.id).padStart(8, '0')}`,
+          tipoComprobante: tipoComprobante || 'BOLETA',
+          date: new Date().toLocaleDateString('es-PE', { timeZone: 'America/Lima' }),
+          customer: {
+            firstName: clienteNom || clienteExistente.nombre,
+            lastName: '',
+            email: clienteExistente.email,
+            phone: clienteExistente.telefono || '',
+            dni: cleanDni,
+            address: direccion || clienteExistente.direccion || 'Juliaca',
+            district: distrito || clienteExistente.distrito || 'Juliaca Cercado',
+          },
+          items: items.map(it => ({
+            id: String(it.productoId || it.id),
+            name: it.name || 'Medicamento',
+            presentation: it.presentation || 'Unidad',
+            quantity: it.cantidad || 1,
+            price: Number(it.price || 0),
+            subtotal: Number(it.subtotal || 0),
+            image: it.image || '/media/botica-hero-clean.jpg'
+          })),
+          subtotal: Number(nuevaVenta.total),
+          shipping: 0,
+          total: Number(nuevaVenta.total),
+          paymentMethod: metodoPago,
+          paymentDetails: metodoPago === 'YAPE_PLIN' ? 'Yape / Plin (+51 955 545 561)' : metodoPago === 'TARJETA' ? 'Tarjeta Débito / Crédito' : 'Contra Entrega en Domicilio',
+          status: 'CONFIRMADO'
+        };
+
+        const pedidosActualizados = [
+          nuevoPedido,
+          ...pedidosPrevios.filter(p => p.id !== nuevoPedido.id && p.serieNumero !== nuevoPedido.serieNumero)
+        ];
+
+        await prisma.cliente.update({
+          where: { dni: cleanDni },
+          data: {
+            fichaMedica: {
+              ...fichaActual,
+              pedidos: pedidosActualizados
+            }
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('Advertencia al vincular pedido al cliente:', e);
+    }
+  }
+
   return nuevaVenta;
 }
 
@@ -484,13 +546,27 @@ export async function actualizarPerfilCliente({ dni, nombre, email, telefono, di
     throw new ErrorNegocio('DNI de cliente requerido.', 400);
   }
 
+  const actual = await prisma.cliente.findUnique({ where: { dni: cleanDni } });
+  if (!actual) {
+    throw new ErrorNegocio('Cliente no encontrado.', 404);
+  }
+
+  const prevFicha = (actual.fichaMedica && typeof actual.fichaMedica === 'object') ? actual.fichaMedica : {};
+
   const dataToUpdate = {};
   if (nombre !== undefined && String(nombre).trim()) dataToUpdate.nombre = String(nombre).trim();
   if (email !== undefined && String(email).trim()) dataToUpdate.email = String(email).trim().toLowerCase();
   if (telefono !== undefined) dataToUpdate.telefono = String(telefono).trim();
   if (direccion !== undefined) dataToUpdate.direccion = String(direccion).trim();
   if (distrito !== undefined) dataToUpdate.distrito = String(distrito).trim();
-  if (fichaMedica !== undefined) dataToUpdate.fichaMedica = fichaMedica;
+  if (fichaMedica !== undefined) {
+    dataToUpdate.fichaMedica = {
+      ...prevFicha,
+      ...fichaMedica,
+      pedidos: fichaMedica.pedidos || prevFicha.pedidos || [],
+      avatar: fichaMedica.avatar !== undefined ? fichaMedica.avatar : prevFicha.avatar || null
+    };
+  }
   if (botiquin !== undefined) dataToUpdate.botiquin = botiquin;
   if (password && String(password).trim().length >= 6) {
     dataToUpdate.password = await bcrypt.hash(String(password).trim(), 10);
@@ -516,12 +592,20 @@ export async function actualizarPerfilCliente({ dni, nombre, email, telefono, di
 }
 
 /**
- * Obtener pedidos asociados al DNI de un cliente desde la base de datos
+ * Obtener pedidos asociados al DNI de un cliente desde la base de datos central de PostgreSQL
+ * Retorna los pedidos completos con formato estándar CustomerOrder
  */
 export async function obtenerPedidosCliente(dni) {
   const cleanDni = String(dni || '').trim();
   if (!cleanDni) return [];
 
+  // 1. Obtener cliente y pedidos guardados en PostgreSQL
+  const cliente = await prisma.cliente.findUnique({ where: { dni: cleanDni } });
+  const pedidosFicha = (cliente && cliente.fichaMedica && Array.isArray(cliente.fichaMedica.pedidos))
+    ? cliente.fichaMedica.pedidos
+    : [];
+
+  // 2. Obtener ventas registradas con ese DNI en PostgreSQL
   const ventas = await prisma.venta.findMany({
     where: { clienteDoc: cleanDni },
     orderBy: { createdAt: 'desc' },
@@ -534,5 +618,66 @@ export async function obtenerPedidosCliente(dni) {
     }
   });
 
-  return ventas;
+  // 3. Transformar ventas transaccionales en formato CustomerOrder
+  const pedidosVentas = ventas.map(v => {
+    const nextNum = v.id;
+    const serie = `B001-${String(nextNum).padStart(8, '0')}`;
+    const orderId = `NS-2026-${String(nextNum).padStart(4, '0')}`;
+    const fechaStr = new Date(v.createdAt).toLocaleDateString('es-PE', {
+      timeZone: 'America/Lima',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+
+    const titularParts = (v.clienteNom || cliente?.nombre || 'Cliente').replace(/\[.*\]/, '').trim().split(' ');
+    const fName = titularParts[0] || 'Cliente';
+    const lName = titularParts.slice(1).join(' ') || '';
+
+    return {
+      id: orderId,
+      serieNumero: serie,
+      tipoComprobante: 'BOLETA',
+      date: fechaStr,
+      customer: {
+        firstName: fName,
+        lastName: lName,
+        email: cliente?.email || '',
+        phone: cliente?.telefono || '',
+        dni: cleanDni,
+        address: cliente?.direccion || 'Juliaca',
+        district: cliente?.distrito || 'Juliaca Cercado',
+      },
+      items: (v.detalles || []).map(d => ({
+        id: String(d.productoId),
+        name: d.producto?.nombre || 'Medicamento',
+        presentation: d.producto?.presentacion || 'Unidad',
+        quantity: d.cantidad,
+        price: Number(d.precioUnitario),
+        subtotal: Number(d.subtotal),
+        image: d.producto?.imagen || '/media/botica-hero-clean.jpg'
+      })),
+      subtotal: Number(v.total),
+      shipping: 0,
+      total: Number(v.total),
+      paymentMethod: v.metodoPago || 'YAPE_PLIN',
+      paymentDetails: v.metodoPago === 'TARJETA' ? 'Tarjeta Débito / Crédito' : v.metodoPago === 'EFECTIVO' ? 'Contra Entrega en Domicilio' : 'Yape / Plin (+51 955 545 561)',
+      status: 'CONFIRMADO'
+    };
+  });
+
+  // Fusionar por id o serieNumero dando prioridad a la información completa de la ficha
+  const mapa = new Map();
+  for (const p of pedidosFicha) {
+    if (p && (p.id || p.serieNumero)) {
+      mapa.set(p.id || p.serieNumero, p);
+    }
+  }
+  for (const p of pedidosVentas) {
+    if (p && !mapa.has(p.id) && !mapa.has(p.serieNumero)) {
+      mapa.set(p.id, p);
+    }
+  }
+
+  return Array.from(mapa.values());
 }
