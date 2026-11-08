@@ -171,7 +171,7 @@ export default function ClientPortal() {
 
       // Sincronizar pedidos en segundo plano desde la base de datos central de PostgreSQL
       fetchCustomerOrdersFromServer(client).then((serverOrders) => {
-        if (serverOrders && serverOrders.length > 0) {
+        if (Array.isArray(serverOrders)) {
           setOrders(serverOrders);
         }
       });
@@ -219,7 +219,7 @@ export default function ClientPortal() {
         });
         setOrders(getCustomerOrders(client));
         fetchCustomerOrdersFromServer(client).then((serverOrders) => {
-          if (serverOrders && serverOrders.length > 0) {
+          if (Array.isArray(serverOrders)) {
             setOrders(serverOrders);
           }
         });
@@ -1495,7 +1495,7 @@ export default function ClientPortal() {
         {/* =========================================================================
             VISTA MÓVIL: RESUMEN DEL PACIENTE + OPCIONES CENTRADAS EN EL MEDIO (SIN SCROLL)
             ========================================================================= */}
-        <div className="block lg:hidden w-full max-w-sm sm:max-w-md mx-auto pt-4 pb-3 sm:py-2 space-y-2.5">
+        <div className="block lg:hidden w-full max-w-sm sm:max-w-md mx-auto pt-1 pb-28 sm:pb-12 space-y-2">
           {/* 1. Tarjeta de Perfil Compacta */}
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-3 shadow-xs">
             <div className="flex items-center justify-between gap-2">
@@ -1719,23 +1719,23 @@ export default function ClientPortal() {
             </div>
           </div>
 
-          {/* 3. Accesos Rápidos Inferiores: WhatsApp + Cerrar Sesión en Fila Compacta */}
-          <div className="grid grid-cols-2 gap-2 pt-0.5">
+          {/* 3. Accesos Rápidos Inferiores: WhatsApp + Cerrar Sesión en Fila Compacta con Separación Segura */}
+          <div className="grid grid-cols-2 gap-2 pt-1 pb-4">
             <a
               href="https://wa.me/51955545561?text=Hola%20Botica%20Nova%20Salud,%20deseo%20orientaci%C3%B3n%20farmac%C3%A9utica"
               target="_blank"
               rel="noopener noreferrer"
-              className="py-2 px-2.5 rounded-2xl text-[11px] font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs min-w-0"
+              className="py-2.5 px-3 rounded-2xl text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs min-w-0 active:scale-[0.98]"
             >
-              <MessageCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span className="truncate">WhatsApp</span>
             </a>
 
             <button
               onClick={handleLogout}
-              className="py-2 px-2.5 rounded-2xl text-[11px] font-bold text-neutral-600 dark:text-neutral-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-neutral-200 dark:border-neutral-800 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs min-w-0"
+              className="py-2.5 px-3 rounded-2xl text-xs font-bold text-neutral-600 dark:text-neutral-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-neutral-200 dark:border-neutral-800 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs min-w-0 active:scale-[0.98]"
             >
-              <LogOut className="w-3.5 h-3.5 shrink-0" />
+              <LogOut className="w-4 h-4 shrink-0" />
               <span className="truncate">Cerrar Sesión</span>
             </button>
           </div>

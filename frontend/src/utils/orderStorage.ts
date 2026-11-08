@@ -90,13 +90,11 @@ export function getCustomerOrders(clientIdentifier?: string | { dni?: string; em
           (o) =>
             o.customer?.dni?.trim().toLowerCase() === idf ||
             o.customer?.email?.trim().toLowerCase() === idf ||
-            (o.customer?.ruc && o.customer.ruc.trim().toLowerCase() === idf) ||
-            (o.customer?.phone && o.customer.phone.trim().replace(/\D/g, '') === idf.replace(/\D/g, ''))
+            (o.customer?.ruc && o.customer.ruc.trim().toLowerCase() === idf)
         );
       } else {
         const dni = clientIdentifier.dni?.trim().toLowerCase();
         const email = clientIdentifier.email?.trim().toLowerCase();
-        const phone = clientIdentifier.phone?.trim().replace(/\D/g, '');
         const id = clientIdentifier.id?.trim().toLowerCase();
 
         return orders.filter((o) => {
@@ -104,11 +102,9 @@ export function getCustomerOrders(clientIdentifier?: string | { dni?: string; em
           const cDni = o.customer.dni?.trim().toLowerCase() || '';
           const cEmail = o.customer.email?.trim().toLowerCase() || '';
           const cRuc = o.customer.ruc?.trim().toLowerCase() || '';
-          const cPhone = o.customer.phone?.trim().replace(/\D/g, '') || '';
 
           if (dni && (cDni === dni || cRuc === dni)) return true;
           if (email && cEmail === email) return true;
-          if (phone && cPhone === phone) return true;
           if (id && (cDni === id || cRuc === id)) return true;
           return false;
         });
@@ -194,28 +190,17 @@ export async function fetchCustomerOrdersFromServer(
       if (json.ok && Array.isArray(json.pedidos)) {
         const serverOrders: CustomerOrder[] = json.pedidos;
 
-        // Fusionar con localStorage local para persistencia inmediata en la laptop / celular
+        // Actualizar el almacenamiento local con las órdenes oficiales de PostgreSQL
         const localOrders = getCustomerOrders();
-        const map = new Map<string, CustomerOrder>();
+        // Preservar órdenes de otros clientes pero limpiar duplicados o fantasmas sin DNI
+        const otherOrders = localOrders.filter(
+          (o) => o?.customer?.dni && o.customer.dni.trim() !== dni
+        );
+        const updatedLocal = [...serverOrders, ...otherOrders];
+        localStorage.setItem(STORAGE_ORDERS_KEY, JSON.stringify(updatedLocal));
 
-        // 1. Agregar las del servidor (fuente de verdad en PostgreSQL)
-        for (const o of serverOrders) {
-          if (o && (o.id || o.serieNumero)) {
-            map.set(o.id || o.serieNumero, o);
-          }
-        }
-
-        // 2. Mantener las locales si existiera alguna previa
-        for (const o of localOrders) {
-          const key = o.id || o.serieNumero;
-          if (key && !map.has(key)) {
-            map.set(key, o);
-          }
-        }
-
-        const merged = Array.from(map.values());
-        localStorage.setItem(STORAGE_ORDERS_KEY, JSON.stringify(merged));
-        return merged.filter((o) => o.customer?.dni === dni || !o.customer?.dni);
+        // Retornar exactamente las órdenes de PostgreSQL para sincronización perfecta entre móvil y laptop
+        return serverOrders;
       }
     }
   } catch (err) {
