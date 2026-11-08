@@ -18,6 +18,8 @@ let ultimoEstado = {
   timestamp: Date.now()
 };
 
+let ultimoPagoPendiente = null;
+
 /**
  * Obtener la IP IPv4 local en la red Wi-Fi/Ethernet para que los celulares se conecten
  */
@@ -111,9 +113,37 @@ export const emitirEvento = (req, res) => {
     ultimoEstado = { ...ultimoEstado, ...payload, timestamp: Date.now() };
   }
 
+  // Si es confirmación de pago digital o tarjeta desde el celular, persistir como pago pendiente
+  if (tipo === 'PAGO_TARJETA_APROBADO' || tipo === 'PAGO_MOVIL_CONFIRMADO') {
+    ultimoPagoPendiente = {
+      id: `pago_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      tipo,
+      payload: payload || {},
+      timestamp: Date.now()
+    };
+  }
+
   broadcast(evento);
 
   return res.status(200).json({ ok: true, totalConectados: clientesSSE.size });
+};
+
+/**
+ * Consultar si hay algún pago de tarjeta o Yape pendiente de procesar en el POS
+ */
+export const obtenerPagoPendiente = (req, res) => {
+  return res.status(200).json({ pagoPendiente: ultimoPagoPendiente });
+};
+
+/**
+ * Marcar un pago como procesado e ingresado al sistema contable/POS
+ */
+export const marcarPagoProcesado = (req, res) => {
+  const { id } = req.body || {};
+  if (ultimoPagoPendiente && (!id || ultimoPagoPendiente.id === id)) {
+    ultimoPagoPendiente = null;
+  }
+  return res.status(200).json({ ok: true });
 };
 
 /**

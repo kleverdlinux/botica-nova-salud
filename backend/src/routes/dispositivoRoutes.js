@@ -12,6 +12,10 @@ router.post('/evento', dispositivoController.emitirEvento);
 // Consultar estado actual
 router.get('/estado', dispositivoController.obtenerEstado);
 
+// Consultar y marcar pagos pendientes (Yape / Tarjeta desde terminal móvil)
+router.get('/pago-pendiente', dispositivoController.obtenerPagoPendiente);
+router.post('/marcar-pago-procesado', dispositivoController.marcarPagoProcesado);
+
 // Consultar info de conectividad USB y periféricos
 router.get('/info-conexion', dispositivoController.obtenerInfoConexion);
 

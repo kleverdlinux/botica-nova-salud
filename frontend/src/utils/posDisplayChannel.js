@@ -196,6 +196,29 @@ class PosDisplayManager {
     }
   }
 
+  // Consultar pago pendiente en el servidor (sondeo de alta confiabilidad para móvil / laptop)
+  async consultarPagoPendiente() {
+    try {
+      const res = await fetch(`${getApiBaseUrl()}/dispositivos/pago-pendiente`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data?.pagoPendiente || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Marcar pago como procesado en el servidor para evitar duplicados
+  async marcarPagoProcesado(id) {
+    try {
+      await fetch(`${getApiBaseUrl()}/dispositivos/marcar-pago-procesado`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+    } catch (e) {}
+  }
+
   // Obtener el estado actual guardado
   obtenerEstadoActual() {
     if (typeof window === 'undefined') return null;

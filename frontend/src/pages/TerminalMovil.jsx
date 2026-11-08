@@ -77,10 +77,20 @@ export default function TerminalMovil() {
 
   // Confirmar cobro Yape desde el celular
   const handleConfirmarYapeDesdeCelular = () => {
+    if (total <= 0) {
+      setNotificacionLocal({
+        tipo: 'alerta',
+        titulo: 'Mostrador en Reposo',
+        detalle: 'Agregue medicamentos al carrito en el mostrador para confirmar el pago.'
+      });
+      setTimeout(() => setNotificacionLocal(null), 3000);
+      return;
+    }
+
     const op = String(Math.floor(100000 + Math.random() * 900000));
     posDisplay.notificarPagoMovil({
       numeroOperacion: op,
-      monto: estadoPos.total || 0,
+      monto: total,
       metodoPago: 'YAPE_PLIN'
     });
     setNotificacionLocal({
@@ -88,22 +98,32 @@ export default function TerminalMovil() {
       titulo: 'Pago Yape Notificado',
       detalle: `Operación N° ${op} enviada al sistema de caja.`
     });
-    setTimeout(() => setNotificacionLocal(null), 3000);
+    setTimeout(() => setNotificacionLocal(null), 3500);
   };
 
   // Confirmar cobro Tarjeta desde el celular
   const handleConfirmarTarjetaDesdeCelular = () => {
+    if (total <= 0) {
+      setNotificacionLocal({
+        tipo: 'alerta',
+        titulo: 'Mostrador en Reposo',
+        detalle: 'Agregue medicamentos al carrito en el mostrador para aprobar el cobro.'
+      });
+      setTimeout(() => setNotificacionLocal(null), 3000);
+      return;
+    }
+
     const voucher = `VCH-${Math.floor(10000 + Math.random() * 90000)}`;
     posDisplay.notificarPagoTarjeta({
       voucher,
-      monto: estadoPos.total || 0
+      monto: total
     });
     setNotificacionLocal({
       tipo: 'exito',
       titulo: 'Cobro Tarjeta Aprobado',
       detalle: `Comprobante ${voucher} enviado al sistema de caja.`
     });
-    setTimeout(() => setNotificacionLocal(null), 3000);
+    setTimeout(() => setNotificacionLocal(null), 3500);
   };
 
   // Enviar código de barras escaneado al carrito de la laptop
@@ -373,11 +393,12 @@ export default function TerminalMovil() {
               <button
                 type="button"
                 onClick={handleConfirmarTarjetaDesdeCelular}
-                disabled={total <= 0}
-                className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-2xl text-xs font-black shadow-md shadow-blue-600/20 transition cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-2xl text-xs font-black shadow-md shadow-blue-600/20 transition cursor-pointer flex items-center justify-center space-x-2"
               >
                 <Check className="w-4 h-4 stroke-[3]" />
-                <span>Aprobar Cobro de Tarjeta</span>
+                <span>
+                  {total > 0 ? `Aprobar Cobro de Tarjeta (S/ ${total.toFixed(2)})` : 'Aprobar Cobro de Tarjeta'}
+                </span>
               </button>
               <p className="text-[10px] text-slate-400 mt-2">
                 Acerque la tarjeta física al equipo de mostrador y valide la transacción.

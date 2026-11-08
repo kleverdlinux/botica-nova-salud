@@ -195,10 +195,11 @@ export default function Pos() {
         handleCobrarRef.current?.(null, 'YAPE_PLIN', numeroOperacion);
       } else if (mensaje.tipo === 'PAGO_TARJETA_APROBADO') {
         const { voucher, monto } = mensaje.payload;
+        const vchFinal = voucher || 'VCH-APROBADO';
         setMetodoPago('TARJETA');
-        setNumeroVoucherTarjeta(voucher || 'VCH-APROBADO');
-        toast.success(`Cobro con Tarjeta aprobado: S/ ${monto}`);
-        handleCobrarRef.current?.(null, 'TARJETA', voucher);
+        setVoucherTarjeta(vchFinal);
+        toast.success(`Cobro con Tarjeta aprobado: S/ ${monto || totalCalculadoUI}`);
+        handleCobrarRef.current?.(null, 'TARJETA', vchFinal);
       } else if (mensaje.tipo === 'CAMBIAR_METODO_PAGO') {
         const metodo = mensaje.payload.metodoPago;
         setMetodoPago(metodo);
@@ -207,7 +208,39 @@ export default function Pos() {
       }
     });
     return () => unsuscribe();
-  }, [items]);
+  }, [items, totalCalculadoUI]);
+
+  // Sondeo continuo de respaldo para pagos de Tarjeta y Yape (Garantía ante micro-desconexiones en Render / Wi-Fi)
+  useEffect(() => {
+    let activo = true;
+    const intervalId = setInterval(async () => {
+      if (!activo || items.length === 0) return;
+      try {
+        const pago = await posDisplay.consultarPagoPendiente();
+        if (pago && pago.payload && activo) {
+          await posDisplay.marcarPagoProcesado(pago.id);
+          if (pago.tipo === 'PAGO_TARJETA_APROBADO') {
+            const vch = pago.payload.voucher || 'VCH-APROBADO';
+            setMetodoPago('TARJETA');
+            setVoucherTarjeta(vch);
+            toast.success(`Cobro con Tarjeta aprobado desde terminal: S/ ${pago.payload.monto || totalCalculadoUI}`);
+            handleCobrarRef.current?.(null, 'TARJETA', vch);
+          } else if (pago.tipo === 'PAGO_MOVIL_CONFIRMADO') {
+            const op = pago.payload.numeroOperacion || 'OP-CONFIRMADA';
+            setMetodoPago('YAPE_PLIN');
+            setNumeroOperacionYape(op);
+            toast.success(`Pago Yape confirmado desde terminal: S/ ${pago.payload.monto || totalCalculadoUI}`);
+            handleCobrarRef.current?.(null, 'YAPE_PLIN', op);
+          }
+        }
+      } catch (e) {}
+    }, 1500);
+
+    return () => {
+      activo = false;
+      clearInterval(intervalId);
+    };
+  }, [items, totalCalculadoUI]);
 
   // Sincronización en tiempo real con la Pantalla de Cliente / Visor Externo
   useEffect(() => {
@@ -372,7 +405,7 @@ export default function Pos() {
   };
 
   // Cobro seguro con descuento atómico de stock en PostgreSQL y Kardex
-  const handleCobrar = async (e, metodoSobrescrito) => {
+  const handleCobrar = async (e, metodoSobrescrito, referenciaSobrescrita) => {
     if (e && e.preventDefault) e.preventDefault();
 
     if (items.length === 0) {
@@ -386,6 +419,10 @@ export default function Pos() {
     }
 
     const metodoFinal = metodoSobrescrito || metodoPago;
+    if (referenciaSobrescrita) {
+      if (metodoFinal === 'TARJETA') setVoucherTarjeta(referenciaSobrescrita);
+      if (metodoFinal === 'YAPE_PLIN') setNumeroOperacionYape(referenciaSobrescrita);
+    }
 
     setCobrando(true);
     try {
@@ -443,49 +480,13 @@ export default function Pos() {
   const igvCalculado = totalCalculadoUI - subtotalNeto;
 
   return (
-    <div className="w-full space-y-5 font-sans">
-      {/* 1. Cabecera Ejecutiva del POS */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 bg-white dark:bg-black p-3.5 sm:p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs">
-        <div>
-          <h1 className="text-lg sm:text-xl font-black text-neutral-900 dark:text-white tracking-tight flex items-center space-x-2 sm:space-x-2.5">
-            <div className="p-1 sm:p-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800/60 text-teal-600 dark:text-teal-400 shrink-0">
-              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <span>Punto de Venta & Dispensación en Mostrador</span>
-          </h1>
-        </div>
-
-        {/* Botón único de Vinculación de Dispositivo USB */}
-        <button
-          type="button"
-          onClick={handleVincularDispositivoUsb}
-          className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl border text-xs font-bold transition cursor-pointer ${
-            dispositivoUsbConectado
-              ? 'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
-              : 'bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800'
-          }`}
-          title="Detectar pistola de código de barras o lector USB conectado por cable a la PC o laptop"
-        >
-          <Usb className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-          <span>
-            {dispositivoUsbConectado
-              ? `Dispositivo Conectado: ${nombreDispositivoUsb}`
-              : 'Vincular Dispositivo'}
-          </span>
-          <span
-            className={`w-2 h-2 rounded-full ${
-              dispositivoUsbConectado ? 'bg-emerald-500 animate-pulse' : 'bg-neutral-400'
-            }`}
-          />
-        </button>
-      </div>
-
+    <div className="w-full space-y-4 font-sans">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* PANEL IZQUIERDO: BÚSQUEDA Y CATÁLOGO (7 Cols) */}
         <div className="lg:col-span-7 space-y-4">
-          {/* Barra de Búsqueda con Botón de Escáner en Dispositivo */}
-          <div className="bg-white dark:bg-black p-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs">
-            <div className="flex items-center gap-2.5">
+          {/* Barra de Búsqueda con Botón de Escáner y Vinculación Discreta */}
+          <div className="bg-white dark:bg-black p-3 sm:p-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs">
+            <div className="flex items-center gap-2 sm:gap-2.5">
               <div className="relative flex-1">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
                   {buscando ? (
@@ -501,7 +502,7 @@ export default function Pos() {
                   onChange={(e) => setTermino(e.target.value)}
                   onKeyDown={handleKeyDownBusqueda}
                   placeholder="Escanee código de barras con pistola o escriba medicamento..."
-                  className="w-full pl-11 pr-20 py-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm font-medium text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white dark:focus:bg-black transition"
+                  className="w-full pl-11 pr-20 py-2.5 sm:py-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm font-medium text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white dark:focus:bg-black transition"
                   autoFocus
                 />
                 {termino && (
@@ -513,6 +514,28 @@ export default function Pos() {
                   </button>
                 )}
               </div>
+
+              {/* Botón Compacto de Dispositivo / Escáner */}
+              <button
+                type="button"
+                onClick={handleVincularDispositivoUsb}
+                className={`flex items-center space-x-1.5 px-3 py-2.5 rounded-xl border text-xs font-bold transition cursor-pointer shrink-0 ${
+                  dispositivoUsbConectado
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800'
+                    : 'bg-neutral-50 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                }`}
+                title="Vincular lector de código de barras o terminal móvil"
+              >
+                <Usb className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                <span className="hidden sm:inline">
+                  {dispositivoUsbConectado ? nombreDispositivoUsb || 'Conectado' : 'Vincular'}
+                </span>
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    dispositivoUsbConectado ? 'bg-emerald-500 animate-pulse' : 'bg-neutral-400'
+                  }`}
+                />
+              </button>
             </div>
           </div>
 
@@ -899,73 +922,64 @@ export default function Pos() {
                 </div>
               </div>
 
-              {/* Selector de Método de Pago */}
+              {/* Selector de Método de Pago Unificado (PC y Móvil) */}
               <div>
                 <label className="block text-[11px] font-black text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">
                   Método de Pago
                 </label>
-                {isMobileOrTablet ? (
-                  /* En celular o tablet: Efectivo + botón Otros Métodos de Pago directo al terminal */
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMetodoPago('EFECTIVO');
-                        setYapeEnviadoADispositivo(false);
-                        setTarjetaEnviadaADispositivo(false);
-                      }}
-                      className={`py-2.5 px-2 rounded-xl text-xs font-bold flex flex-col items-center justify-center space-y-1 border transition cursor-pointer ${
-                        metodoPago === 'EFECTIVO'
-                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                          : 'bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100'
-                      }`}
-                    >
-                      <Banknote className="w-4 h-4" />
-                      <span>Efectivo</span>
-                    </button>
+                <div className="grid grid-cols-3 gap-2">
+                  {/* 1. Efectivo */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMetodoPago('EFECTIVO');
+                      setYapeEnviadoADispositivo(false);
+                      setTarjetaEnviadaADispositivo(false);
+                    }}
+                    className={`py-2.5 px-2 rounded-xl text-xs font-black flex flex-col items-center justify-center space-y-1 border transition cursor-pointer ${
+                      metodoPago === 'EFECTIVO'
+                        ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm ring-2 ring-emerald-500/30'
+                        : 'bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800'
+                    }`}
+                  >
+                    <Banknote className="w-4 h-4" />
+                    <span>Efectivo</span>
+                  </button>
 
-                    <button
-                      type="button"
-                      onClick={() => navigate('/terminal-movil')}
-                      className="py-2.5 px-2 rounded-xl text-xs font-bold flex flex-col items-center justify-center space-y-1 border border-purple-300 dark:border-purple-800 bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 transition cursor-pointer shadow-xs"
-                    >
-                      <div className="flex items-center gap-1">
-                        <Smartphone className="w-3.5 h-3.5 text-[#732282]" />
-                        <CreditCard className="w-3.5 h-3.5 text-blue-600" />
-                      </div>
-                      <span>Otros Métodos (Yape / Tarjeta)</span>
-                    </button>
-                  </div>
-                ) : (
-                  /* En PC o Laptop: Efectivo directo en caja + sincronización automática con celular vinculado */
-                  <div className="space-y-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMetodoPago('EFECTIVO');
-                        setYapeEnviadoADispositivo(false);
-                        setTarjetaEnviadaADispositivo(false);
-                      }}
-                      className="w-full py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border bg-emerald-600 text-white border-emerald-600 shadow-xs cursor-pointer"
-                    >
-                      <Banknote className="w-4 h-4" />
-                      <span>Cobro en Efectivo (Caja Física)</span>
-                    </button>
-                    <div className="bg-neutral-50 dark:bg-neutral-950 p-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 flex items-center justify-between text-[11px] text-neutral-500">
-                      <div className="flex items-center gap-2">
-                        <Smartphone className="w-4 h-4 text-purple-600 shrink-0" />
-                        <span>Pagos digitales (Yape / Plin / Tarjeta) sincronizados con móvil</span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleVincularDispositivoUsb}
-                        className="font-bold text-teal-600 dark:text-teal-400 hover:underline cursor-pointer shrink-0"
-                      >
-                        Ver QR
-                      </button>
-                    </div>
-                  </div>
-                )}
+                  {/* 2. Yape / Plin */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMetodoPago('YAPE_PLIN');
+                      setTarjetaEnviadaADispositivo(false);
+                    }}
+                    className={`py-2.5 px-2 rounded-xl text-xs font-black flex flex-col items-center justify-center space-y-1 border transition cursor-pointer ${
+                      metodoPago === 'YAPE_PLIN'
+                        ? 'bg-[#732282] text-white border-[#732282] shadow-sm ring-2 ring-purple-500/30'
+                        : 'bg-white dark:bg-neutral-900 text-[#732282] dark:text-purple-300 border-purple-200 dark:border-purple-900/60 hover:bg-purple-50 dark:hover:bg-purple-950/40'
+                    }`}
+                  >
+                    <Smartphone className="w-4 h-4 text-purple-400" />
+                    <span>Yape / Plin</span>
+                  </button>
+
+                  {/* 3. Tarjeta */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMetodoPago('TARJETA');
+                      setYapeEnviadoADispositivo(false);
+                    }}
+                    className={`py-2.5 px-2 rounded-xl text-xs font-black flex flex-col items-center justify-center space-y-1 border transition cursor-pointer ${
+                      metodoPago === 'TARJETA'
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-sm ring-2 ring-blue-500/30'
+                        : 'bg-white dark:bg-neutral-900 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-900/60 hover:bg-blue-50 dark:hover:bg-blue-950/40'
+                    }`}
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    <span>Tarjeta</span>
+                  </button>
+                </div>
               </div>
 
               {/* DETALLES DINÁMICOS SEGÚN MÉTODO DE PAGO */}
@@ -1025,9 +1039,9 @@ export default function Pos() {
 
               {/* 2. MODO YAPE / PLIN */}
               {metodoPago === 'YAPE_PLIN' && (
-                <div className="p-3 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 space-y-2.5 animate-in fade-in duration-150">
+                <div className="p-3 bg-white dark:bg-neutral-900 rounded-xl border border-purple-200 dark:border-purple-900/60 space-y-2.5 animate-in fade-in duration-150">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-black text-[#732282] dark:text-purple-400 flex items-center space-x-1.5">
+                    <span className="text-xs font-black text-[#732282] dark:text-purple-300 flex items-center space-x-1.5">
                       <span className="w-2 h-2 rounded-full bg-[#732282] animate-ping" />
                       <span>Cobro Yape / Plin</span>
                     </span>
@@ -1036,30 +1050,59 @@ export default function Pos() {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between bg-purple-50/50 dark:bg-purple-950/30 p-2.5 rounded-xl border border-purple-200/70 dark:border-purple-900/40 text-xs">
-                    <div>
-                      <span className="text-[10px] text-purple-700 dark:text-purple-300 font-bold uppercase block">
-                        Constancia N° Operación:
-                      </span>
-                      <span className="font-mono font-black text-neutral-900 dark:text-white">
-                        {numeroOperacionYape ? `Op: ${numeroOperacionYape}` : 'Pendiente de registrar'}
-                      </span>
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] text-purple-700 dark:text-purple-300 font-bold uppercase">
+                      N° Operación Yape / Plin:
+                    </label>
+                    <div className="flex gap-1.5">
+                      <input
+                        type="text"
+                        maxLength={8}
+                        value={numeroOperacionYape}
+                        onChange={(e) => setNumeroOperacionYape(e.target.value.replace(/\D/g, ''))}
+                        placeholder="Ej. 849201"
+                        className="flex-1 px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs font-mono font-bold text-neutral-900 dark:text-white focus:ring-1 focus:ring-[#732282] focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={simularPagoYape}
+                        className="px-2 py-1 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 text-[10px] font-bold text-neutral-700 dark:text-neutral-300 rounded-lg transition cursor-pointer"
+                        title="Generar código de operación para prueba"
+                      >
+                        Generar Op.
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setModalYapeAbierto(true)}
+                        className="px-2.5 py-1 bg-[#732282] hover:bg-[#5b1968] text-white text-[10px] font-bold rounded-lg transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                        title="Ver QR y datos completos"
+                      >
+                        <QrCode className="w-3 h-3" />
+                        <span>Ver QR</span>
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setModalYapeAbierto(true)}
-                      className="px-2.5 py-1.5 rounded-lg bg-[#732282] hover:bg-[#5b1968] text-white font-bold text-xs flex items-center gap-1.5 transition cursor-pointer shadow-2xs"
-                    >
-                      <QrCode className="w-3.5 h-3.5" />
-                      <span>Ver QR / Modificar</span>
-                    </button>
                   </div>
+
+                  {/* Botón directo de aprobación Yape */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      const opFinal = numeroOperacionYape || String(Math.floor(100000 + Math.random() * 900000));
+                      setNumeroOperacionYape(opFinal);
+                      handleCobrar(e, 'YAPE_PLIN', opFinal);
+                    }}
+                    disabled={cobrando || items.length === 0}
+                    className="w-full py-2.5 px-3 bg-[#732282] hover:bg-[#5b1968] text-white rounded-xl text-xs font-black shadow-md shadow-purple-700/20 flex items-center justify-center space-x-1.5 transition cursor-pointer disabled:opacity-50"
+                  >
+                    <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    <span>Aprobar Cobro Yape (Completar Venta)</span>
+                  </button>
                 </div>
               )}
 
               {/* 3. MODO TARJETA */}
               {metodoPago === 'TARJETA' && (
-                <div className="p-3 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 space-y-2.5 animate-in fade-in duration-150">
+                <div className="p-3 bg-white dark:bg-neutral-900 rounded-xl border border-blue-200 dark:border-blue-900/60 space-y-2.5 animate-in fade-in duration-150">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-black text-blue-600 dark:text-blue-400 flex items-center space-x-1.5">
                       <CreditCard className="w-4 h-4" />
@@ -1070,24 +1113,75 @@ export default function Pos() {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between bg-blue-50/50 dark:bg-blue-950/30 p-2.5 rounded-xl border border-blue-200/70 dark:border-blue-900/40 text-xs">
-                    <div>
-                      <span className="text-[10px] text-blue-700 dark:text-blue-300 font-bold uppercase block">
-                        Voucher / Autorización:
-                      </span>
-                      <span className="font-mono font-black text-neutral-900 dark:text-white">
-                        {voucherTarjeta ? voucherTarjeta : 'Pendiente de registrar'}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setModalTarjetaAbierto(true)}
-                      className="px-2.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1.5 transition cursor-pointer shadow-2xs"
-                    >
-                      <CreditCard className="w-3.5 h-3.5" />
-                      <span>Ver Terminal / Modificar</span>
-                    </button>
+                  {/* Selector rápido de Marca */}
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {['VISA', 'MASTERCARD', 'AMEX', 'OTRA'].map((m) => (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => setMarcaTarjeta(m)}
+                        className={`py-1 px-1 rounded-lg text-[10px] font-bold transition border cursor-pointer ${
+                          marcaTarjeta === m
+                            ? 'bg-blue-600 text-white border-blue-600'
+                            : 'bg-neutral-50 dark:bg-neutral-950 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-800'
+                        }`}
+                      >
+                        {m}
+                      </button>
+                    ))}
                   </div>
+
+                  {/* Input de Voucher con botón rápido */}
+                  <div className="space-y-1">
+                    <label className="block text-[10px] text-blue-700 dark:text-blue-300 font-bold uppercase">
+                      N° Voucher / Ref. POS:
+                    </label>
+                    <div className="flex gap-1.5">
+                      <input
+                        type="text"
+                        value={voucherTarjeta}
+                        onChange={(e) => setVoucherTarjeta(e.target.value)}
+                        placeholder="Ej. VCH-489201"
+                        className="flex-1 px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs font-mono font-bold text-neutral-900 dark:text-white focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const vch = `VCH-${Math.floor(10000 + Math.random() * 90000)}`;
+                          setVoucherTarjeta(vch);
+                          toast.success(`Voucher generado: ${vch}`);
+                        }}
+                        className="px-2 py-1 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 text-[10px] font-bold text-neutral-700 dark:text-neutral-300 rounded-lg transition cursor-pointer"
+                        title="Autogenerar código de voucher"
+                      >
+                        Generar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setModalTarjetaAbierto(true)}
+                        className="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded-lg transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                        title="Ver instrucciones y terminal"
+                      >
+                        <CreditCard className="w-3 h-3" />
+                        <span>Ver Terminal</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Botón directo de aprobación Tarjeta */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      const vchFinal = voucherTarjeta || `VCH-${Math.floor(10000 + Math.random() * 90000)}`;
+                      setVoucherTarjeta(vchFinal);
+                      handleCobrar(e, 'TARJETA', vchFinal);
+                    }}
+                    disabled={cobrando || items.length === 0}
+                    className="w-full py-2.5 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black shadow-md shadow-blue-600/20 flex items-center justify-center space-x-1.5 transition cursor-pointer disabled:opacity-50"
+                  >
+                    <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    <span>Aprobar Cobro de Tarjeta (Completar Venta)</span>
+                  </button>
                 </div>
               )}
 
@@ -1302,14 +1396,17 @@ export default function Pos() {
               </button>
               <button
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
+                  const opFinal = numeroOperacionYape || String(Math.floor(100000 + Math.random() * 900000));
+                  setNumeroOperacionYape(opFinal);
                   setModalYapeAbierto(false);
-                  toast.success('Método Yape confirmado para el cobro');
+                  handleCobrar(e, 'YAPE_PLIN', opFinal);
                 }}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-[#732282] hover:bg-[#5b1968] text-white text-xs font-black uppercase tracking-wider transition cursor-pointer shadow-sm flex items-center justify-center gap-1.5"
+                disabled={cobrando || items.length === 0}
+                className="flex-1 py-2.5 px-3 rounded-xl bg-[#732282] hover:bg-[#5b1968] text-white text-xs font-black uppercase tracking-wider transition cursor-pointer shadow-sm flex items-center justify-center gap-1.5 disabled:opacity-50"
               >
-                <Check className="w-4 h-4" />
-                <span>Confirmar Pago</span>
+                <Check className="w-4 h-4 stroke-[3]" />
+                <span>Aprobar Cobro Yape</span>
               </button>
             </div>
           </div>
@@ -1442,14 +1539,17 @@ export default function Pos() {
               </button>
               <button
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
+                  const vchFinal = voucherTarjeta || `VCH-${Math.floor(10000 + Math.random() * 90000)}`;
+                  setVoucherTarjeta(vchFinal);
                   setModalTarjetaAbierto(false);
-                  toast.success('Datos de tarjeta confirmados para el cobro');
+                  handleCobrar(e, 'TARJETA', vchFinal);
                 }}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition cursor-pointer shadow-sm flex items-center justify-center gap-1.5"
+                disabled={cobrando || items.length === 0}
+                className="flex-1 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition cursor-pointer shadow-sm flex items-center justify-center gap-1.5 disabled:opacity-50"
               >
-                <Check className="w-4 h-4" />
-                <span>Confirmar Pago</span>
+                <Check className="w-4 h-4 stroke-[3]" />
+                <span>Aprobar Cobro de Tarjeta</span>
               </button>
             </div>
           </div>
