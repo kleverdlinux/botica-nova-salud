@@ -33,20 +33,47 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({ isOpen, onCl
     }
   }, [isOpen]);
 
-  // Filtrado instantáneo multi-token
+  // Filtrado instantáneo por prefijo y relevancia
   const filteredProducts = useMemo(() => {
     const raw = searchTerm.trim();
     if (!raw) return [];
 
     const norm = normalizeText(raw);
     const tokens = norm.split(/\s+/).filter(Boolean);
+    const isShort = norm.length <= 2;
 
     return products
       .filter((p) => {
+        const prodName = normalizeText(p.name);
+        const prodMat = normalizeText(p.materials || '');
+
+        if (isShort) {
+          // Búsqueda corta (1 o 2 letras, ej: "A"): buscar SOLO medicamentos cuyo nombre o principio inicie con dicha letra
+          const nameWords = prodName.split(/\s+/);
+          const matWords = prodMat.split(/\s+/);
+          return nameWords.some((w) => w.startsWith(norm)) || matWords.some((w) => w.startsWith(norm));
+        }
+
         const fullText = normalizeText(
-          `${p.name} ${p.description || ''} ${p.longDescription || ''} ${p.materials || ''} ${p.collection || ''}`
+          `${p.name} ${p.materials || ''} ${p.description || ''} ${p.collection || ''}`
         );
         return tokens.every((token) => fullText.includes(token));
+      })
+      .sort((a, b) => {
+        const nameA = normalizeText(a.name);
+        const nameB = normalizeText(b.name);
+
+        const aStarts = nameA.startsWith(norm);
+        const bStarts = nameB.startsWith(norm);
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+
+        const aWord = nameA.split(/\s+/).some((w) => w.startsWith(norm));
+        const bWord = nameB.split(/\s+/).some((w) => w.startsWith(norm));
+        if (aWord && !bWord) return -1;
+        if (!aWord && bWord) return 1;
+
+        return a.name.localeCompare(b.name);
       })
       .slice(0, 8); // Top 8 resultados más relevantes
   }, [searchTerm]);

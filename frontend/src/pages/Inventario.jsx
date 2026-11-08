@@ -249,14 +249,53 @@ export default function Inventario() {
 
     if (lotesBusqueda.trim()) {
       const q = lotesBusqueda.toLowerCase().trim();
-      const tokens = q.split(/\s+/).filter(Boolean);
-      const fullText = `${prod.nombre || ''} ${prod.principioActivo || ''} ${prod.laboratorio || ''} ${prod.lote || ''} ${prod.codigoBarras || ''}`.toLowerCase();
-      const matchesAll = tokens.every(token => fullText.includes(token));
-      if (!matchesAll) return false;
+      const isShort = q.length <= 2;
+      const prodName = (prod.nombre || '').toLowerCase();
+      const prodPrincipio = (prod.principioActivo || '').toLowerCase();
+      const prodLote = (prod.lote || '').toLowerCase();
+      const prodBar = (prod.codigoBarras || '').toLowerCase();
+
+      if (isShort) {
+        // Para 1 o 2 letras, buscar SOLO lotes cuyo nombre o principio inicie con dicha letra
+        const nameWords = prodName.split(/\s+/);
+        const priWords = prodPrincipio.split(/\s+/);
+        const matchesShort =
+          nameWords.some((w) => w.startsWith(q)) ||
+          priWords.some((w) => w.startsWith(q)) ||
+          prodLote.startsWith(q) ||
+          prodBar.startsWith(q);
+        if (!matchesShort) return false;
+      } else {
+        const tokens = q.split(/\s+/).filter(Boolean);
+        const fullText = `${prodName} ${prodPrincipio} ${prod.laboratorio || ''} ${prodLote} ${prodBar}`.toLowerCase();
+        const matchesAll = tokens.every((token) => fullText.includes(token));
+        if (!matchesAll) return false;
+      }
     }
 
     return true;
   });
+
+  // Ordenar lotes por relevancia si hay búsqueda activa
+  if (lotesBusqueda.trim()) {
+    const normLoteQ = lotesBusqueda.toLowerCase().trim();
+    lotesFiltrados.sort((a, b) => {
+      const aName = (a.nombre || '').toLowerCase();
+      const bName = (b.nombre || '').toLowerCase();
+
+      const aStarts = aName.startsWith(normLoteQ);
+      const bStarts = bName.startsWith(normLoteQ);
+      if (aStarts && !bStarts) return -1;
+      if (!aStarts && bStarts) return 1;
+
+      const aWord = aName.split(/\s+/).some((w) => w.startsWith(normLoteQ));
+      const bWord = bName.split(/\s+/).some((w) => w.startsWith(normLoteQ));
+      if (aWord && !bWord) return -1;
+      if (!aWord && bWord) return 1;
+
+      return aName.localeCompare(bName);
+    });
+  }
 
   const totalLotesFiltrados = lotesFiltrados.length;
   const totalPaginasLotes = Math.max(1, Math.ceil(totalLotesFiltrados / lotesPorPagina));

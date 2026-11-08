@@ -35,23 +35,41 @@ export async function buscarProductosPOS(termino) {
   // Garantizar que no haya medicamentos caducados en estado activo antes de consultar
   await sincronizarCaducidadAutomatica();
 
-  // Búsqueda multi-token: divide la consulta en palabras para encontrar coincidencias cruzadas
-  const palabras = query.split(/\s+/).filter(Boolean);
-  const condicionesAND = palabras.map(p => ({
-    OR: [
-      { nombre: { contains: p, mode: 'insensitive' } },
-      { codigoBarras: { contains: p, mode: 'insensitive' } },
-      { principioActivo: { contains: p, mode: 'insensitive' } },
-      { laboratorio: { contains: p, mode: 'insensitive' } }
-    ]
-  }));
+  const isShort = query.length <= 2;
+  let whereCond;
 
-  return await prisma.producto.findMany({
-    where: {
+  if (isShort) {
+    // Si el usuario escribe 1 o 2 letras (ej: "A" o "Am"), buscar SOLO fármacos que inicien con esa letra
+    whereCond = {
       activo: true,
       stock: { gt: 0 },
-      AND: condicionesAND
-    },
+      OR: [
+        { nombre: { startsWith: query, mode: 'insensitive' } },
+        { nombre: { contains: ` ${query}`, mode: 'insensitive' } },
+        { principioActivo: { startsWith: query, mode: 'insensitive' } },
+        { principioActivo: { contains: ` ${query}`, mode: 'insensitive' } },
+        { codigoBarras: { startsWith: query, mode: 'insensitive' } }
+      ]
+    };
+  } else {
+    // Búsqueda multi-token para términos de 3 o más letras
+    const palabras = query.split(/\s+/).filter(Boolean);
+    whereCond = {
+      activo: true,
+      stock: { gt: 0 },
+      AND: palabras.map(p => ({
+        OR: [
+          { nombre: { contains: p, mode: 'insensitive' } },
+          { codigoBarras: { contains: p, mode: 'insensitive' } },
+          { principioActivo: { contains: p, mode: 'insensitive' } },
+          { laboratorio: { contains: p, mode: 'insensitive' } }
+        ]
+      }))
+    };
+  }
+
+  const productos = await prisma.producto.findMany({
+    where: whereCond,
     select: {
       id: true,
       codigoBarras: true,
@@ -67,9 +85,30 @@ export async function buscarProductosPOS(termino) {
       categoriaId: true
       // EXCLUIDOS: costo, proveedorId
     },
-    take: 20,
+    take: 50,
     orderBy: { nombre: 'asc' }
   });
+
+  // Ordenamiento estricto por relevancia: los que inician con el término van primero
+  const normQuery = query.toLowerCase();
+  productos.sort((a, b) => {
+    const aName = (a.nombre || '').toLowerCase();
+    const bName = (b.nombre || '').toLowerCase();
+
+    const aStarts = aName.startsWith(normQuery);
+    const bStarts = bName.startsWith(normQuery);
+    if (aStarts && !bStarts) return -1;
+    if (!aStarts && bStarts) return 1;
+
+    const aWord = aName.split(/\s+/).some(w => w.startsWith(normQuery));
+    const bWord = bName.split(/\s+/).some(w => w.startsWith(normQuery));
+    if (aWord && !bWord) return -1;
+    if (!aWord && bWord) return 1;
+
+    return aName.localeCompare(bName);
+  });
+
+  return productos.slice(0, 20);
 }
 
 // 2. Listado paginado de productos según Rol (Admin vs Cajero)
@@ -102,16 +141,34 @@ export async function listarProductos({ rol, activoQuery, page = 1, limit = 20, 
 
   if (busqueda && busqueda.trim()) {
     const q = busqueda.trim();
-    const palabras = q.split(/\s+/).filter(Boolean);
-    where.AND = palabras.map(p => ({
-      OR: [
-        { nombre: { contains: p, mode: 'insensitive' } },
-        { codigoBarras: { contains: p, mode: 'insensitive' } },
-        { principioActivo: { contains: p, mode: 'insensitive' } },
-        { laboratorio: { contains: p, mode: 'insensitive' } }
-      ]
-    }));
+    const isShort = q.length <= 2;
+
+    if (isShort) {
+      // Para 1 o 2 letras (ej: "A"), buscar SOLO fármacos cuyo nombre o principio inicie con dicha letra
+      where.OR = [
+        { nombre: { startsWith: q, mode: 'insensitive' } },
+        { nombre: { contains: ` ${q}`, mode: 'insensitive' } },
+        { principioActivo: { startsWith: q, mode: 'insensitive' } },
+        { principioActivo: { contains: ` ${q}`, mode: 'insensitive' } },
+        { codigoBarras: { startsWith: q, mode: 'insensitive' } }
+      ];
+    } else {
+      const palabras = q.split(/\s+/).filter(Boolean);
+      where.AND = palabras.map(p => ({
+        OR: [
+          { nombre: { contains: p, mode: 'insensitive' } },
+          { codigoBarras: { contains: p, mode: 'insensitive' } },
+          { principioActivo: { contains: p, mode: 'insensitive' } },
+          { laboratorio: { contains: p, mode: 'insensitive' } }
+        ]
+      }));
+    }
   }
+
+  // Si hay búsqueda, ordenar siempre alfabéticamente de la A a la Z para que no muestre productos desordenados
+  const orderBy = (busqueda && busqueda.trim())
+    ? { nombre: 'asc' }
+    : { id: 'desc' };
 
   // Proyecciones estrictas por rol (ADMIN y ALMACEN ven gestión completa; CAJERO solo mostrador)
   const esGestor = rol === 'ADMIN' || rol === 'ALMACEN';
@@ -162,9 +219,29 @@ export async function listarProductos({ rol, activoQuery, page = 1, limit = 20, 
       skip,
       take: l,
       select,
-      orderBy: { id: 'desc' }
+      orderBy
     })
   ]);
+
+  // Si hay búsqueda activa, ordenar por relevancia para que los que empiezan con el término aparezcan estrictamente primero
+  if (busqueda && busqueda.trim()) {
+    const normQ = busqueda.trim().toLowerCase();
+    productos.sort((a, b) => {
+      const aName = (a.nombre || '').toLowerCase();
+      const bName = (b.nombre || '').toLowerCase();
+      const aStarts = aName.startsWith(normQ);
+      const bStarts = bName.startsWith(normQ);
+      if (aStarts && !bStarts) return -1;
+      if (!aStarts && bStarts) return 1;
+
+      const aWord = aName.split(/\s+/).some(w => w.startsWith(normQ));
+      const bWord = bName.split(/\s+/).some(w => w.startsWith(normQ));
+      if (aWord && !bWord) return -1;
+      if (!aWord && bWord) return 1;
+
+      return aName.localeCompare(bName);
+    });
+  }
 
   return {
     total,

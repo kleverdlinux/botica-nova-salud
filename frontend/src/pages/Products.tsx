@@ -114,7 +114,7 @@ const Products = () => {
       }
     }
 
-    // Filter by search term (Multi-token, insensible a mayúsculas y acentos)
+    // Filter by search term (Prefijo inteligente y relevancia)
     if (searchTerm && searchTerm.trim()) {
       const norm = searchTerm
         .toLowerCase()
@@ -122,10 +122,27 @@ const Products = () => {
         .replace(/[\u0300-\u036f]/g, '')
         .trim();
       const tokens = norm.split(/\s+/).filter(Boolean);
+      const isShort = norm.length <= 2;
 
       result = result.filter((product) => {
+        const prodName = product.name
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+        const prodMat = (product.materials || '')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+
+        if (isShort) {
+          // Búsqueda de 1 o 2 letras (ej: "A"): SOLO productos cuyo nombre o principio inicie con dicha letra
+          const nameWords = prodName.split(/\s+/);
+          const matWords = prodMat.split(/\s+/);
+          return nameWords.some((w) => w.startsWith(norm)) || matWords.some((w) => w.startsWith(norm));
+        }
+
         const fullText = (
-          `${product.name} ${product.description || ''} ${product.longDescription || ''} ${product.materials || ''} ${product.collection || ''}`
+          `${product.name} ${product.materials || ''} ${product.description || ''} ${product.collection || ''}`
         )
           .toLowerCase()
           .normalize('NFD')
@@ -151,7 +168,28 @@ const Products = () => {
         break;
       case "featured":
       default:
-        result = result.filter((p) => p.featured).concat(result.filter((p) => !p.featured));
+        if (searchTerm && searchTerm.trim()) {
+          // Si hay búsqueda activa, ordenar por relevancia estricta (los que inician con el término van primero)
+          const norm = searchTerm.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+          result.sort((a, b) => {
+            const nameA = a.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const nameB = b.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+            const aStarts = nameA.startsWith(norm);
+            const bStarts = nameB.startsWith(norm);
+            if (aStarts && !bStarts) return -1;
+            if (!aStarts && bStarts) return 1;
+
+            const aWord = nameA.split(/\s+/).some((w) => w.startsWith(norm));
+            const bWord = nameB.split(/\s+/).some((w) => w.startsWith(norm));
+            if (aWord && !bWord) return -1;
+            if (!aWord && bWord) return 1;
+
+            return a.name.localeCompare(b.name);
+          });
+        } else {
+          result = result.filter((p) => p.featured).concat(result.filter((p) => !p.featured));
+        }
         break;
     }
 
