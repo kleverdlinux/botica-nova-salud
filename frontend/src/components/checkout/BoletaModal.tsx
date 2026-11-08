@@ -361,7 +361,7 @@ Para seguimiento de tu despacho ingresa a tu panel de cliente en Botica Nova Sal
                       Dirección de Entrega:
                     </span>
                     <span className="text-zinc-800 truncate block">
-                      {order.customer.address} ({order.customer.district})
+                      {order.customer.address} ({order.customer.district && !order.customer.district.toLowerCase().includes('breña') && !order.customer.district.toLowerCase().includes('lima') ? order.customer.district : 'Juliaca Cercado'})
                     </span>
                   </div>
                   <div>

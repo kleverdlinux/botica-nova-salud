@@ -666,18 +666,200 @@ export async function obtenerPedidosCliente(dni) {
     };
   });
 
-  // Fusionar por id o serieNumero dando prioridad a la información completa de la ficha
+  // Fusionar transacciones y fichas médicas asegurando que los productos (items) y el estado (status) siempre existan
   const mapa = new Map();
-  for (const p of pedidosFicha) {
-    if (p && (p.id || p.serieNumero)) {
-      mapa.set(p.id || p.serieNumero, p);
-    }
-  }
   for (const p of pedidosVentas) {
-    if (p && !mapa.has(p.id) && !mapa.has(p.serieNumero)) {
+    if (p && (p.id || p.serieNumero)) {
       mapa.set(p.id, p);
+      if (p.serieNumero) mapa.set(p.serieNumero, p);
     }
   }
 
-  return Array.from(mapa.values());
+  for (const p of pedidosFicha) {
+    if (p && (p.id || p.serieNumero)) {
+      const key = p.id || p.serieNumero;
+      const baseVenta = mapa.get(key) || mapa.get(p.id) || mapa.get(p.serieNumero);
+      if (baseVenta) {
+        const merged = {
+          ...baseVenta,
+          ...p,
+          items: (Array.isArray(p.items) && p.items.length > 0) ? p.items : (baseVenta.items || []),
+          status: p.status || baseVenta.status || 'EN_PREPARACION'
+        };
+        mapa.set(baseVenta.id, merged);
+      } else {
+        mapa.set(key, {
+          ...p,
+          items: Array.isArray(p.items) ? p.items : [],
+          status: p.status || 'EN_PREPARACION'
+        });
+      }
+    }
+  }
+
+  const unicos = new Map();
+  for (const p of mapa.values()) {
+    if (p?.id && !unicos.has(p.id)) {
+      unicos.set(p.id, p);
+    }
+  }
+
+  return Array.from(unicos.values());
+}
+
+/**
+ * Actualiza el estado de entrega de un pedido delivery (EN_PREPARACION, EN_CAMINO, ENTREGADO, CANCELADO)
+ * Se actualiza en PostgreSQL para que tanto el cliente como el cajero/admin lo vean sincronizado en vivo
+ */
+export async function actualizarEstadoPedidoDelivery({ orderId, nuevoEstado, dni, ventaId }) {
+  const estadoValido = ['CONFIRMADO', 'EN_PREPARACION', 'EN_CAMINO', 'ENTREGADO', 'CANCELADO'].includes(nuevoEstado)
+    ? nuevoEstado
+    : 'EN_PREPARACION';
+
+  let cleanDni = dni ? String(dni).trim() : null;
+
+  // Si no se proporcionó el DNI, intentar resolverlo desde la Venta o el ID de la orden
+  if (!cleanDni && ventaId) {
+    const venta = await prisma.venta.findUnique({ where: { id: Number(ventaId) } });
+    if (venta?.clienteDoc) cleanDni = String(venta.clienteDoc).trim();
+  }
+
+  if (!cleanDni && orderId) {
+    const match = String(orderId).match(/(\d+)$/);
+    if (match) {
+      const vId = parseInt(match[1], 10);
+      const venta = await prisma.venta.findUnique({ where: { id: vId } });
+      if (venta?.clienteDoc) cleanDni = String(venta.clienteDoc).trim();
+    }
+  }
+
+  // 1. Si tenemos el DNI, actualizar directamente la ficha del cliente en PostgreSQL
+  if (cleanDni) {
+    const cliente = await prisma.cliente.findUnique({ where: { dni: cleanDni } });
+    if (cliente) {
+      const fichaActual = (cliente.fichaMedica && typeof cliente.fichaMedica === 'object')
+        ? cliente.fichaMedica
+        : {};
+      const pedidosPrevios = Array.isArray(fichaActual.pedidos) ? fichaActual.pedidos : [];
+
+      let encontrado = false;
+      const pedidosActualizados = pedidosPrevios.map((p) => {
+        const matchesId = p.id === orderId || p.serieNumero === orderId;
+        const matchesVenta = ventaId && (p.id?.endsWith(String(ventaId)) || p.serieNumero?.endsWith(String(ventaId)));
+        if (matchesId || matchesVenta) {
+          encontrado = true;
+          return { ...p, status: estadoValido };
+        }
+        return p;
+      });
+
+      if (!encontrado && (orderId || ventaId)) {
+        // Si no estaba en el array de pedidos previos, agregarlo con el estado
+        pedidosActualizados.push({
+          id: orderId || `NS-2026-${String(ventaId).padStart(4, '0')}`,
+          serieNumero: `B001-${String(ventaId || 1).padStart(8, '0')}`,
+          status: estadoValido,
+          date: new Date().toLocaleDateString('es-PE', { timeZone: 'America/Lima' })
+        });
+      }
+
+      await prisma.cliente.update({
+        where: { dni: cleanDni },
+        data: {
+          fichaMedica: {
+            ...fichaActual,
+            pedidos: pedidosActualizados
+          }
+        }
+      });
+      return { ok: true, dni: cleanDni, status: estadoValido };
+    }
+  }
+
+  // 2. Si no se ubicó por DNI directo, buscar en todas las fichas de clientes registrados
+  const clientes = await prisma.cliente.findMany({
+    where: { NOT: { fichaMedica: null } }
+  });
+
+  for (const c of clientes) {
+    const ficha = (c.fichaMedica && typeof c.fichaMedica === 'object') ? c.fichaMedica : {};
+    const pedidos = Array.isArray(ficha.pedidos) ? ficha.pedidos : [];
+    const index = pedidos.findIndex((p) => p.id === orderId || p.serieNumero === orderId);
+    if (index >= 0) {
+      pedidos[index].status = estadoValido;
+      await prisma.cliente.update({
+        where: { id: c.id },
+        data: {
+          fichaMedica: { ...ficha, pedidos }
+        }
+      });
+      return { ok: true, dni: c.dni, status: estadoValido };
+    }
+  }
+
+  return { ok: true, status: estadoValido };
+}
+
+/**
+ * Obtener todos los pedidos web para el panel de Cajero / Admin con sus estados
+ */
+export async function listarPedidosDeliveryAdmin() {
+  const ventas = await prisma.venta.findMany({
+    where: {
+      OR: [
+        { clienteNom: { contains: 'Web Delivery' } },
+        { clienteNom: { contains: 'Tienda Web' } },
+        { clienteNom: { contains: '[Web' } }
+      ]
+    },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      detalles: {
+        include: {
+          producto: true
+        }
+      }
+    }
+  });
+
+  // Mapear estados guardados en las fichas médicas de clientes
+  const clientes = await prisma.cliente.findMany();
+  const mapaEstados = new Map();
+  for (const c of clientes) {
+    if (c.fichaMedica && Array.isArray(c.fichaMedica.pedidos)) {
+      for (const p of c.fichaMedica.pedidos) {
+        if (p.id) mapaEstados.set(p.id, p);
+        if (p.serieNumero) mapaEstados.set(p.serieNumero, p);
+      }
+    }
+  }
+
+  return ventas.map((v) => {
+    const orderId = `NS-2026-${String(v.id).padStart(4, '0')}`;
+    const serie = `B001-${String(v.id).padStart(8, '0')}`;
+    const orderGuardada = mapaEstados.get(orderId) || mapaEstados.get(serie);
+
+    return {
+      ventaId: v.id,
+      orderId,
+      serieNumero: serie,
+      clienteNom: v.clienteNom?.replace(/\s*\[Web Delivery.*?\]/g, '').replace(/\[.*?\]/g, '').trim() || 'Cliente General',
+      clienteDoc: v.clienteDoc || '',
+      direccion: orderGuardada?.customer?.address || 'Juliaca',
+      distrito: orderGuardada?.customer?.district || 'Juliaca Cercado',
+      telefono: orderGuardada?.customer?.phone || '',
+      metodoPago: v.metodoPago,
+      total: Number(v.total),
+      fecha: v.createdAt,
+      status: orderGuardada?.status || 'EN_PREPARACION',
+      items: (v.detalles || []).map((d) => ({
+        id: d.productoId,
+        nombre: d.producto?.nombre || 'Medicamento',
+        presentacion: d.producto?.presentacion || 'Unidad',
+        cantidad: d.cantidad,
+        precio: Number(d.precioUnitario),
+        subtotal: Number(d.subtotal)
+      }))
+    };
+  });
 }

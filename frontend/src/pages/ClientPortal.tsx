@@ -80,6 +80,13 @@ const DISTRITOS_JULIACA = [
   'Puno Ciudad (Ruta Interurbana 45 min)',
 ];
 
+const getDisplayDistrict = (d?: string): string => {
+  if (!d || d.toLowerCase().includes('breña') || d.toLowerCase().includes('lima') || d.toLowerCase().includes('miraflores') || d.toLowerCase().includes('san isidro')) {
+    return 'Juliaca Cercado';
+  }
+  return d;
+};
+
 interface FichaSaludPaciente {
   alergias: string[];
   condiciones: string[];
@@ -514,7 +521,7 @@ export default function ClientPortal() {
       shortTitle: 'Mis Datos',
       icon: User,
       badgeText: 'SUNAT',
-      subtitle: activeClient?.district || 'Juliaca Cercado',
+      subtitle: getDisplayDistrict(activeClient?.district),
       description: 'Dirección de despacho a domicilio y datos de emisión',
       accentColor: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 border-amber-200 dark:border-amber-800',
     },
@@ -584,7 +591,9 @@ export default function ClientPortal() {
         </div>
       ) : (
         pedidosFiltrados.map((order) => {
-          const totalItemsCount = order.items.reduce((acc, it) => acc + (it.quantity || 1), 0);
+          const totalItemsCount = Array.isArray(order?.items)
+            ? order.items.reduce((acc, it) => acc + (it.quantity || 1), 0)
+            : 0;
           const esFactura = order.tipoComprobante === 'FACTURA' || order.serieNumero?.startsWith('F');
 
           return (
@@ -612,9 +621,33 @@ export default function ClientPortal() {
                     <span className="text-[9.5px] px-1.5 py-0.2 rounded font-mono font-bold bg-teal-50 dark:bg-teal-950/60 text-[#0d9488] dark:text-teal-400 border border-teal-200 dark:border-teal-800">
                       {order.serieNumero}
                     </span>
-                    <span className="inline-flex items-center gap-1 text-[9.5px] px-1.5 py-0.2 rounded font-extrabold uppercase bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span>{order.status === 'ENTREGADO' ? 'Entregado' : 'En Preparación'}</span>
+                    <span className={`inline-flex items-center gap-1 text-[9.5px] px-1.5 py-0.2 rounded font-extrabold uppercase border ${
+                      order.status === 'ENTREGADO'
+                        ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'
+                        : order.status === 'EN_CAMINO'
+                        ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800'
+                        : order.status === 'CANCELADO'
+                        ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800'
+                        : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        order.status === 'ENTREGADO'
+                          ? 'bg-emerald-500'
+                          : order.status === 'EN_CAMINO'
+                          ? 'bg-blue-500 animate-pulse'
+                          : order.status === 'CANCELADO'
+                          ? 'bg-rose-500'
+                          : 'bg-amber-500 animate-pulse'
+                      }`} />
+                      <span>
+                        {order.status === 'ENTREGADO'
+                          ? 'Entregado'
+                          : order.status === 'EN_CAMINO'
+                          ? 'En Ruta'
+                          : order.status === 'CANCELADO'
+                          ? 'Cancelado'
+                          : 'En Preparación'}
+                      </span>
                     </span>
                     <span className="text-[9.5px] px-1.5 py-0.2 rounded font-bold text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800">
                       {order.paymentMethod === 'YAPE_PLIN' ? 'Yape' : order.paymentMethod === 'TARJETA' ? 'Tarjeta' : 'Contra Entrega'}
@@ -628,7 +661,7 @@ export default function ClientPortal() {
                     </span>
                     <span>•</span>
                     <span className="truncate max-w-[260px] sm:max-w-md text-neutral-700 dark:text-neutral-300 font-medium">
-                      {totalItemsCount} {totalItemsCount === 1 ? 'producto' : 'productos'}: {order.items.map((i) => `${i.quantity}× ${i.name}`).join(', ')}
+                      {totalItemsCount} {totalItemsCount === 1 ? 'producto' : 'productos'}: {(order.items || []).map((i) => `${i.quantity}× ${i.name}`).join(', ')}
                     </span>
                   </div>
                 </div>
@@ -1257,7 +1290,7 @@ export default function ClientPortal() {
                       {activeClient.name}
                     </h2>
                     <p className="text-[10.5px] text-neutral-400 dark:text-neutral-500 truncate">
-                      {activeClient.district || 'Juliaca Cercado'}
+                      {getDisplayDistrict(activeClient.district)}
                     </p>
                   </div>
                 </div>
@@ -1448,7 +1481,7 @@ export default function ClientPortal() {
                       Entrega Juliaca
                     </span>
                     <span className="text-xs sm:text-sm font-bold text-neutral-900 dark:text-white block truncate leading-tight mt-1">
-                      {activeClient.district || 'Juliaca Cercado'}
+                      {getDisplayDistrict(activeClient.district)}
                     </span>
                   </div>
                   <div className="mt-1">
@@ -1528,7 +1561,7 @@ export default function ClientPortal() {
               </div>
               <div className="bg-neutral-50 dark:bg-neutral-800/60 px-1.5 py-1 rounded-lg border border-neutral-200/60 dark:border-neutral-800 min-w-0">
                 <span className="text-neutral-400 block text-[7.5px] uppercase font-bold">Entrega</span>
-                <span className="font-bold text-neutral-900 dark:text-white truncate block">{activeClient.district || 'Juliaca Cercado'}</span>
+                <span className="font-bold text-neutral-900 dark:text-white truncate block">{getDisplayDistrict(activeClient.district)}</span>
               </div>
             </div>
           </div>
@@ -1628,7 +1661,7 @@ export default function ClientPortal() {
               </div>
               <div className="mt-0.5">
                 <span className="text-xs font-black text-neutral-900 dark:text-white leading-tight block truncate">
-                  {activeClient.district || 'Juliaca Cercado'}
+                  {getDisplayDistrict(activeClient.district)}
                 </span>
                 <span className="text-[9.5px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 block truncate mt-0.5">
                   Zona de Entrega
@@ -1836,7 +1869,7 @@ export default function ClientPortal() {
                     {
                       label: 'En Preparación',
                       detalle: 'Control FEFO y lote DIGEMID',
-                      activo: ['PREPARANDO', 'EN_CAMINO', 'ENTREGADO'].includes(selectedDetailOrder.status),
+                      activo: ['CONFIRMADO', 'PREPARANDO', 'EN_PREPARACION', 'EN_CAMINO', 'ENTREGADO'].includes(selectedDetailOrder.status) || !selectedDetailOrder.status,
                     },
                     {
                       label: 'En Ruta',
@@ -1875,10 +1908,10 @@ export default function ClientPortal() {
               {/* 2. Medicamentos Solicitados */}
               <div className="space-y-2">
                 <span className="text-[11px] font-black uppercase tracking-wider text-neutral-900 dark:text-white block">
-                  Medicamentos y Productos ({selectedDetailOrder.items.length})
+                  Medicamentos y Productos ({(selectedDetailOrder.items || []).length})
                 </span>
                 <div className="border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden divide-y divide-neutral-100 dark:divide-neutral-800">
-                  {selectedDetailOrder.items.map((it, idx) => (
+                  {(selectedDetailOrder.items || []).map((it, idx) => (
                     <div key={idx} className="p-3 bg-white dark:bg-neutral-900 flex items-center justify-between gap-3 text-xs">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-10 h-10 rounded-lg bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-1 flex items-center justify-center shrink-0">

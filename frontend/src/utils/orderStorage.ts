@@ -285,6 +285,11 @@ export function getActiveClient(): ClientProfile | null {
       return null;
     }
 
+    // Normalizar distrito de Juliaca si viene de la configuración anterior en Lima
+    if (!client.district || client.district.toLowerCase().includes('breña') || client.district.toLowerCase().includes('lima')) {
+      client.district = 'Juliaca Cercado';
+    }
+
     return client;
   } catch {
     return null;

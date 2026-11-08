@@ -25,3 +25,18 @@ export async function obtenerVentaPorIdApi(id) {
   const { data } = await clienteAxios.get(`/ventas/${id}`);
   return data;
 }
+
+export async function actualizarEstadoPedidoDeliveryApi({ orderId, nuevoEstado, dni, ventaId }) {
+  const { data } = await clienteAxios.put('/catalogo/pedido/estado', {
+    orderId,
+    nuevoEstado,
+    dni,
+    ventaId
+  });
+  return data;
+}
+
+export async function listarPedidosDeliveryApi() {
+  const { data } = await clienteAxios.get('/catalogo/pedidos-delivery');
+  return data;
+}

@@ -48,3 +48,21 @@ export const obtenerPedidosCliente = asyncHandler(async (req, res) => {
     pedidos
   });
 });
+
+export const actualizarEstadoPedido = asyncHandler(async (req, res) => {
+  const { orderId, nuevoEstado, dni, ventaId } = req.body;
+  const result = await catalogoService.actualizarEstadoPedidoDelivery({ orderId, nuevoEstado, dni, ventaId });
+  return res.status(200).json({
+    ok: true,
+    mensaje: `Estado del pedido actualizado a ${nuevoEstado}.`,
+    result
+  });
+});
+
+export const listarPedidosDelivery = asyncHandler(async (req, res) => {
+  const pedidos = await catalogoService.listarPedidosDeliveryAdmin();
+  return res.status(200).json({
+    ok: true,
+    pedidos
+  });
+});
