@@ -52,7 +52,8 @@ export async function consultarDocumentoIdentidad(documento) {
       orderBy: { createdAt: 'desc' }
     });
 
-    if (ventaPrevia && ventaPrevia.clienteNom && ventaPrevia.clienteNom !== 'Cliente General') {
+    const nombresGenericos = ['cliente general', 'consumidor final', 'publico general', 'público general', 'venta rapida', 'venta rápida', 'sin nombre'];
+    if (ventaPrevia && ventaPrevia.clienteNom && !nombresGenericos.includes(ventaPrevia.clienteNom.trim().toLowerCase())) {
       return {
         tipo: esDni ? 'DNI' : 'RUC',
         numero: docLimpio,

@@ -249,12 +249,21 @@ export async function listarVentas({ rol, usuarioId, page = 1, limit = 20, fecha
     const q = busqueda.trim();
     const cleanNum = q.replace(/^T-0*/i, '').replace(/\D/g, '');
     const numId = cleanNum ? parseInt(cleanNum, 10) : null;
+    const isShort = q.length <= 2;
 
-    where.OR = [
-      { clienteNom: { contains: q, mode: 'insensitive' } },
-      { clienteDoc: { contains: q, mode: 'insensitive' } },
-      ...(numId && !isNaN(numId) ? [{ id: numId }] : [])
-    ];
+    if (isShort && !numId) {
+      where.OR = [
+        { clienteNom: { startsWith: q, mode: 'insensitive' } },
+        { clienteNom: { contains: ` ${q}`, mode: 'insensitive' } },
+        { clienteDoc: { startsWith: q, mode: 'insensitive' } }
+      ];
+    } else {
+      where.OR = [
+        { clienteNom: { contains: q, mode: 'insensitive' } },
+        { clienteDoc: { contains: q, mode: 'insensitive' } },
+        ...(numId && !isNaN(numId) ? [{ id: numId }] : [])
+      ];
+    }
   }
 
   const [total, ventas] = await Promise.all([

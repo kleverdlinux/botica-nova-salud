@@ -844,7 +844,11 @@ export default function Pos() {
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, '');
                         setClienteDoc(val);
-                        if (val !== ultimoDocConsultadoRef.current) {
+                        if (!val) {
+                          ultimoDocConsultadoRef.current = '';
+                          setClienteNom('');
+                          setDocVerificadoInfo(null);
+                        } else if (val !== ultimoDocConsultadoRef.current) {
                           setDocVerificadoInfo(null);
                         }
                         // Autoconsultar al completar 8 dígitos (DNI) o 11 dígitos (RUC)

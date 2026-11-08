@@ -213,7 +213,7 @@ export default function LayoutPrivado() {
   const enInventario = location.pathname.startsWith('/app/inventario');
 
   return (
-    <div className="fixed inset-0 h-full w-full overflow-hidden overscroll-none bg-[#fcfcfc] dark:bg-black text-neutral-900 dark:text-neutral-100 font-sans antialiased flex transition-colors duration-200">
+    <div className="fixed inset-0 h-full w-full overflow-hidden overscroll-y-auto bg-[#fcfcfc] dark:bg-black text-neutral-900 dark:text-neutral-100 font-sans antialiased flex transition-colors duration-200">
       {/* Sidebar para Escritorio y Móvil (100% Estático y Anclado) */}
       <aside
         className={`fixed md:relative top-0 left-0 z-40 h-full bg-white dark:bg-black text-neutral-700 dark:text-neutral-300 border-r border-neutral-200 dark:border-neutral-800 flex flex-col shadow-xs transition-all duration-300 ease-in-out shrink-0 ${
@@ -766,7 +766,7 @@ export default function LayoutPrivado() {
         </header>
 
         {/* Área de Trabajo con Scroll Independiente y Ancho Flexible */}
-        <main className="flex-1 overflow-y-auto overscroll-contain p-3.5 sm:p-5 lg:px-6 lg:py-5 scroll-smooth">
+        <main className="flex-1 overflow-y-auto overscroll-y-auto p-3.5 sm:p-5 lg:px-6 lg:py-5 scroll-smooth">
           <Outlet />
         </main>
       </div>

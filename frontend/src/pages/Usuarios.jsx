@@ -143,6 +143,13 @@ export default function Usuarios() {
     if (filtroEstado === 'INACTIVOS' && u.activo) return false;
     const q = busqueda.toLowerCase().trim();
     if (!q) return true;
+    if (q.length <= 2) {
+      const matchPrefix = (str) => {
+        if (!str) return false;
+        return str.toLowerCase().split(/\s+/).some((w) => w.startsWith(q));
+      };
+      return matchPrefix(u.nombre) || u.email.toLowerCase().startsWith(q) || u.rol.toLowerCase().startsWith(q);
+    }
     return (
       u.nombre.toLowerCase().includes(q) ||
       u.email.toLowerCase().includes(q) ||

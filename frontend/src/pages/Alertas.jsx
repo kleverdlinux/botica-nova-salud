@@ -62,10 +62,22 @@ export default function Alertas() {
   const conteos = alertas?.conteos || { bajoStock: 0, porVencer: 0, vencidos: 0 };
   const listaBruta = alertas ? alertas[tabActiva] || [] : [];
 
-  // Filtrado local por buscador
+  // Filtrado local por buscador inteligente
   const listaFiltrada = listaBruta.filter((p) => {
     if (!busqueda.trim()) return true;
     const q = busqueda.toLowerCase().trim();
+    if (q.length <= 2) {
+      const matchPrefix = (str) => {
+        if (!str) return false;
+        return str.toLowerCase().split(/\s+/).some((w) => w.startsWith(q));
+      };
+      return (
+        matchPrefix(p.nombre) ||
+        matchPrefix(p.principioActivo) ||
+        (p.codigoBarras && p.codigoBarras.startsWith(q)) ||
+        (p.lote && p.lote.toLowerCase().startsWith(q))
+      );
+    }
     return (
       p.nombre?.toLowerCase().includes(q) ||
       p.principioActivo?.toLowerCase().includes(q) ||
