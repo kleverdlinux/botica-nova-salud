@@ -42,6 +42,7 @@ import {
   ShoppingCart,
   Store,
   ArrowLeft,
+  RefreshCw,
 } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa6';
 import { CartDrawer } from '@/components/CartDrawer';
@@ -314,6 +315,24 @@ export default function ClientPortal() {
       useCart.getState().clearCart();
       useWishlist.getState().clearWishlist();
       notificarExito('Sesión Finalizada', 'Hasta pronto, esperamos haber cuidado de tu salud.');
+    }
+  };
+
+  const [isRefrescando, setIsRefrescando] = useState(false);
+
+  const handleRefrescarPortal = async () => {
+    if (!activeClient) return;
+    setIsRefrescando(true);
+    try {
+      const serverOrders = await fetchCustomerOrdersFromServer(activeClient);
+      if (Array.isArray(serverOrders)) {
+        setOrders(serverOrders);
+      }
+      notificarExito('Portal Actualizado', 'Tus pedidos e información se sincronizaron con éxito.');
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsRefrescando(false);
     }
   };
 
@@ -1482,6 +1501,18 @@ export default function ClientPortal() {
             >
               <FaWhatsapp className="w-4 h-4 sm:w-5 sm:h-5" />
             </a>
+
+            {/* Botón Actualizar Datos del Portal */}
+            <button
+              type="button"
+              onClick={handleRefrescarPortal}
+              disabled={isRefrescando}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-xs font-bold text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 shadow-2xs transition cursor-pointer"
+              title="Actualizar pedidos y datos del portal sin recargar la página"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-teal-600 ${isRefrescando ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Actualizar</span>
+            </button>
 
             {/* Botón Cerrar Sesión */}
             <button

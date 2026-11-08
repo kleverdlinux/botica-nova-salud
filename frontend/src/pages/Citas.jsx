@@ -41,6 +41,9 @@ export default function Citas() {
 
   useEffect(() => {
     cargarCitas();
+    const handleReload = () => cargarCitas();
+    window.addEventListener('app-reload-data', handleReload);
+    return () => window.removeEventListener('app-reload-data', handleReload);
   }, [cargarCitas]);
 
   const handleCambiarEstado = async (id, nuevoEstado) => {

@@ -57,6 +57,9 @@ export default function Alertas() {
 
   useEffect(() => {
     cargarAlertas();
+    const handleReload = () => cargarAlertas();
+    window.addEventListener('app-reload-data', handleReload);
+    return () => window.removeEventListener('app-reload-data', handleReload);
   }, []);
 
   const conteos = alertas?.conteos || { bajoStock: 0, porVencer: 0, vencidos: 0 };

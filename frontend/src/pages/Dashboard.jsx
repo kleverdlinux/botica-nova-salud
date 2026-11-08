@@ -191,10 +191,12 @@ function DashboardAdmin() {
       cargarMetricas(true);
     };
     window.addEventListener('new-order-placed', handleNewOrder);
+    window.addEventListener('app-reload-data', handleNewOrder);
 
     return () => {
       clearInterval(intervaloAutoUpdate);
       window.removeEventListener('new-order-placed', handleNewOrder);
+      window.removeEventListener('app-reload-data', handleNewOrder);
     };
   }, []);
 

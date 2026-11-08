@@ -77,7 +77,12 @@ export default function DashboardCajero() {
     const interval = setInterval(() => {
       cargarDatos(true);
     }, 20000);
-    return () => clearInterval(interval);
+    const handleReload = () => cargarDatos(false);
+    window.addEventListener('app-reload-data', handleReload);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('app-reload-data', handleReload);
+    };
   }, []);
 
   // Renderizar y actualizar gráfico de comprobantes respetando el tema activo

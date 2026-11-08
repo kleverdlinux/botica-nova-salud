@@ -22,7 +22,10 @@ import {
   Phone,
   MapPin,
   ShoppingBag,
-  X
+  X,
+  Copy,
+  Check,
+  MessageSquare
 } from 'lucide-react';
 import { listarUsuariosApi, crearUsuarioApi, cambiarEstadoUsuarioApi } from '../api/usuariosApi.js';
 import { listarClientesWebAdminApi, reasignarPasswordClienteApi } from '../api/clientesAdminApi.js';
@@ -50,6 +53,8 @@ export default function Usuarios() {
   const [clienteParaClave, setClienteParaClave] = useState(null);
   const [nuevaClaveCliente, setNuevaClaveCliente] = useState('');
   const [enviandoClave, setEnviandoClave] = useState(false);
+  const [resultadoClave, setResultadoClave] = useState(null);
+  const [copiado, setCopiado] = useState(false);
 
   // Estados del modal de creación de usuario personal
   const [modalAbierto, setModalAbierto] = useState(false);
@@ -95,6 +100,13 @@ export default function Usuarios() {
   useEffect(() => {
     cargarUsuarios();
     cargarClientes();
+
+    const handleReload = () => {
+      cargarUsuarios();
+      cargarClientes();
+    };
+    window.addEventListener('app-reload-data', handleReload);
+    return () => window.removeEventListener('app-reload-data', handleReload);
   }, []);
 
   const generarClaveAleatoria = () => {
@@ -116,13 +128,25 @@ export default function Usuarios() {
       return;
     }
 
+    const claveFijada = nuevaClaveCliente.trim();
+    const clienteObj = clienteParaClave;
     setEnviandoClave(true);
     try {
       const res = await reasignarPasswordClienteApi({
-        dni: clienteParaClave.dni,
-        nuevaPassword: nuevaClaveCliente.trim()
+        dni: clienteObj.dni,
+        nuevaPassword: claveFijada
       });
-      toast.success(res.mensaje || 'Contraseña reasignada y enviada al cliente.');
+
+      setResultadoClave({
+        nombre: clienteObj.nombre,
+        dni: clienteObj.dni,
+        telefono: clienteObj.telefono || res.clienteTelefono || '',
+        email: clienteObj.email,
+        nuevaPassword: claveFijada,
+        correoEnviado: res.correoEnviado,
+        detalleEnvio: res.detalleEnvio
+      });
+      setCopiado(false);
       setClienteParaClave(null);
       setNuevaClaveCliente('');
       cargarClientes();
@@ -261,10 +285,11 @@ export default function Usuarios() {
           <button
             onClick={tabActiva === 'PERSONAL' ? cargarUsuarios : cargarClientes}
             disabled={tabActiva === 'PERSONAL' ? cargando : cargandoClientes}
-            className="p-2.5 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-slate-700 dark:text-neutral-200 rounded-xl shadow-xs transition cursor-pointer"
-            title="Recargar datos"
+            className="px-3.5 py-2 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-slate-700 dark:text-neutral-200 rounded-xl shadow-xs transition cursor-pointer flex items-center space-x-2 text-xs font-bold"
+            title="Actualizar datos de esta sección"
           >
-            <RefreshCw className={`w-4 h-4 ${(tabActiva === 'PERSONAL' ? cargando : cargandoClientes) ? 'animate-spin text-[#0d9488] dark:text-teal-400' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-teal-600 dark:text-teal-400 ${(tabActiva === 'PERSONAL' ? cargando : cargandoClientes) ? 'animate-spin' : ''}`} />
+            <span>Actualizar</span>
           </button>
 
           {tabActiva === 'PERSONAL' && (
@@ -608,12 +633,16 @@ export default function Usuarios() {
                         >
                           <td className="py-3.5 px-4">
                             <div className="flex items-center space-x-3">
-                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs ${
+                              <div className={`w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center font-bold text-xs shrink-0 ${
                                 tieneSolicitud
                                   ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
                                   : 'bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-800'
                               }`}>
-                                {c.nombre ? c.nombre.charAt(0).toUpperCase() : 'C'}
+                                {c.avatar ? (
+                                  <img src={c.avatar} alt={c.nombre} className="w-full h-full object-cover" />
+                                ) : (
+                                  c.nombre ? c.nombre.charAt(0).toUpperCase() : 'C'
+                                )}
                               </div>
                               <div>
                                 <span className="font-extrabold text-slate-900 dark:text-white block text-xs">
@@ -941,16 +970,22 @@ export default function Usuarios() {
             </div>
 
             {/* Ficha Resumen del Cliente */}
-            <div className="bg-slate-50 dark:bg-neutral-950 p-3.5 rounded-xl border border-slate-200 dark:border-neutral-800 space-y-1.5 text-xs">
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500 dark:text-neutral-400 font-semibold">Cliente:</span>
-                <span className="font-bold text-slate-800 dark:text-white">{clienteParaClave.nombre}</span>
+            <div className="bg-slate-50 dark:bg-neutral-950 p-3.5 rounded-xl border border-slate-200 dark:border-neutral-800 space-y-2 text-xs">
+              <div className="flex items-center space-x-3 pb-2 border-b border-slate-200 dark:border-neutral-800">
+                <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center font-bold text-xs bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-800 shrink-0">
+                  {clienteParaClave.avatar ? (
+                    <img src={clienteParaClave.avatar} alt={clienteParaClave.nombre} className="w-full h-full object-cover" />
+                  ) : (
+                    clienteParaClave.nombre ? clienteParaClave.nombre.charAt(0).toUpperCase() : 'C'
+                  )}
+                </div>
+                <div>
+                  <span className="font-extrabold text-slate-900 dark:text-white text-xs block">{clienteParaClave.nombre}</span>
+                  <span className="font-mono text-[11px] text-slate-500 dark:text-neutral-400">DNI: {clienteParaClave.dni}</span>
+                </div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500 dark:text-neutral-400 font-semibold">DNI:</span>
-                <span className="font-mono text-slate-800 dark:text-white">{clienteParaClave.dni}</span>
-              </div>
-              <div className="flex justify-between items-center">
+
+              <div className="flex justify-between items-center pt-1">
                 <span className="text-slate-500 dark:text-neutral-400 font-semibold">Correo de Destino:</span>
                 <span className="font-semibold text-teal-700 dark:text-teal-400">{clienteParaClave.email}</span>
               </div>
@@ -1024,6 +1059,116 @@ export default function Usuarios() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: RESULTADO DE REASIGNACIÓN CON ACCESO A WHATSAPP Y COPIADO */}
+      {resultadoClave && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-neutral-800 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-neutral-800 pb-3">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center font-bold">
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900 dark:text-white leading-tight">
+                    Contraseña Reasignada
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
+                    Actualizada en la base de datos de Botica Nova Salud
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setResultadoClave(null)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-neutral-200 p-1 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="bg-slate-50 dark:bg-neutral-950 p-4 rounded-xl border border-slate-200 dark:border-neutral-800 space-y-3 text-xs">
+              <div className="flex justify-between items-center text-slate-700 dark:text-neutral-300">
+                <span className="font-semibold text-slate-500">Cliente:</span>
+                <span className="font-extrabold">{resultadoClave.nombre}</span>
+              </div>
+              <div className="flex justify-between items-center text-slate-700 dark:text-neutral-300">
+                <span className="font-semibold text-slate-500">DNI:</span>
+                <span className="font-mono font-bold">{resultadoClave.dni}</span>
+              </div>
+              <div className="flex justify-between items-center text-slate-700 dark:text-neutral-300">
+                <span className="font-semibold text-slate-500">Correo:</span>
+                <span className="font-mono text-teal-700 dark:text-teal-400">{resultadoClave.email}</span>
+              </div>
+
+              {/* Contraseña Nueva Generada con Copiado */}
+              <div className="pt-2 border-t border-slate-200 dark:border-neutral-800">
+                <span className="block text-[11px] font-bold text-slate-500 dark:text-neutral-400 uppercase mb-1">
+                  Nueva Contraseña Temporal:
+                </span>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 p-2.5 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl font-mono text-sm font-extrabold text-teal-700 dark:text-teal-400 text-center tracking-wider">
+                    {resultadoClave.nuevaPassword}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(resultadoClave.nuevaPassword);
+                      setCopiado(true);
+                      setTimeout(() => setCopiado(false), 2000);
+                    }}
+                    className="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 rounded-xl text-xs font-bold text-slate-700 dark:text-neutral-200 transition flex items-center gap-1.5 cursor-pointer"
+                  >
+                    {copiado ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                    <span>{copiado ? 'Copiado' : 'Copiar'}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Aviso sobre estado del Correo */}
+            <div className={`p-3 rounded-xl border text-xs leading-relaxed ${
+              resultadoClave.correoEnviado
+                ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300'
+                : 'bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300'
+            }`}>
+              {resultadoClave.correoEnviado ? (
+                <span>El correo se envió correctamente a la bandeja Gmail del cliente.</span>
+              ) : (
+                <span>
+                  <strong>Aviso:</strong> La clave ya está guardada y activa. Para que los correos salgan automáticamente a Gmail desde Render, configure las variables <code>GMAIL_USER</code> y <code>GMAIL_PASS</code>. Mientras tanto, puede entregar la clave al cliente directamente por WhatsApp:
+                </span>
+              )}
+            </div>
+
+            {/* Acciones */}
+            <div className="flex items-center justify-end space-x-2 pt-2">
+              {resultadoClave.telefono && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const telLimpio = resultadoClave.telefono.replace(/\D/g, '');
+                    const texto = encodeURIComponent(
+                      `Hola ${resultadoClave.nombre.split(' ')[0]}, el Administrador de Botica Nova Salud ha procesado tu solicitud de restablecimiento.\n\nTu nueva contraseña es: *${resultadoClave.nuevaPassword}*\n\nPuedes ingresar a tu cuenta con tu DNI o correo en:\nhttps://botica-nova-salud-khs4.onrender.com`
+                    );
+                    window.open(`https://api.whatsapp.com/send?phone=51${telLimpio}&text=${texto}`, '_blank');
+                  }}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 flex items-center space-x-1.5 transition cursor-pointer"
+                >
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  <span>Enviar por WhatsApp</span>
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => setResultadoClave(null)}
+                className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-xs"
+              >
+                Cerrar
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronDown, Check, Search, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Check, Search, X, RefreshCw } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { ProductCard } from "@/components/ProductCard";
 import { SkeletonProductGrid } from "@/components/ui/skeleton";
@@ -479,6 +479,19 @@ const Products = () => {
                     ))}
                   </SelectContent>
                 </Select>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCargando(true);
+                    setTimeout(() => setCargando(false), 300);
+                  }}
+                  className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 text-[11px] font-bold transition cursor-pointer"
+                  title="Actualizar catálogo de productos"
+                >
+                  <RefreshCw className={`w-3 h-3 text-[#0d9488] ${cargando ? 'animate-spin' : ''}`} />
+                  <span className="hidden sm:inline">Actualizar</span>
+                </button>
               </div>
             </div>
           </div>

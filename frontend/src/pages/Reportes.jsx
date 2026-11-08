@@ -68,6 +68,9 @@ export default function Reportes() {
 
   useEffect(() => {
     cargarDatos();
+    const handleReload = () => cargarDatos();
+    window.addEventListener('app-reload-data', handleReload);
+    return () => window.removeEventListener('app-reload-data', handleReload);
   }, []);
 
   // Cálculos consolidados para el reporte financiero

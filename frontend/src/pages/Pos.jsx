@@ -30,7 +30,8 @@ import {
   Usb,
   QrCode,
   Copy,
-  X
+  X,
+  RefreshCw
 } from 'lucide-react';
 import { buscarProductosPOSApi, consultarDocumentoApi } from '../api/productosApi.js';
 import { registrarVentaApi } from '../api/ventasApi.js';
@@ -156,6 +157,24 @@ export default function Pos() {
     return () => {
       if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
     };
+  }, [termino]);
+
+  // Listener para evento global de actualización
+  useEffect(() => {
+    const handleReload = async () => {
+      if (termino.trim()) {
+        try {
+          setBuscando(true);
+          const prods = await buscarProductosPOSApi(termino.trim());
+          setResultados(prods);
+        } catch (e) {
+        } finally {
+          setBuscando(false);
+        }
+      }
+    };
+    window.addEventListener('app-reload-data', handleReload);
+    return () => window.removeEventListener('app-reload-data', handleReload);
   }, [termino]);
 
   // Manejo de Pistola de Código de Barras (Escáner físico USB/Bluetooth presiona Enter al escanear)
@@ -543,6 +562,29 @@ export default function Pos() {
                     dispositivoUsbConectado ? 'bg-emerald-500 animate-pulse' : 'bg-neutral-400'
                   }`}
                 />
+              </button>
+
+              {/* Botón Actualizar POS */}
+              <button
+                type="button"
+                onClick={async () => {
+                  if (termino.trim()) {
+                    setBuscando(true);
+                    try {
+                      const prods = await buscarProductosPOSApi(termino.trim());
+                      setResultados(prods);
+                    } catch (e) {
+                    } finally {
+                      setBuscando(false);
+                    }
+                  }
+                  toast.success('Terminal POS sincronizado');
+                }}
+                className="flex items-center space-x-1.5 px-3 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs font-bold transition cursor-pointer shrink-0"
+                title="Actualizar catálogo y sincronizar mostrador"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 text-teal-600 dark:text-teal-400 ${buscando ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Actualizar</span>
               </button>
             </div>
           </div>

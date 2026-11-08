@@ -139,7 +139,11 @@ export default function Ventas() {
       cargarPedidosDelivery();
     };
     window.addEventListener('new-order-placed', handleNewOrder);
-    return () => window.removeEventListener('new-order-placed', handleNewOrder);
+    window.addEventListener('app-reload-data', handleNewOrder);
+    return () => {
+      window.removeEventListener('new-order-placed', handleNewOrder);
+      window.removeEventListener('app-reload-data', handleNewOrder);
+    };
   }, [cargarVentas, cargarPedidosDelivery]);
 
   const handleCambiarEstado = async (orderId, nuevoEstado, dni, ventaId) => {

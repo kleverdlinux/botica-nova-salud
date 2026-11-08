@@ -311,6 +311,14 @@ export default function Inventario() {
     }
   };
 
+  useEffect(() => {
+    const handleReload = () => {
+      recargarInventarioCompleto();
+    };
+    window.addEventListener('app-reload-data', handleReload);
+    return () => window.removeEventListener('app-reload-data', handleReload);
+  }, [paginaActual, tabActiva]);
+
   const handleBuscarSubmit = (e) => {
     e.preventDefault();
     cargarProductos(1);
@@ -564,6 +572,18 @@ export default function Inventario() {
 
         {/* Botones de Exportación y Nuevo Medicamento con Iconos Coloreados */}
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={recargarInventarioCompleto}
+            disabled={cargando}
+            className="px-3.5 py-2 bg-white dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-slate-700 dark:text-neutral-200 rounded-xl shadow-xs transition cursor-pointer flex items-center space-x-2 text-xs font-bold"
+            title="Actualizar datos de inventario"
+          >
+            <div className="w-5 h-5 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400 flex items-center justify-center shrink-0">
+              <RefreshCw className={`w-3.5 h-3.5 text-teal-600 dark:text-teal-400 ${cargando ? 'animate-spin' : ''}`} />
+            </div>
+            <span>Actualizar</span>
+          </button>
+
           <button
             onClick={handleExportInventarioExcel}
             disabled={exportando}

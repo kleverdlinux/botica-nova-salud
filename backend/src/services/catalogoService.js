@@ -1054,6 +1054,7 @@ export async function listarClientesAdmin() {
   const lista = await Promise.all(clientes.map(async (c) => {
     const totalCompras = await prisma.venta.count({ where: { clienteDoc: c.dni } });
     const solicitud = c.fichaMedica && typeof c.fichaMedica === 'object' ? c.fichaMedica.solicitudPassword : null;
+    const avatar = (c.fichaMedica && typeof c.fichaMedica === 'object' && c.fichaMedica.avatar) || null;
     return {
       id: c.id,
       dni: c.dni,
@@ -1063,6 +1064,7 @@ export async function listarClientesAdmin() {
       direccion: c.direccion || 'Juliaca',
       distrito: c.distrito || 'Juliaca Cercado',
       activo: c.activo,
+      avatar,
       totalCompras,
       solicitudPendiente: solicitud && solicitud.estado === 'PENDIENTE' ? solicitud : null,
       historialSolicitud: solicitud || null,
@@ -1112,29 +1114,26 @@ export async function reasignarPasswordClienteAdmin({ dni, nuevaPassword, adminU
     }
   });
 
-  let correoEnviado = false;
-  let detalleEnvio = null;
+  const resultadoEnvio = await enviarCorreoNuevaPassword({
+    clienteNombre: cliente.nombre,
+    clienteEmail: cliente.email,
+    nuevaPassword: rawPass
+  });
 
-  try {
-    const info = await enviarCorreoNuevaPassword({
-      clienteNombre: cliente.nombre,
-      clienteEmail: cliente.email,
-      nuevaPassword: rawPass
-    });
-    correoEnviado = true;
-    detalleEnvio = info?.messageId || 'OK';
-  } catch (err) {
-    console.error('Error al enviar correo SMTP a cliente:', err);
-    detalleEnvio = err.message;
-  }
+  const correoEnviado = !!resultadoEnvio?.enviado;
+  const detalleEnvio = resultadoEnvio?.motivo || resultadoEnvio?.messageId || null;
 
   return {
     success: true,
     correoEnviado,
     detalleEnvio,
+    nuevaPassword: rawPass,
+    clienteNombre: cliente.nombre,
+    clienteTelefono: cliente.telefono || '',
+    clienteEmail: cliente.email,
     mensaje: correoEnviado
       ? `Contraseña reasignada exitosamente y enviada al correo ${cliente.email}.`
-      : `Contraseña actualizada en el sistema. (Aviso correo: ${detalleEnvio})`
+      : `Contraseña actualizada en el sistema. (Aviso correo: ${detalleEnvio || 'Credenciales no configuradas'})`
   };
 }
 

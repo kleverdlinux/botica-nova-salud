@@ -59,6 +59,16 @@ export default function LayoutPrivado() {
   };
   const [inventarioSubmenuAbierto, setInventarioSubmenuAbierto] = useState(true);
   const [modalPerfilAbierto, setModalPerfilAbierto] = useState(false);
+  const [actualizandoGlobal, setActualizandoGlobal] = useState(false);
+
+  const handleActualizarGlobal = () => {
+    setActualizandoGlobal(true);
+    window.dispatchEvent(new CustomEvent('app-reload-data'));
+    setTimeout(() => {
+      setActualizandoGlobal(false);
+      notificarExito('Datos Actualizados', 'La vista se ha sincronizado correctamente.');
+    }, 600);
+  };
 
   // Alertas Sanitarias & Notificaciones en Tiempo Real
   const [datosAlertas, setDatosAlertas] = useState(null);
@@ -731,6 +741,17 @@ export default function LayoutPrivado() {
                 )}
               </div>
             )}
+
+            {/* Botón de Actualizar Pantalla / Datos */}
+            <button
+              onClick={handleActualizarGlobal}
+              disabled={actualizandoGlobal}
+              title="Actualizar datos de esta pantalla sin recargar el navegador"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition cursor-pointer shadow-2xs text-xs font-bold"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-teal-600 dark:text-teal-400 ${actualizandoGlobal ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Actualizar</span>
+            </button>
 
             {/* Botón Switch Modo Claro / Oscuro */}
             <button
