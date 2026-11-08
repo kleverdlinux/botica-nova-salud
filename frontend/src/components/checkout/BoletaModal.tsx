@@ -235,12 +235,12 @@ Para seguimiento de tu despacho ingresa a tu panel de cliente en Botica Nova Sal
   return (
     <>
       <div
-        className="fixed inset-0 z-[100] overflow-y-auto bg-black/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-2.5 sm:p-4 pt-16 sm:pt-6 pb-6 animate-in fade-in duration-200 print:p-0 print:bg-white"
+        className="fixed inset-0 z-[100] overflow-y-auto bg-black/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-2.5 sm:p-4 pt-16 sm:pt-6 pb-6 animate-in fade-in duration-200 print:p-0 print:bg-white print:static print:block print:inset-auto print:m-0 print:overflow-visible"
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}
       >
-      <div className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-zinc-200 flex flex-col my-auto text-[#18181b] animate-in zoom-in-95 duration-200 print:border-none print:shadow-none print:max-w-none print:rounded-none">
+      <div className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-zinc-200 flex flex-col my-auto text-[#18181b] animate-in zoom-in-95 duration-200 print:border-none print:shadow-none print:max-w-none print:rounded-none print:static print:block print:m-0 print:p-0 print:w-full">
         {/* ========================================================
             HEADER DEL MODAL (Fondo blanco, diseño unificado)
             ======================================================== */}
@@ -277,14 +277,14 @@ Para seguimiento de tu despacho ingresa a tu panel de cliente en Botica Nova Sal
         {/* ========================================================
             CUERPO HORIZONTAL EN 2 COLUMNAS (DOCUMENTO + BOTONES DERECHA)
             ======================================================== */}
-        <div className="grid grid-cols-1 md:grid-cols-12 flex-1">
+        <div className="grid grid-cols-1 md:grid-cols-12 flex-1 print:block print:m-0 print:p-0">
           {/* ====================================================================
               COLUMNA IZQUIERDA (7 u 8 cols): BOLETA / FACTURA FÍSICA AUTÉNTICA
               ==================================================================== */}
           <div
             id="seccion-boleta-imprimible"
             ref={printRef}
-            className="md:col-span-7 lg:col-span-8 p-3.5 sm:p-5 flex flex-col justify-between space-y-3 bg-white border-b md:border-b-0 md:border-r border-zinc-200 print:border-none print:p-6 print:m-0"
+            className="md:col-span-7 lg:col-span-8 p-3.5 sm:p-5 flex flex-col justify-between space-y-3 bg-white border-b md:border-b-0 md:border-r border-zinc-200 print:border-none print:p-0 print:m-0 print:w-full"
           >
             <div className="space-y-3">
               {/* Encabezado de la Boleta / Factura */}
