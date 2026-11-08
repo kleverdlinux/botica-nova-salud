@@ -292,8 +292,13 @@ export function saveActiveClient(client: ClientProfile): void {
   try {
     const existing = getActiveClient();
     const finalClient: ClientProfile = {
+      ...existing,
       ...client,
-      password: client.password || (existing?.dni === client.dni ? existing.password : undefined)
+      avatar: client.avatar !== undefined ? client.avatar : (existing?.avatar || null),
+      fichaSalud: client.fichaSalud !== undefined ? client.fichaSalud : (existing?.fichaSalud || undefined),
+      botiquin: client.botiquin !== undefined ? client.botiquin : (existing?.botiquin || undefined),
+      puntos: client.puntos !== undefined ? client.puntos : (existing?.puntos || undefined),
+      password: client.password || (existing?.dni === client.dni ? existing?.password : undefined)
     };
 
     localStorage.setItem(CLIENT_USER_KEY, JSON.stringify(finalClient));
@@ -497,7 +502,7 @@ export async function registerClient(data: {
         const clientToSave: ClientProfile = {
           ...json.client,
           isNewAccount: isNew,
-          password: (!isNew && existingActive?.dni === json.client.dni && existingActive.password)
+          password: (!isNew && existingActive && existingActive.dni === json.client.dni && existingActive.password)
             ? existingActive.password
             : (json.client.password || undefined)
         };

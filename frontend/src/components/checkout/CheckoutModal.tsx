@@ -250,33 +250,37 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         activeClient && (activeClient.dni === clientDni || activeClient.id === clientDni)
       );
 
-      // Registrar o sincronizar en PostgreSQL
-      const regRes = await registerClient({
-        dni: clientDni,
-        name: clientName,
-        email: clientEmail,
-        phone: cleanPhone,
-        address: formData.address,
-        district: formData.district,
-        password: clientDni, // Sólo se usa si la cuenta es 100% nueva
-        esAutoRegistro: true,
-      });
+      let isBrandNewAccount = false;
 
-      // Se considera cuenta nueva solo si el usuario no estaba autenticado y el servidor confirma que es nueva
-      const isBrandNewAccount = !alreadyLoggedIn && Boolean(regRes.isNewAccount);
+      if (alreadyLoggedIn && activeClient) {
+        // El cliente ya tiene cuenta y está autenticado: preservar sesión completa intacta sin registrar de nuevo
+        const updatedActive: ClientProfile = {
+          ...activeClient,
+          phone: cleanPhone || activeClient.phone,
+          address: formData.address || activeClient.address,
+          district: formData.district || activeClient.district,
+        };
+        saveActiveClient(updatedActive);
+        isBrandNewAccount = false;
+      } else {
+        // Solo para compras como invitado sin sesión activa previa
+        const regRes = await registerClient({
+          dni: clientDni,
+          name: clientName,
+          email: clientEmail,
+          phone: cleanPhone,
+          address: formData.address,
+          district: formData.district,
+          password: clientDni, // Sólo se usa como clave inicial si la cuenta es 100% nueva
+          esAutoRegistro: true,
+        });
 
-      // Asegurar sesión activa local SIN sobreescribir la contraseña original con el DNI
-      const clientToActive: ClientProfile = {
-        id: clientDni,
-        dni: clientDni,
-        name: clientName,
-        email: clientEmail,
-        phone: cleanPhone,
-        address: formData.address,
-        district: formData.district,
-        ...(alreadyLoggedIn && activeClient?.password ? { password: activeClient.password } : {}),
-      };
-      saveActiveClient(clientToActive);
+        isBrandNewAccount = Boolean(regRes.isNewAccount);
+
+        if (regRes.client) {
+          saveActiveClient(regRes.client);
+        }
+      }
 
       // Guardar pedido persistente con la bandera isNewAccount
       const fullOrderData: CustomerOrder = {

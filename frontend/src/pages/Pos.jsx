@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import QRCode from 'qrcode';
 import {
   Search,
@@ -47,10 +48,27 @@ import toast, { notificarExito, notificarError } from '../utils/alertaSweet.js';
 import { posDisplay } from '../utils/posDisplayChannel.js';
 
 export default function Pos() {
+  const navigate = useNavigate();
   const [termino, setTermino] = useState('');
   const [resultados, setResultados] = useState([]);
   const [buscando, setBuscando] = useState(false);
   const [haBuscado, setHaBuscado] = useState(false);
+
+  // Referencia para evitar consultas duplicadas de DNI / RUC
+  const ultimoDocConsultadoRef = useRef('');
+
+  // Detección de dispositivo móvil / tablet
+  const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => {
+      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      const isSmall = window.innerWidth <= 1024;
+      setIsMobileOrTablet(isSmall || isTouch);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Modal de Dispositivo
   const [modalVincularAbierto, setModalVincularAbierto] = useState(false);
@@ -65,6 +83,7 @@ export default function Pos() {
   const [clienteDoc, setClienteDoc] = useState('');
   const [clienteNom, setClienteNom] = useState('');
   const [cobrando, setCobrando] = useState(false);
+  const handleCobrarRef = useRef(null);
 
   // Cobro en Efectivo (cálculo de vuelto)
   const [montoRecibido, setMontoRecibido] = useState('');
@@ -171,28 +190,18 @@ export default function Pos() {
       } else if (mensaje.tipo === 'PAGO_MOVIL_CONFIRMADO') {
         const { numeroOperacion, monto } = mensaje.payload;
         setMetodoPago('YAPE_PLIN');
-        setModalYapeAbierto(true);
         setNumeroOperacionYape(numeroOperacion);
-        toast.success(`Pago Yape recibido desde el celular: S/ ${monto} (Op: ${numeroOperacion})`);
+        toast.success(`Pago Yape recibido: S/ ${monto} (Op: ${numeroOperacion})`);
+        handleCobrarRef.current?.(null, 'YAPE_PLIN', numeroOperacion);
       } else if (mensaje.tipo === 'PAGO_TARJETA_APROBADO') {
         const { voucher, monto } = mensaje.payload;
         setMetodoPago('TARJETA');
-        setModalTarjetaAbierto(true);
         setNumeroVoucherTarjeta(voucher || 'VCH-APROBADO');
-        toast.success(`Cobro de tarjeta aprobado desde el terminal móvil: S/ ${monto}`);
+        toast.success(`Cobro con Tarjeta aprobado: S/ ${monto}`);
+        handleCobrarRef.current?.(null, 'TARJETA', voucher);
       } else if (mensaje.tipo === 'CAMBIAR_METODO_PAGO') {
         const metodo = mensaje.payload.metodoPago;
         setMetodoPago(metodo);
-        if (metodo === 'YAPE_PLIN') {
-          setModalYapeAbierto(true);
-          setModalTarjetaAbierto(false);
-        } else if (metodo === 'TARJETA') {
-          setModalTarjetaAbierto(true);
-          setModalYapeAbierto(false);
-        } else {
-          setModalYapeAbierto(false);
-          setModalTarjetaAbierto(false);
-        }
       } else if (mensaje.tipo === 'DISPOSITIVOS_ACTUALIZADOS') {
         setDispositivosConectados(mensaje.payload.totalConectados || 0);
       }
@@ -226,11 +235,15 @@ export default function Pos() {
     }
   }, [items, totalCalculadoUI, metodoPago, yapeEnviadoADispositivo, tarjetaEnviadaADispositivo, clienteNom, tipoComprobante]);
 
-  // Generar código QR dinámico de Yape / Plin accesible desde el celular por Wi-Fi
+  // Generar código QR dinámico de Yape / Plin accesible desde el celular por Wi-Fi o Producción
   useEffect(() => {
     if (totalCalculadoUI > 0) {
       const host = posDisplay.obtenerHostMovil();
-      const urlPagoMovil = `http://${host}:5173/pago-movil?monto=${totalCalculadoUI.toFixed(2)}&ticket=${encodeURIComponent(ticketIdActual.current)}&comercio=${encodeURIComponent('Botica Nova Salud')}`;
+      const esLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+      const baseOrigin = typeof window !== 'undefined' && !esLocal && !window.location.hostname.startsWith('192.168.')
+        ? window.location.origin
+        : `http://${host}:5173`;
+      const urlPagoMovil = `${baseOrigin}/pago-movil?monto=${totalCalculadoUI.toFixed(2)}&ticket=${encodeURIComponent(ticketIdActual.current)}&comercio=${encodeURIComponent('Botica Nova Salud')}`;
 
       QRCode.toDataURL(urlPagoMovil, {
         width: 260,
@@ -243,7 +256,7 @@ export default function Pos() {
     }
   }, [totalCalculadoUI]);
 
-  // Consulta automática de DNI / RUC con API gratuita
+  // Consulta automática de DNI / RUC con API gratuita y protección contra alertas duplicadas
   const handleConsultarDocumento = async (docValor) => {
     const doc = String(docValor !== undefined ? docValor : clienteDoc).trim().replace(/\D/g, '');
 
@@ -254,6 +267,11 @@ export default function Pos() {
       return;
     }
 
+    if (ultimoDocConsultadoRef.current === doc || consultandoDoc) {
+      return;
+    }
+
+    ultimoDocConsultadoRef.current = doc;
     setConsultandoDoc(true);
     try {
       const data = await consultarDocumentoApi(doc);
@@ -354,7 +372,7 @@ export default function Pos() {
   };
 
   // Cobro seguro con descuento atómico de stock en PostgreSQL y Kardex
-  const handleCobrar = async (e) => {
+  const handleCobrar = async (e, metodoSobrescrito) => {
     if (e && e.preventDefault) e.preventDefault();
 
     if (items.length === 0) {
@@ -367,6 +385,8 @@ export default function Pos() {
       return;
     }
 
+    const metodoFinal = metodoSobrescrito || metodoPago;
+
     setCobrando(true);
     try {
       const nombreFinal = clienteNom ? clienteNom.trim() : (tipoComprobante === 'FACTURA' ? 'Empresa Cliente' : 'Cliente General');
@@ -376,7 +396,7 @@ export default function Pos() {
           productoId: i.productoId,
           cantidad: i.cantidad
         })),
-        metodoPago,
+        metodoPago: metodoFinal,
         clienteDoc: clienteDoc ? clienteDoc.trim() : null,
         clienteNom: nombreFinal
       });
@@ -398,8 +418,10 @@ export default function Pos() {
       setVoucherTarjeta('');
       setDocVerificadoInfo(null);
       setModalTarjetaAbierto(false);
+      setModalYapeAbierto(false);
       setYapeEnviadoADispositivo(false);
       setTarjetaEnviadaADispositivo(false);
+      ultimoDocConsultadoRef.current = '';
       ticketIdActual.current = `TKT-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
       setTimeout(() => {
@@ -412,6 +434,8 @@ export default function Pos() {
       setCobrando(false);
     }
   };
+
+  handleCobrarRef.current = handleCobrar;
 
   const recibidoNum = parseFloat(montoRecibido) || 0;
   const vuelto = recibidoNum > totalCalculadoUI ? recibidoNum - totalCalculadoUI : 0;
@@ -810,6 +834,9 @@ export default function Pos() {
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, '');
                         setClienteDoc(val);
+                        if (val !== ultimoDocConsultadoRef.current) {
+                          setDocVerificadoInfo(null);
+                        }
                         // Autoconsultar al completar 8 dígitos (DNI) o 11 dígitos (RUC)
                         if (tipoComprobante === 'BOLETA' && val.length === 8) {
                           handleConsultarDocumento(val);
@@ -817,7 +844,11 @@ export default function Pos() {
                           handleConsultarDocumento(val);
                         }
                       }}
-                      onBlur={() => handleConsultarDocumento()}
+                      onBlur={() => {
+                        if (clienteDoc && clienteDoc !== ultimoDocConsultadoRef.current) {
+                          handleConsultarDocumento(clienteDoc);
+                        }
+                      }}
                       placeholder={tipoComprobante === 'BOLETA' ? '8 dígitos (vacío = Consumidor Final)' : '11 dígitos RUC'}
                       className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs font-mono font-bold text-neutral-900 dark:text-white focus:ring-1 focus:ring-teal-500 focus:outline-none"
                     />
@@ -859,61 +890,68 @@ export default function Pos() {
                 <label className="block text-[11px] font-black text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">
                   Método de Pago
                 </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {/* Efectivo */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMetodoPago('EFECTIVO');
-                      setYapeEnviadoADispositivo(false);
-                      setTarjetaEnviadaADispositivo(false);
-                    }}
-                    className={`py-2.5 px-2 rounded-xl text-xs font-bold flex flex-col items-center justify-center space-y-1 border transition cursor-pointer ${
-                      metodoPago === 'EFECTIVO'
-                        ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-                        : 'bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100'
-                    }`}
-                  >
-                    <Banknote className="w-4 h-4" />
-                    <span>Efectivo</span>
-                  </button>
+                {isMobileOrTablet ? (
+                  /* En celular o tablet: Efectivo + botón Otros Métodos de Pago directo al terminal */
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMetodoPago('EFECTIVO');
+                        setYapeEnviadoADispositivo(false);
+                        setTarjetaEnviadaADispositivo(false);
+                      }}
+                      className={`py-2.5 px-2 rounded-xl text-xs font-bold flex flex-col items-center justify-center space-y-1 border transition cursor-pointer ${
+                        metodoPago === 'EFECTIVO'
+                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                          : 'bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100'
+                      }`}
+                    >
+                      <Banknote className="w-4 h-4" />
+                      <span>Efectivo</span>
+                    </button>
 
-                  {/* Yape / Plin */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMetodoPago('YAPE_PLIN');
-                      setModalYapeAbierto(true);
-                      setTarjetaEnviadaADispositivo(false);
-                    }}
-                    className={`py-2.5 px-2 rounded-xl text-xs font-bold flex flex-col items-center justify-center space-y-1 border transition cursor-pointer ${
-                      metodoPago === 'YAPE_PLIN'
-                        ? 'bg-[#732282] text-white border-[#732282] shadow-xs'
-                        : 'bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100'
-                    }`}
-                  >
-                    <Smartphone className="w-4 h-4" />
-                    <span>Yape / Plin</span>
-                  </button>
-
-                  {/* Tarjeta */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMetodoPago('TARJETA');
-                      setModalTarjetaAbierto(true);
-                      setYapeEnviadoADispositivo(false);
-                    }}
-                    className={`py-2.5 px-2 rounded-xl text-xs font-bold flex flex-col items-center justify-center space-y-1 border transition cursor-pointer ${
-                      metodoPago === 'TARJETA'
-                        ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                        : 'bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100'
-                    }`}
-                  >
-                    <CreditCard className="w-4 h-4" />
-                    <span>Tarjeta</span>
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/terminal-movil')}
+                      className="py-2.5 px-2 rounded-xl text-xs font-bold flex flex-col items-center justify-center space-y-1 border border-purple-300 dark:border-purple-800 bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 transition cursor-pointer shadow-xs"
+                    >
+                      <div className="flex items-center gap-1">
+                        <Smartphone className="w-3.5 h-3.5 text-[#732282]" />
+                        <CreditCard className="w-3.5 h-3.5 text-blue-600" />
+                      </div>
+                      <span>Otros Métodos (Yape / Tarjeta)</span>
+                    </button>
+                  </div>
+                ) : (
+                  /* En PC o Laptop: Efectivo directo en caja + sincronización automática con celular vinculado */
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMetodoPago('EFECTIVO');
+                        setYapeEnviadoADispositivo(false);
+                        setTarjetaEnviadaADispositivo(false);
+                      }}
+                      className="w-full py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border bg-emerald-600 text-white border-emerald-600 shadow-xs cursor-pointer"
+                    >
+                      <Banknote className="w-4 h-4" />
+                      <span>Cobro en Efectivo (Caja Física)</span>
+                    </button>
+                    <div className="bg-neutral-50 dark:bg-neutral-950 p-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 flex items-center justify-between text-[11px] text-neutral-500">
+                      <div className="flex items-center gap-2">
+                        <Smartphone className="w-4 h-4 text-purple-600 shrink-0" />
+                        <span>Pagos digitales (Yape / Plin / Tarjeta) sincronizados con móvil</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleVincularDispositivoUsb}
+                        className="font-bold text-teal-600 dark:text-teal-400 hover:underline cursor-pointer shrink-0"
+                      >
+                        Ver QR
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* DETALLES DINÁMICOS SEGÚN MÉTODO DE PAGO */}

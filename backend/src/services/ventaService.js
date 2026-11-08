@@ -32,7 +32,7 @@ export async function crearVenta({ items, usuarioId, metodoPago = 'EFECTIVO', cl
 
   const inicioHoyLima = getInicioDiaLima();
 
-  return await prisma.$transaction(async (tx) => {
+  const resultadoVenta = await prisma.$transaction(async (tx) => {
     const productoIds = itemsConsolidados.map(i => i.productoId);
     const productosDB = await tx.producto.findMany({
       where: { id: { in: productoIds }, activo: true }
@@ -145,6 +145,77 @@ export async function crearVenta({ items, usuarioId, metodoPago = 'EFECTIVO', cl
       ticket
     };
   });
+
+  // 6. Si la venta tiene clienteDoc (DNI) y no es Web Delivery, vincular pedido e incrementar Puntos Salud
+  if (clienteDoc && !clienteNom?.includes('[Web')) {
+    try {
+      const cleanDni = String(clienteDoc).trim();
+      if (cleanDni.length === 8) {
+        const clienteExistente = await prisma.cliente.findUnique({ where: { dni: cleanDni } });
+        if (clienteExistente) {
+          const fichaActual = (clienteExistente.fichaMedica && typeof clienteExistente.fichaMedica === 'object')
+            ? clienteExistente.fichaMedica
+            : {};
+          const pedidosPrevios = Array.isArray(fichaActual.pedidos) ? fichaActual.pedidos : [];
+
+          const nuevoPedidoPOS = {
+            id: `NS-POS-${resultadoVenta.id}`,
+            serieNumero: resultadoVenta.ticket,
+            tipoComprobante: 'BOLETA',
+            date: new Date().toLocaleDateString('es-PE', { timeZone: 'America/Lima' }),
+            customer: {
+              firstName: clienteNom || clienteExistente.nombre,
+              lastName: '',
+              email: clienteExistente.email,
+              phone: clienteExistente.telefono || '',
+              dni: cleanDni,
+              address: clienteExistente.direccion || 'Juliaca Cercado',
+              district: clienteExistente.distrito || 'Juliaca Cercado',
+            },
+            items: (resultadoVenta.detalles || []).map(d => ({
+              id: String(d.productoId),
+              name: d.producto?.nombre || 'Producto Farmacéutico',
+              presentation: d.producto?.presentacion || 'Unidad',
+              quantity: d.cantidad,
+              price: Number(d.precioUnitario),
+              subtotal: Number(d.subtotal),
+              image: '/media/botica-hero-clean.jpg'
+            })),
+            subtotal: Number(resultadoVenta.total),
+            shipping: 0,
+            total: Number(resultadoVenta.total),
+            paymentMethod: metodoPago,
+            paymentDetails: metodoPago === 'YAPE_PLIN' ? 'Yape / Plin POS' : metodoPago === 'TARJETA' ? 'Tarjeta Débito / Crédito POS' : 'Efectivo en Caja Mostrador',
+            status: 'ENTREGADO'
+          };
+
+          const pedidosActualizados = [
+            nuevoPedidoPOS,
+            ...pedidosPrevios.filter(p => p.id !== nuevoPedidoPOS.id && p.serieNumero !== nuevoPedidoPOS.serieNumero)
+          ];
+
+          const puntosPrevios = typeof fichaActual.puntos === 'number'
+            ? fichaActual.puntos
+            : Math.max(50, pedidosPrevios.length * 25 + 50);
+
+          await prisma.cliente.update({
+            where: { dni: cleanDni },
+            data: {
+              fichaMedica: {
+                ...fichaActual,
+                pedidos: pedidosActualizados,
+                puntos: puntosPrevios + 25
+              }
+            }
+          });
+        }
+      }
+    } catch (errPuntos) {
+      console.warn('Error al vincular puntos o comprobante POS al cliente:', errPuntos.message);
+    }
+  }
+
+  return resultadoVenta;
 }
 
 export async function listarVentas({ rol, usuarioId, page = 1, limit = 20 }) {

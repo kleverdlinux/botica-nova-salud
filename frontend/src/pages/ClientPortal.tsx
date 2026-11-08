@@ -39,8 +39,13 @@ import {
   X,
   Camera,
   Upload,
+  ShoppingCart,
+  Store,
+  ArrowLeft,
 } from 'lucide-react';
-import { Layout } from '@/components/Layout';
+import { FaWhatsapp } from 'react-icons/fa6';
+import { CartDrawer } from '@/components/CartDrawer';
+import { WishlistDrawer } from '@/components/WishlistDrawer';
 import { Product } from '@/data/products';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -100,8 +105,10 @@ export default function ClientPortal() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { addItem: addToCart, openDrawer } = useCart();
+  const { addItem: addToCart, openDrawer, getItemCount } = useCart();
   const { items: wishlistItems, removeItem: removeFromWishlist } = useWishlist();
+  const cartItemCount = getItemCount ? getItemCount() : 0;
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'pedidos' | 'botiquin' | 'salud' | 'datos'>(
     location.state?.tab === 'botiquin' || location.state?.tab === 'salud' || location.state?.tab === 'datos'
@@ -1246,9 +1253,100 @@ export default function ClientPortal() {
   };
 
   return (
-    <Layout hideFooter>
+    <div className="min-h-screen bg-neutral-100/70 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex flex-col font-sans selection:bg-teal-500 selection:text-white">
+      {/* Barra Superior Exclusiva del Portal del Paciente (Independiente y Limpia) */}
+      <header className="sticky top-0 z-40 w-full bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md border-b border-neutral-200/80 dark:border-neutral-800 shadow-2xs">
+        <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-12 h-14 sm:h-16 flex items-center justify-between gap-3">
+          {/* Lado Izquierdo: Marca e Identidad del Portal */}
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <button
+              type="button"
+              onClick={() => navigate('/catalogo')}
+              className="p-1.5 sm:p-2 rounded-xl text-neutral-500 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition cursor-pointer shrink-0"
+              title="Volver a la Tienda / Catálogo"
+            >
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="font-black text-sm sm:text-base tracking-tight text-neutral-950 dark:text-white truncate">
+                NOVA SALUD
+              </span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-teal-50 dark:bg-teal-950/60 text-[#0d9488] dark:text-teal-400 border border-teal-200 dark:border-teal-800 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></span>
+                <span>Portal Paciente</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Lado Derecho: Acciones Rápidas (Catálogo, Favoritos, Carrito, WhatsApp, Cerrar Sesión) */}
+          <div className="flex items-center gap-1 sm:gap-2">
+            {/* Botón Ir a Tienda / Catálogo */}
+            <button
+              type="button"
+              onClick={() => navigate('/catalogo')}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition cursor-pointer"
+            >
+              <Store className="w-4 h-4 text-teal-600" />
+              <span>Ver Catálogo</span>
+            </button>
+
+            {/* Botón Favoritos / Botiquín */}
+            <button
+              type="button"
+              onClick={() => setIsWishlistOpen(true)}
+              className="relative p-2 rounded-xl text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition cursor-pointer"
+              title="Mis Fármacos en Tratamiento"
+            >
+              <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-rose-500" />
+              {wishlistItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-600 text-white rounded-full text-[9.5px] font-black flex items-center justify-center shadow-xs">
+                  {wishlistItems.length}
+                </span>
+              )}
+            </button>
+
+            {/* Botón Carrito con apertura directa del Drawer */}
+            <button
+              type="button"
+              onClick={() => openDrawer()}
+              className="relative p-2 rounded-xl text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition cursor-pointer"
+              title="Mi Carrito de Compras"
+            >
+              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 text-[#0d9488]" />
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#0d9488] text-white rounded-full text-[9.5px] font-black flex items-center justify-center shadow-xs">
+                  {cartItemCount}
+                </span>
+              )}
+            </button>
+
+            {/* Botón WhatsApp Asistencia */}
+            <a
+              href="https://wa.me/51955545561"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-xl text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 transition cursor-pointer"
+              title="Asistencia Farmacéutica WhatsApp"
+            >
+              <FaWhatsapp className="w-4 h-4 sm:w-5 sm:h-5" />
+            </a>
+
+            {/* Botón Cerrar Sesión */}
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-neutral-200 dark:border-neutral-700 text-xs font-bold text-neutral-600 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer ml-1"
+              title="Cerrar Sesión de Mi Cuenta"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Salir</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
       {/* Contenedor Principal: Calibrado para encajar perfectamente tanto en PC como en móviles */}
-      <div className="w-full max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-12 py-3 lg:py-4 min-h-[calc(100vh-76px)] flex flex-col justify-start">
+      <div className="w-full max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-12 py-3 lg:py-4 min-h-[calc(100vh-64px)] flex flex-col justify-start">
         {/* =========================================================================
             VISTA DESKTOP / PC: SIDEBAR LATERAL + PANE PRINCIPAL (INTACTO COMO ANTES)
             ========================================================================= */}
@@ -2017,12 +2115,21 @@ export default function ClientPortal() {
         </div>
       )}
 
+      {/* Drawer Oficial del Carrito de Compras */}
+      <CartDrawer />
+
+      {/* Drawer Oficial de Favoritos */}
+      <WishlistDrawer
+        isOpen={isWishlistOpen}
+        onClose={() => setIsWishlistOpen(false)}
+      />
+
       {/* Modal para Visualizar / Descargar Boleta Oficial */}
       <BoletaModal
         isOpen={isBoletaOpen}
         onClose={() => setIsBoletaOpen(false)}
         order={selectedBoletaOrder}
       />
-    </Layout>
+    </div>
   );
 }

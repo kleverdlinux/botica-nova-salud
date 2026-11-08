@@ -24,7 +24,25 @@ export async function consultarDocumentoIdentidad(documento) {
 
   const esDni = docLimpio.length === 8;
 
-  // 1. Verificar si el cliente ya existe en el historial local de ventas de Nova Salud
+  // 1. Verificar si el paciente ya tiene cuenta registrada en Nova Salud (PostgreSQL)
+  try {
+    const clienteRegistrado = await prisma.cliente.findUnique({
+      where: { dni: docLimpio }
+    });
+    if (clienteRegistrado && clienteRegistrado.nombre) {
+      return {
+        tipo: esDni ? 'DNI' : 'RUC',
+        numero: docLimpio,
+        nombre: clienteRegistrado.nombre,
+        fuente: 'CLIENTE_REGISTRADO',
+        verificado: true
+      };
+    }
+  } catch (err) {
+    console.warn('Error al consultar cliente registrado:', err.message);
+  }
+
+  // 2. Verificar si el cliente ya existe en el historial local de ventas de Nova Salud
   try {
     const ventaPrevia = await prisma.venta.findFirst({
       where: {
@@ -47,7 +65,7 @@ export async function consultarDocumentoIdentidad(documento) {
     console.warn('Error al consultar historial local:', err.message);
   }
 
-  // 2. Intentar consultar servicios públicos y gratuitos de Perú
+  // 3. Intentar consultar servicios públicos y gratuitos de Perú
   if (esDni) {
     try {
       // Intentar API pública de DNI
