@@ -17,7 +17,11 @@ export const listar = asyncHandler(async (req, res) => {
     rol: req.usuario.rol,
     usuarioId: req.usuario.id,
     page: req.query.page,
-    limit: req.query.limit
+    limit: req.query.limit,
+    fechaInicio: req.query.fechaInicio,
+    fechaFin: req.query.fechaFin,
+    metodoPago: req.query.metodoPago,
+    busqueda: req.query.busqueda
   });
   return res.status(200).json(resultado);
 });

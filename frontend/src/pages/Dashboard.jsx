@@ -31,6 +31,7 @@ import { formatearMoneda, formatearFechaLima, formatearFechaHoraLima } from '../
 import { exportToCSV, printProfessionalReport } from '../utils/exportUtils.ts';
 import { notificarExito } from '../utils/alertaSweet.js';
 import { useDarkMode } from '../hooks/useDarkMode';
+import { SkeletonDashboardStats } from '../components/ui/skeleton.tsx';
 import ChartJS from 'chart.js/auto';
 
 // Paleta visual semántica de familias farmacéuticas (Azul, Naranja, Esmeralda, Púrpura, Teal, Ámbar, Rosa, Índigo)
@@ -521,10 +522,16 @@ function DashboardAdmin() {
 
   if (cargando && !data) {
     return (
-      <div className="py-28 text-center text-neutral-500 font-sans">
-        <Loader2 className="w-8 h-8 animate-spin mx-auto text-black dark:text-white mb-3" />
-        <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Cargando métricas ejecutivas de Botica Nova Salud...</p>
-        <p className="text-xs text-neutral-400 mt-1">Conectando 120 fármacos reales con PostgreSQL</p>
+      <div className="space-y-6 pb-12 animate-pulse font-sans">
+        <div className="flex items-center justify-between">
+          <div className="h-8 w-56 bg-neutral-200 dark:bg-neutral-800 rounded-2xl" />
+          <div className="h-9 w-32 bg-neutral-200 dark:bg-neutral-800 rounded-2xl" />
+        </div>
+        <SkeletonDashboardStats />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+          <div className="h-72 bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 p-5 shadow-xs" />
+          <div className="h-72 bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 p-5 shadow-xs" />
+        </div>
       </div>
     );
   }

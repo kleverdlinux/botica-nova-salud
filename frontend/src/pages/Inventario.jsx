@@ -24,8 +24,10 @@ import {
   Boxes,
   Barcode,
   RefreshCw,
-  Eye
+  Eye,
+  X
 } from 'lucide-react';
+import { SkeletonTableRow, SkeletonTable } from '../components/ui/skeleton.tsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import {
   listarProductosApi,
@@ -247,12 +249,10 @@ export default function Inventario() {
 
     if (lotesBusqueda.trim()) {
       const q = lotesBusqueda.toLowerCase().trim();
-      const matchNombre = prod.nombre?.toLowerCase().includes(q);
-      const matchPrincipio = prod.principioActivo?.toLowerCase().includes(q);
-      const matchLab = prod.laboratorio?.toLowerCase().includes(q);
-      const matchLote = prod.lote?.toLowerCase().includes(q);
-      const matchCodigo = prod.codigoBarras?.toLowerCase().includes(q);
-      if (!matchNombre && !matchPrincipio && !matchLab && !matchLote && !matchCodigo) return false;
+      const tokens = q.split(/\s+/).filter(Boolean);
+      const fullText = `${prod.nombre || ''} ${prod.principioActivo || ''} ${prod.laboratorio || ''} ${prod.lote || ''} ${prod.codigoBarras || ''}`.toLowerCase();
+      const matchesAll = tokens.every(token => fullText.includes(token));
+      if (!matchesAll) return false;
     }
 
     return true;
@@ -662,8 +662,21 @@ export default function Inventario() {
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
                 placeholder="Buscar por nombre comercial, principio activo o código GS1..."
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-neutral-950 border border-slate-200 dark:border-neutral-800 text-slate-900 dark:text-white rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:bg-white dark:focus:bg-neutral-950 focus:outline-none transition"
+                className="w-full pl-10 pr-9 py-2.5 bg-slate-50 dark:bg-neutral-950 border border-slate-200 dark:border-neutral-800 text-slate-900 dark:text-white rounded-xl text-xs focus:ring-2 focus:ring-teal-500 focus:bg-white dark:focus:bg-neutral-950 focus:outline-none transition"
               />
+              {busqueda && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBusqueda('');
+                    cargarProductos(1);
+                  }}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 dark:hover:text-neutral-200 cursor-pointer"
+                  title="Limpiar búsqueda"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </form>
 
             <div className="shrink-0">
@@ -720,12 +733,9 @@ export default function Inventario() {
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-neutral-800 bg-white dark:bg-neutral-900">
                   {cargando ? (
-                    <tr>
-                      <td colSpan={esAdmin ? 7 : 6} className="py-20 text-center text-slate-500 dark:text-neutral-400">
-                        <Loader2 className="w-8 h-8 animate-spin mx-auto text-[#0d9488] mb-2" />
-                        <p className="text-xs font-bold text-slate-700 dark:text-neutral-300">Sincronizando inventario...</p>
-                      </td>
-                    </tr>
+                    Array.from({ length: 6 }).map((_, idx) => (
+                      <SkeletonTableRow key={`skel-inv-${idx}`} cols={esAdmin ? 7 : 6} />
+                    ))
                   ) : productos.length === 0 ? (
                     <tr>
                       <td colSpan={esAdmin ? 7 : 6} className="py-16 text-center text-slate-400 dark:text-neutral-500">
@@ -1008,12 +1018,9 @@ export default function Inventario() {
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-neutral-800 bg-white dark:bg-neutral-900">
                   {cargandoKardex ? (
-                    <tr>
-                      <td colSpan={7} className="py-20 text-center text-slate-500 dark:text-neutral-400">
-                        <Loader2 className="w-8 h-8 animate-spin mx-auto text-[#0d9488] mb-2" />
-                        <p className="text-xs font-bold text-slate-700 dark:text-neutral-300">Cargando sábana de Kardex oficial...</p>
-                      </td>
-                    </tr>
+                    Array.from({ length: 6 }).map((_, idx) => (
+                      <SkeletonTableRow key={`skel-kardex-${idx}`} cols={7} />
+                    ))
                   ) : kardexMovimientos.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="py-16 text-center text-slate-400 dark:text-neutral-500">
@@ -1410,9 +1417,8 @@ export default function Inventario() {
 
             {/* Contenedor de Tabla con Estado de Carga y Empty State */}
             {cargandoLotes ? (
-              <div className="py-16 text-center space-y-3">
-                <Loader2 className="w-8 h-8 text-teal-600 animate-spin mx-auto" />
-                <p className="text-xs font-bold text-slate-600 dark:text-neutral-300">Cargando libro de lotes y vencimientos de los {lotesProductos.length || 120} fármacos...</p>
+              <div className="p-4">
+                <SkeletonTable rows={8} cols={7} />
               </div>
             ) : lotesFiltrados.length === 0 ? (
               <div className="py-14 text-center space-y-2">

@@ -427,7 +427,7 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
   const existenteDni = await prisma.cliente.findUnique({ where: { dni: cleanDni } });
   if (existenteDni) {
     if (esAutoRegistro) {
-      // Si es auto-registro en checkout, actualizar datos de despacho y retornar cuenta existente
+      // Si es auto-registro en checkout, actualizar datos de despacho y retornar cuenta existente preservando avatar y clave
       const actualizado = await prisma.cliente.update({
         where: { dni: cleanDni },
         data: {
@@ -442,6 +442,8 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
         ? actualizado.fichaMedica.puntos
         : Math.max(50, ventasCount * 25 + 50);
 
+      const avatarPreservado = (actualizado.fichaMedica && actualizado.fichaMedica.avatar) || (existenteDni.fichaMedica && existenteDni.fichaMedica.avatar) || null;
+
       return {
         id: actualizado.dni,
         dni: actualizado.dni,
@@ -450,7 +452,7 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
         phone: actualizado.telefono || '',
         address: actualizado.direccion || 'Juliaca',
         district: actualizado.distrito || 'Juliaca Cercado',
-        avatar: (actualizado.fichaMedica && actualizado.fichaMedica.avatar) || null,
+        avatar: avatarPreservado,
         fichaSalud: actualizado.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
         botiquin: Array.isArray(actualizado.botiquin) ? actualizado.botiquin : [],
         puntos: puntosGuardados,
@@ -458,7 +460,52 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
         isNewAccount: false
       };
     }
-    throw new ErrorNegocio('Ya existe una cuenta registrada con este DNI. Por favor inicia sesión.', 400);
+
+    // Si el cliente fue creado por auto-registro y su clave actual es su DNI (o no tiene clave), permitirle reclamar su cuenta y fijar su contraseña definitiva
+    let claveEsDni = true;
+    if (existenteDni.password) {
+      const matchBcrypt = await bcrypt.compare(cleanDni, existenteDni.password).catch(() => false);
+      claveEsDni = matchBcrypt || existenteDni.password === cleanDni;
+    }
+
+    if (claveEsDni && rawPassword && rawPassword !== cleanDni) {
+      const hashedPassword = await bcrypt.hash(rawPassword, 10);
+      const actualizado = await prisma.cliente.update({
+        where: { dni: cleanDni },
+        data: {
+          nombre: cleanNombre || existenteDni.nombre,
+          email: cleanEmail || existenteDni.email,
+          telefono: telefono ? String(telefono).trim() : existenteDni.telefono,
+          direccion: direccion ? String(direccion).trim() : existenteDni.direccion,
+          distrito: distrito ? String(distrito).trim() : existenteDni.distrito,
+          password: hashedPassword
+        }
+      });
+      const ventasCount = await prisma.venta.count({ where: { clienteDoc: cleanDni } });
+      const puntosGuardados = (actualizado.fichaMedica && typeof actualizado.fichaMedica.puntos === 'number')
+        ? actualizado.fichaMedica.puntos
+        : Math.max(50, ventasCount * 25 + 50);
+
+      const avatarPreservado = (actualizado.fichaMedica && actualizado.fichaMedica.avatar) || (existenteDni.fichaMedica && existenteDni.fichaMedica.avatar) || null;
+
+      return {
+        id: actualizado.dni,
+        dni: actualizado.dni,
+        name: actualizado.nombre,
+        email: actualizado.email,
+        phone: actualizado.telefono || '',
+        address: actualizado.direccion || 'Juliaca',
+        district: actualizado.distrito || 'Juliaca Cercado',
+        avatar: avatarPreservado,
+        fichaSalud: actualizado.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
+        botiquin: Array.isArray(actualizado.botiquin) ? actualizado.botiquin : [],
+        puntos: puntosGuardados,
+        createdAt: actualizado.createdAt,
+        isNewAccount: false
+      };
+    }
+
+    throw new ErrorNegocio('Ya existe una cuenta registrada con este DNI. Por favor inicia sesión con tu contraseña o con tu DNI.', 400);
   }
 
   let finalEmail = cleanEmail;
@@ -584,11 +631,16 @@ export async function actualizarPerfilCliente({ dni, nombre, email, telefono, di
   if (direccion !== undefined) dataToUpdate.direccion = String(direccion).trim();
   if (distrito !== undefined) dataToUpdate.distrito = String(distrito).trim();
   if (fichaMedica !== undefined) {
+    const avatarFinal =
+      (fichaMedica.avatar && String(fichaMedica.avatar).trim() !== '')
+        ? fichaMedica.avatar
+        : (fichaMedica.eliminarAvatar ? null : prevFicha.avatar || null);
+
     dataToUpdate.fichaMedica = {
       ...prevFicha,
       ...fichaMedica,
       pedidos: fichaMedica.pedidos || prevFicha.pedidos || [],
-      avatar: fichaMedica.avatar !== undefined ? fichaMedica.avatar : prevFicha.avatar || null
+      avatar: avatarFinal
     };
   }
   if (botiquin !== undefined) dataToUpdate.botiquin = botiquin;

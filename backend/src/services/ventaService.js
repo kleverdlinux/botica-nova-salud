@@ -218,7 +218,7 @@ export async function crearVenta({ items, usuarioId, metodoPago = 'EFECTIVO', cl
   return resultadoVenta;
 }
 
-export async function listarVentas({ rol, usuarioId, page = 1, limit = 20 }) {
+export async function listarVentas({ rol, usuarioId, page = 1, limit = 20, fechaInicio, fechaFin, metodoPago, busqueda }) {
   const p = Math.max(1, parseInt(page, 10) || 1);
   const l = Math.max(1, Math.min(100, parseInt(limit, 10) || 20));
   const skip = (p - 1) * l;
@@ -231,6 +231,30 @@ export async function listarVentas({ rol, usuarioId, page = 1, limit = 20 }) {
       gte: getInicioDiaLima(),
       lte: getFinDiaLima()
     };
+  } else if (fechaInicio || fechaFin) {
+    where.createdAt = {};
+    if (fechaInicio) where.createdAt.gte = new Date(fechaInicio);
+    if (fechaFin) {
+      const fFin = new Date(fechaFin);
+      fFin.setHours(23, 59, 59, 999);
+      where.createdAt.lte = fFin;
+    }
+  }
+
+  if (metodoPago && ['EFECTIVO', 'YAPE_PLIN', 'TARJETA'].includes(metodoPago)) {
+    where.metodoPago = metodoPago;
+  }
+
+  if (busqueda && busqueda.trim()) {
+    const q = busqueda.trim();
+    const cleanNum = q.replace(/^T-0*/i, '').replace(/\D/g, '');
+    const numId = cleanNum ? parseInt(cleanNum, 10) : null;
+
+    where.OR = [
+      { clienteNom: { contains: q, mode: 'insensitive' } },
+      { clienteDoc: { contains: q, mode: 'insensitive' } },
+      ...(numId && !isNaN(numId) ? [{ id: numId }] : [])
+    ];
   }
 
   const [total, ventas] = await Promise.all([

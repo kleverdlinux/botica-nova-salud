@@ -20,8 +20,12 @@ import {
   Phone,
   MessageCircle,
   RefreshCw,
-  ShoppingBag
+  ShoppingBag,
+  Search,
+  X,
+  Filter
 } from 'lucide-react';
+import { SkeletonTableRow } from '../components/ui/skeleton.tsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import {
   listarVentasApi,
@@ -45,6 +49,12 @@ export default function Ventas() {
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [cargando, setCargando] = useState(true);
 
+  // Filtros Avanzados para Historial de Ventas
+  const [busqueda, setBusqueda] = useState('');
+  const [filtroFecha, setFiltroFecha] = useState('TODAS'); // 'TODAS' | 'HOY' | 'AYER' | '7DIAS' | 'MES'
+  const [filtroMetodo, setFiltroMetodo] = useState('TODOS'); // 'TODOS' | 'EFECTIVO' | 'YAPE_PLIN' | 'TARJETA'
+  const [filtroTipo, setFiltroTipo] = useState('TODOS'); // 'TODOS' | 'BOLETA' | 'FACTURA' | 'TICKET'
+
   // Pedidos Web Delivery y estados de trazabilidad
   const [pedidosDelivery, setPedidosDelivery] = useState([]);
   const [cargandoDelivery, setCargandoDelivery] = useState(false);
@@ -57,8 +67,44 @@ export default function Ventas() {
   const cargarVentas = useCallback(async (p = 1) => {
     setCargando(true);
     try {
-      const data = await listarVentasApi({ page: p, limit: 20 });
-      setVentas(data.ventas || []);
+      const params = { page: p, limit: 20 };
+      if (busqueda.trim()) params.busqueda = busqueda.trim();
+      if (filtroMetodo !== 'TODOS') params.metodoPago = filtroMetodo;
+
+      // Calcular fechas según filtroFecha
+      const now = new Date();
+      if (filtroFecha === 'HOY') {
+        const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        params.fechaInicio = d.toISOString();
+      } else if (filtroFecha === 'AYER') {
+        const dAyer = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+        const dFinAyer = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 23, 59, 59, 999);
+        params.fechaInicio = dAyer.toISOString();
+        params.fechaFin = dFinAyer.toISOString();
+      } else if (filtroFecha === '7DIAS') {
+        const d7 = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        params.fechaInicio = d7.toISOString();
+      } else if (filtroFecha === 'MES') {
+        const dMes = new Date(now.getFullYear(), now.getMonth(), 1);
+        params.fechaInicio = dMes.toISOString();
+      }
+
+      const data = await listarVentasApi(params);
+      let lista = data.ventas || [];
+
+      // Filtro local adicional de tipo de comprobante (Boleta vs Factura vs Ticket)
+      if (filtroTipo !== 'TODOS') {
+        lista = lista.filter(v => {
+          const esFactura = v.clienteDoc && v.clienteDoc.length === 11;
+          const esBoleta = v.clienteDoc && v.clienteDoc.length === 8;
+          if (filtroTipo === 'FACTURA') return esFactura;
+          if (filtroTipo === 'BOLETA') return esBoleta;
+          if (filtroTipo === 'TICKET') return !esFactura && !esBoleta;
+          return true;
+        });
+      }
+
+      setVentas(lista);
       setTotal(data.total || 0);
       setPaginaActual(data.paginaActual || 1);
       setTotalPaginas(data.totalPaginas || 1);
@@ -68,7 +114,7 @@ export default function Ventas() {
     } finally {
       setCargando(false);
     }
-  }, []);
+  }, [busqueda, filtroFecha, filtroMetodo, filtroTipo]);
 
   const cargarPedidosDelivery = useCallback(async () => {
     setCargandoDelivery(true);
@@ -579,31 +625,115 @@ export default function Ventas() {
         </div>
       ) : (
         /* ========================================================
-            VISTA 2: TODAS LAS VENTAS (HISTORIAL COMPLETO CON PAGING)
+            VISTA 2: TODAS LAS VENTAS (HISTORIAL COMPLETO CON PAGING Y FILTROS)
             ======================================================== */
-        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs divide-y divide-slate-200 dark:divide-neutral-800">
-              <thead className="bg-slate-50 dark:bg-neutral-950 text-slate-700 dark:text-neutral-300 font-bold uppercase tracking-wider text-[11px]">
-                <tr>
-                  <th className="px-5 py-3.5">Ticket</th>
-                  <th className="px-5 py-3.5">Fecha y Hora (Lima)</th>
-                  <th className="px-5 py-3.5">Cajero / Responsable</th>
-                  <th className="px-5 py-3.5">Cliente</th>
-                  <th className="px-5 py-3.5">Método de Pago</th>
-                  <th className="px-5 py-3.5 text-right">Total Cobrado</th>
-                  <th className="px-5 py-3.5 text-right">Acción</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-neutral-800/60 bg-white dark:bg-neutral-900">
-                {cargando ? (
+        <div className="space-y-3">
+          {/* Barra de Filtros Avanzados: Nombre/Doc, Fecha, Método y Tipo */}
+          <div className="bg-white dark:bg-neutral-900 p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs flex flex-col md:flex-row items-stretch md:items-center gap-2.5 text-xs">
+            {/* Buscador predictivo por cliente, DNI, RUC o ticket */}
+            <div className="relative flex-1">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                placeholder="Buscar por cliente, DNI, RUC o N° ticket (ej: T-000001)..."
+                className="w-full pl-8 pr-8 py-2 bg-slate-50 dark:bg-neutral-950 border border-slate-200 dark:border-neutral-800 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-teal-500 transition"
+              />
+              {busqueda && (
+                <button
+                  type="button"
+                  onClick={() => setBusqueda('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-700 dark:hover:text-neutral-200 cursor-pointer"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+
+            {/* Selector de Rango de Fecha */}
+            <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-neutral-950 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-neutral-800 shrink-0">
+              <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <select
+                value={filtroFecha}
+                onChange={(e) => setFiltroFecha(e.target.value)}
+                className="bg-transparent text-xs font-semibold text-slate-700 dark:text-neutral-300 focus:outline-none cursor-pointer"
+              >
+                <option value="TODAS">Todas las fechas</option>
+                <option value="HOY">Hoy (Turno actual)</option>
+                <option value="AYER">Ayer</option>
+                <option value="7DIAS">Últimos 7 días</option>
+                <option value="MES">Este mes</option>
+              </select>
+            </div>
+
+            {/* Selector de Método de Pago */}
+            <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-neutral-950 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-neutral-800 shrink-0">
+              <CreditCard className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <select
+                value={filtroMetodo}
+                onChange={(e) => setFiltroMetodo(e.target.value)}
+                className="bg-transparent text-xs font-semibold text-slate-700 dark:text-neutral-300 focus:outline-none cursor-pointer"
+              >
+                <option value="TODOS">Todos los métodos</option>
+                <option value="EFECTIVO">Efectivo</option>
+                <option value="YAPE_PLIN">Yape / Plin</option>
+                <option value="TARJETA">Tarjeta</option>
+              </select>
+            </div>
+
+            {/* Selector de Tipo de Comprobante */}
+            <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-neutral-950 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-neutral-800 shrink-0">
+              <ReceiptText className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <select
+                value={filtroTipo}
+                onChange={(e) => setFiltroTipo(e.target.value)}
+                className="bg-transparent text-xs font-semibold text-slate-700 dark:text-neutral-300 focus:outline-none cursor-pointer"
+              >
+                <option value="TODOS">Todos los comprobantes</option>
+                <option value="BOLETA">Boletas (DNI)</option>
+                <option value="FACTURA">Facturas (RUC)</option>
+                <option value="TICKET">Ticket Mostrador</option>
+              </select>
+            </div>
+
+            {/* Botón Restablecer */}
+            {(busqueda || filtroFecha !== 'TODAS' || filtroMetodo !== 'TODOS' || filtroTipo !== 'TODOS') && (
+              <button
+                type="button"
+                onClick={() => {
+                  setBusqueda('');
+                  setFiltroFecha('TODAS');
+                  setFiltroMetodo('TODOS');
+                  setFiltroTipo('TODOS');
+                }}
+                className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-rose-600 bg-slate-100 dark:bg-neutral-800 transition cursor-pointer shrink-0"
+              >
+                Limpiar
+              </button>
+            )}
+          </div>
+
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs divide-y divide-slate-200 dark:divide-neutral-800">
+                <thead className="bg-slate-50 dark:bg-neutral-950 text-slate-700 dark:text-neutral-300 font-bold uppercase tracking-wider text-[11px]">
                   <tr>
-                    <td colSpan={7} className="py-16 text-center text-slate-500 dark:text-neutral-400">
-                      <Loader2 className="w-8 h-8 animate-spin mx-auto text-[#0d9488] dark:text-teal-400 mb-2" />
-                      <p className="text-sm font-medium">Cargando ventas...</p>
-                    </td>
+                    <th className="px-5 py-3.5">Ticket</th>
+                    <th className="px-5 py-3.5">Fecha y Hora (Lima)</th>
+                    <th className="px-5 py-3.5">Cajero / Responsable</th>
+                    <th className="px-5 py-3.5">Cliente</th>
+                    <th className="px-5 py-3.5">Método de Pago</th>
+                    <th className="px-5 py-3.5 text-right">Total Cobrado</th>
+                    <th className="px-5 py-3.5 text-right">Acción</th>
                   </tr>
-                ) : ventas.length === 0 ? (
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-neutral-800/60 bg-white dark:bg-neutral-900">
+                  {cargando ? (
+                    Array.from({ length: 6 }).map((_, i) => (
+                      <SkeletonTableRow key={i} cols={7} />
+                    ))
+                  ) : ventas.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="py-16 text-center text-slate-400 dark:text-neutral-500">
                       <ReceiptText className="w-12 h-12 mx-auto stroke-1 text-slate-300 dark:text-neutral-600 mb-2" />
@@ -740,7 +870,8 @@ export default function Ventas() {
             </div>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
       {/* Modal Reutilizado para Reimprimir Ticket Térmico 80mm */}
       {ventaSeleccionada && (

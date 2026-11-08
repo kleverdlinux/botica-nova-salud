@@ -35,15 +35,22 @@ export async function buscarProductosPOS(termino) {
   // Garantizar que no haya medicamentos caducados en estado activo antes de consultar
   await sincronizarCaducidadAutomatica();
 
+  // Búsqueda multi-token: divide la consulta en palabras para encontrar coincidencias cruzadas
+  const palabras = query.split(/\s+/).filter(Boolean);
+  const condicionesAND = palabras.map(p => ({
+    OR: [
+      { nombre: { contains: p, mode: 'insensitive' } },
+      { codigoBarras: { contains: p, mode: 'insensitive' } },
+      { principioActivo: { contains: p, mode: 'insensitive' } },
+      { laboratorio: { contains: p, mode: 'insensitive' } }
+    ]
+  }));
+
   return await prisma.producto.findMany({
     where: {
       activo: true,
       stock: { gt: 0 },
-      OR: [
-        { nombre: { contains: query, mode: 'insensitive' } },
-        { codigoBarras: { equals: query } },
-        { principioActivo: { contains: query, mode: 'insensitive' } }
-      ]
+      AND: condicionesAND
     },
     select: {
       id: true,
@@ -95,11 +102,15 @@ export async function listarProductos({ rol, activoQuery, page = 1, limit = 20, 
 
   if (busqueda && busqueda.trim()) {
     const q = busqueda.trim();
-    where.OR = [
-      { nombre: { contains: q, mode: 'insensitive' } },
-      { codigoBarras: { equals: q } },
-      { principioActivo: { contains: q, mode: 'insensitive' } }
-    ];
+    const palabras = q.split(/\s+/).filter(Boolean);
+    where.AND = palabras.map(p => ({
+      OR: [
+        { nombre: { contains: p, mode: 'insensitive' } },
+        { codigoBarras: { contains: p, mode: 'insensitive' } },
+        { principioActivo: { contains: p, mode: 'insensitive' } },
+        { laboratorio: { contains: p, mode: 'insensitive' } }
+      ]
+    }));
   }
 
   // Proyecciones estrictas por rol (ADMIN y ALMACEN ven gestión completa; CAJERO solo mostrador)

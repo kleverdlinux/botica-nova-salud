@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronDown, Check } from "lucide-react";
+import { ArrowRight, ChevronDown, Check, Search, X } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { ProductCard } from "@/components/ProductCard";
+import { SkeletonProductGrid } from "@/components/ui/skeleton";
 import { products, collections, getCollectionBySlug } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,11 +41,25 @@ const Products = () => {
     searchParams.get("category") ||
     "all";
   const activeSort = (searchParams.get("sort") as SortOption) || "featured";
+  const urlSearch = searchParams.get("q") || searchParams.get("search") || "";
 
+  const [searchTerm, setSearchTerm] = useState(urlSearch);
+  const [cargando, setCargando] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [visibleCount, setVisibleCount] = useState(24);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Sincronizar búsqueda cuando cambia el URL
+  useEffect(() => {
+    setSearchTerm(urlSearch);
+  }, [urlSearch]);
+
+  // Breve delay de carga para transición suave de Skeleton
+  useEffect(() => {
+    const timer = setTimeout(() => setCargando(false), 180);
+    return () => clearTimeout(timer);
+  }, [activeCollection, activeSort, searchTerm]);
 
   // Cerrar menú desplegable al hacer clic fuera
   useEffect(() => {
@@ -60,7 +75,7 @@ const Products = () => {
   // Al cambiar de categoría o filtro, resetear visibleCount a 24
   useEffect(() => {
     setVisibleCount(24);
-  }, [activeCollection, activeSort]);
+  }, [activeCollection, activeSort, searchTerm]);
 
   const currentCollection = activeCollection !== "all"
     ? getCollectionBySlug(activeCollection)
@@ -99,6 +114,27 @@ const Products = () => {
       }
     }
 
+    // Filter by search term (Multi-token, insensible a mayúsculas y acentos)
+    if (searchTerm && searchTerm.trim()) {
+      const norm = searchTerm
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim();
+      const tokens = norm.split(/\s+/).filter(Boolean);
+
+      result = result.filter((product) => {
+        const fullText = (
+          `${product.name} ${product.description || ''} ${product.longDescription || ''} ${product.materials || ''} ${product.collection || ''}`
+        )
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+
+        return tokens.every((token) => fullText.includes(token));
+      });
+    }
+
     // Sort
     switch (activeSort) {
       case "newest":
@@ -120,7 +156,7 @@ const Products = () => {
     }
 
     return result;
-  }, [activeCollection, activeSort]);
+  }, [activeCollection, activeSort, searchTerm]);
 
   const visibleProducts = useMemo(() => {
     return filteredAndSortedProducts.slice(0, visibleCount);
@@ -328,38 +364,80 @@ const Products = () => {
             })}
           </div>
 
-          {/* Sub-barra: Contador de productos y Selector de orden */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pt-2 border-t border-border/40 text-xs">
-            <p className="text-muted-foreground">
-              Mostrando <span className="font-semibold text-foreground">{filteredAndSortedProducts.length}</span>{" "}
-              {filteredAndSortedProducts.length === 1 ? "producto" : "productos"}
-              {currentCollection ? (
-                <> en <span className="font-medium text-foreground">{currentCollection.name}</span></>
-              ) : (
-                " en el catálogo general"
+          {/* Sub-barra: Buscador de productos + Contador + Selector de orden */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 pt-2.5 border-t border-border/40 text-xs">
+            {/* Buscador de productos integrado con búsqueda instantánea y botón limpiar */}
+            <div className="relative w-full md:w-80">
+              <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSearchTerm(val);
+                  const newParams = new URLSearchParams(searchParams);
+                  if (val.trim()) {
+                    newParams.set("q", val);
+                  } else {
+                    newParams.delete("q");
+                    newParams.delete("search");
+                  }
+                  setSearchParams(newParams, { replace: true });
+                }}
+                placeholder="Buscar medicamento o principio activo..."
+                className="w-full pl-8 pr-7 py-1.5 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-xs text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-teal-500 transition"
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchTerm("");
+                    const newParams = new URLSearchParams(searchParams);
+                    newParams.delete("q");
+                    newParams.delete("search");
+                    setSearchParams(newParams, { replace: true });
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 cursor-pointer"
+                >
+                  <X className="w-3 h-3" />
+                </button>
               )}
-            </p>
+            </div>
 
-            <div className="flex items-center gap-2.5">
-              <span className="text-muted-foreground tracking-[0.05em] uppercase font-medium">
-                Ordenar por:
-              </span>
-              <Select value={activeSort} onValueChange={handleSortChange}>
-                <SelectTrigger className="w-[180px] rounded-sm text-xs tracking-[0.02em] h-8 bg-background border-border">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {sortOptions.map((option) => (
-                    <SelectItem
-                      key={option.value}
-                      value={option.value}
-                      className="text-xs"
-                    >
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex flex-wrap items-center justify-between md:justify-end gap-3 flex-1">
+              <p className="text-muted-foreground">
+                Mostrando <span className="font-semibold text-foreground">{filteredAndSortedProducts.length}</span>{" "}
+                {filteredAndSortedProducts.length === 1 ? "producto" : "productos"}
+                {searchTerm ? (
+                  <> para "<span className="font-semibold text-teal-600 dark:text-teal-400">{searchTerm}</span>"</>
+                ) : currentCollection ? (
+                  <> en <span className="font-medium text-foreground">{currentCollection.name}</span></>
+                ) : (
+                  " en el catálogo general"
+                )}
+              </p>
+
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground tracking-[0.05em] uppercase font-medium">
+                  Ordenar por:
+                </span>
+                <Select value={activeSort} onValueChange={handleSortChange}>
+                  <SelectTrigger className="w-[170px] rounded-xl text-xs tracking-[0.02em] h-8 bg-background border-border">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sortOptions.map((option) => (
+                      <SelectItem
+                        key={option.value}
+                        value={option.value}
+                        className="text-xs"
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </div>
@@ -368,7 +446,9 @@ const Products = () => {
       {/* Products Grid */}
       <section className="py-10 md:py-16">
         <div className="container-full">
-          {filteredAndSortedProducts.length > 0 ? (
+          {cargando ? (
+            <SkeletonProductGrid count={8} />
+          ) : filteredAndSortedProducts.length > 0 ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10">
                 {visibleProducts.map((product, index) => (
@@ -397,20 +477,27 @@ const Products = () => {
               )}
             </>
           ) : (
-            <div className="text-center py-28">
-              <p className="font-sans font-semibold text-2xl text-muted-foreground mb-4">
-                No se encontraron productos
+            <div className="text-center py-20 bg-neutral-50 dark:bg-neutral-900/50 rounded-3xl border border-neutral-200 dark:border-neutral-800 p-8 max-w-md mx-auto space-y-3">
+              <Search className="w-10 h-10 mx-auto text-neutral-400 stroke-1" />
+              <h3 className="text-base font-bold text-neutral-900 dark:text-white">
+                No encontramos productos para "{searchTerm}"
+              </h3>
+              <p className="text-xs text-neutral-500">
+                Prueba buscando por principio activo o limpia el término para ver todo el catálogo.
               </p>
-              <p className="text-muted-foreground mb-8">
-                Esta categoría se encuentra en reposición de stock.
-              </p>
-              <Button
-                asChild
-                variant="outline"
-                className="rounded-lg px-8 text-xs font-semibold tracking-wider uppercase"
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchTerm("");
+                  const newParams = new URLSearchParams(searchParams);
+                  newParams.delete("q");
+                  newParams.delete("search");
+                  setSearchParams(newParams, { replace: true });
+                }}
+                className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
               >
-                <Link to="/products">Ver todos los productos</Link>
-              </Button>
+                Ver Todos los Medicamentos
+              </button>
             </div>
           )}
         </div>

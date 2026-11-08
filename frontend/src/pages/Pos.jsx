@@ -553,7 +553,24 @@ export default function Pos() {
                 </div>
 
                 <div className="p-3 divide-y divide-neutral-100 dark:divide-neutral-800 max-h-[58vh] overflow-y-auto space-y-1">
-                  {resultados.length === 0 && haBuscado && !buscando && (
+                  {buscando && (
+                    <div className="space-y-2 p-1">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={`skel-pos-${i}`} className="flex items-center justify-between p-3 rounded-xl border border-neutral-100 dark:border-neutral-800 animate-pulse bg-neutral-50/50 dark:bg-neutral-900/50">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-neutral-200 dark:bg-neutral-800" />
+                            <div className="space-y-1.5">
+                              <div className="h-3.5 w-36 bg-neutral-200 dark:bg-neutral-800 rounded" />
+                              <div className="h-2.5 w-24 bg-neutral-200 dark:bg-neutral-800 rounded" />
+                            </div>
+                          </div>
+                          <div className="h-7 w-20 bg-neutral-200 dark:bg-neutral-800 rounded-lg" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {!buscando && resultados.length === 0 && haBuscado && (
                     <div className="py-14 text-center text-neutral-400 space-y-2">
                       <XCircle className="w-12 h-12 mx-auto stroke-1 text-neutral-300 dark:text-neutral-700" />
                       <p className="text-sm font-bold text-neutral-700 dark:text-neutral-300">
@@ -562,7 +579,7 @@ export default function Pos() {
                     </div>
                   )}
 
-                  {resultados.map((prod) => {
+                  {!buscando && resultados.map((prod) => {
                     const stock = Number(prod.stock);
                     const precio = Number(prod.precio);
                     const vencido = esProductoVencido(prod.fechaVencimiento);

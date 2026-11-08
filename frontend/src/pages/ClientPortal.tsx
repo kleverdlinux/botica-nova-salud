@@ -62,6 +62,7 @@ import {
 import { BoletaModal } from '@/components/checkout/BoletaModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { SkeletonPortal } from '@/components/ui/skeleton';
 import AuthSwitch from '@/components/ui/auth-switch';
 import { notificarExito, notificarAdvertencia, notificarError, confirmarAccion } from '@/utils/alertaSweet';
 
@@ -125,7 +126,11 @@ export default function ClientPortal() {
 
   const [activeClient, setActiveClient] = useState<ClientProfile | null>(null);
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
+  const [cargando, setCargando] = useState(true);
   const [filtroPedidos, setFiltroPedidos] = useState('');
+  const [filtroFecha, setFiltroFecha] = useState<'TODOS' | 'HOY' | '7DIAS' | 'MES'>('TODOS');
+  const [filtroTipo, setFiltroTipo] = useState<'TODOS' | 'BOLETA' | 'FACTURA' | 'POS'>('TODOS');
+  const [filtroEstado, setFiltroEstado] = useState<'TODOS' | 'ENTREGADO' | 'EN_CAMINO' | 'CONFIRMADO'>('TODOS');
   const [selectedBoletaOrder, setSelectedBoletaOrder] = useState<CustomerOrder | null>(null);
   const [isBoletaOpen, setIsBoletaOpen] = useState(false);
   const [selectedDetailOrder, setSelectedDetailOrder] = useState<CustomerOrder | null>(null);
@@ -177,11 +182,18 @@ export default function ClientPortal() {
       setOrders(getCustomerOrders(client));
 
       // Sincronizar pedidos en segundo plano desde la base de datos central de PostgreSQL
-      fetchCustomerOrdersFromServer(client).then((serverOrders) => {
-        if (Array.isArray(serverOrders)) {
-          setOrders(serverOrders);
-        }
-      });
+      fetchCustomerOrdersFromServer(client)
+        .then((serverOrders) => {
+          if (Array.isArray(serverOrders)) {
+            setOrders(serverOrders);
+          }
+        })
+        .finally(() => {
+          setCargando(false);
+        });
+
+      // Timeout de seguridad para skeleton
+      setTimeout(() => setCargando(false), 200);
 
       // Sincronizar botiquín y ficha de salud desde la base de datos central de PostgreSQL
       useWishlist.getState().syncWithServer(client.dni);
@@ -309,15 +321,45 @@ export default function ClientPortal() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 3 * 1024 * 1024) {
-      notificarAdvertencia('Imagen muy grande', 'Por favor selecciona una foto de menos de 3MB.');
+    if (file.size > 8 * 1024 * 1024) {
+      notificarAdvertencia('Imagen muy grande', 'Por favor selecciona una foto de menos de 8MB.');
       return;
     }
 
     const reader = new FileReader();
     reader.onload = () => {
-      const base64 = reader.result as string;
-      setAvatarUrl(base64);
+      const img = new Image();
+      img.onload = () => {
+        // Redimensionar y optimizar la foto a 256x256 máx en formato ligero (~15KB)
+        const canvas = document.createElement('canvas');
+        const maxDim = 256;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          }
+        } else {
+          if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressed = canvas.toDataURL('image/jpeg', 0.85);
+          setAvatarUrl(compressed);
+        } else {
+          setAvatarUrl(reader.result as string);
+        }
+      };
+      img.src = reader.result as string;
     };
     reader.readAsDataURL(file);
   };
@@ -459,15 +501,64 @@ export default function ClientPortal() {
     notificarExito('Agregado al Carrito', `${prod.name} ya está en tu lista de compra.`);
   };
 
-  // Filtrado de pedidos
+  // Filtrado multidimensional de pedidos (Texto/Nombre, Tipo, Estado y Fecha)
   const pedidosFiltrados = orders.filter((o) => {
-    if (!filtroPedidos.trim()) return true;
-    const term = filtroPedidos.toLowerCase();
-    const matchId = (o?.id || '').toLowerCase().includes(term);
-    const matchSerie = (o?.serieNumero || '').toLowerCase().includes(term);
-    const matchItems = Array.isArray(o?.items) && o.items.some((i) => (i?.name || '').toLowerCase().includes(term));
-    return matchId || matchSerie || matchItems;
+    // 1. Filtro por texto / nombre / serie
+    if (filtroPedidos.trim()) {
+      const term = filtroPedidos.toLowerCase().trim();
+      const matchId = (o?.id || '').toLowerCase().includes(term);
+      const matchSerie = (o?.serieNumero || '').toLowerCase().includes(term);
+      const matchItems = Array.isArray(o?.items) && o.items.some((i) => (i?.name || '').toLowerCase().includes(term));
+      if (!matchId && !matchSerie && !matchItems) return false;
+    }
+
+    // 2. Filtro por tipo de comprobante
+    if (filtroTipo !== 'TODOS') {
+      const esFactura = o.tipoComprobante === 'FACTURA' || o.serieNumero?.startsWith('F');
+      const esTicketPOS = o.id?.includes('POS') || o.serieNumero?.startsWith('T');
+      if (filtroTipo === 'FACTURA' && !esFactura) return false;
+      if (filtroTipo === 'BOLETA' && (esFactura || esTicketPOS)) return false;
+      if (filtroTipo === 'POS' && !esTicketPOS) return false;
+    }
+
+    // 3. Filtro por estado
+    if (filtroEstado !== 'TODOS') {
+      const estadoActual = (o.status || '').toUpperCase();
+      if (filtroEstado === 'ENTREGADO' && estadoActual !== 'ENTREGADO') return false;
+      if (filtroEstado === 'EN_CAMINO' && estadoActual !== 'EN_CAMINO' && estadoActual !== 'EN RUTA') return false;
+      if (filtroEstado === 'CONFIRMADO' && estadoActual !== 'CONFIRMADO' && estadoActual !== 'PAGADO') return false;
+    }
+
+    // 4. Filtro por fecha
+    if (filtroFecha !== 'TODOS') {
+      const orderDateStr = o.date || (o as any).createdAt;
+      if (orderDateStr) {
+        const orderDate = new Date(orderDateStr);
+        const now = new Date();
+        if (!isNaN(orderDate.getTime())) {
+          const diffMs = now.getTime() - orderDate.getTime();
+          const diffDays = diffMs / (1000 * 60 * 60 * 24);
+          if (filtroFecha === 'HOY' && diffDays > 1) return false;
+          if (filtroFecha === '7DIAS' && diffDays > 7) return false;
+          if (filtroFecha === 'MES' && diffDays > 31) return false;
+        }
+      }
+    }
+
+    return true;
   });
+
+  // Skeleton de carga para evitar saltos al refrescar
+  if (cargando) {
+    return (
+      <div className="min-h-screen bg-neutral-100/70 dark:bg-neutral-950 flex flex-col font-sans">
+        <header className="sticky top-0 z-40 w-full bg-white/95 dark:bg-neutral-900/95 border-b border-neutral-200/80 dark:border-neutral-800 shadow-2xs h-14 sm:h-16 flex items-center px-4 sm:px-8">
+          <span className="font-black text-sm tracking-tight text-neutral-950 dark:text-white">NOVA SALUD</span>
+        </header>
+        <SkeletonPortal />
+      </div>
+    );
+  }
 
   // Si el usuario no ha iniciado sesión, mostrar la pantalla de acceso oficial
   if (!activeClient) {
@@ -564,6 +655,70 @@ export default function ClientPortal() {
             <span>Nuevo Pedido</span>
           </Link>
         </Button>
+      </div>
+
+      {/* Barra de Filtros Avanzados: Fecha, Tipo y Estado */}
+      <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+        {/* Selector de Rango de Fecha */}
+        <div className="flex items-center gap-1 bg-white dark:bg-neutral-900 px-2.5 py-1.5 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-2xs">
+          <Clock className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+          <select
+            value={filtroFecha}
+            onChange={(e) => setFiltroFecha(e.target.value as any)}
+            className="bg-transparent text-xs font-bold text-neutral-700 dark:text-neutral-300 focus:outline-none cursor-pointer"
+          >
+            <option value="TODOS">Todas las fechas</option>
+            <option value="HOY">Hoy</option>
+            <option value="7DIAS">Últimos 7 días</option>
+            <option value="MES">Este mes</option>
+          </select>
+        </div>
+
+        {/* Selector de Tipo de Comprobante */}
+        <div className="flex items-center gap-1 bg-white dark:bg-neutral-900 px-2.5 py-1.5 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-2xs">
+          <FileText className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+          <select
+            value={filtroTipo}
+            onChange={(e) => setFiltroTipo(e.target.value as any)}
+            className="bg-transparent text-xs font-bold text-neutral-700 dark:text-neutral-300 focus:outline-none cursor-pointer"
+          >
+            <option value="TODOS">Todos los tipos</option>
+            <option value="BOLETA">Boletas SUNAT</option>
+            <option value="FACTURA">Facturas SUNAT</option>
+            <option value="POS">Ventas Mostrador POS</option>
+          </select>
+        </div>
+
+        {/* Selector de Estado del Pedido */}
+        <div className="flex items-center gap-1 bg-white dark:bg-neutral-900 px-2.5 py-1.5 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-2xs">
+          <CheckCircle2 className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+          <select
+            value={filtroEstado}
+            onChange={(e) => setFiltroEstado(e.target.value as any)}
+            className="bg-transparent text-xs font-bold text-neutral-700 dark:text-neutral-300 focus:outline-none cursor-pointer"
+          >
+            <option value="TODOS">Todos los estados</option>
+            <option value="ENTREGADO">Entregados</option>
+            <option value="EN_CAMINO">En camino / delivery</option>
+            <option value="CONFIRMADO">Confirmados</option>
+          </select>
+        </div>
+
+        {/* Botón Reset de Filtros */}
+        {(filtroFecha !== 'TODOS' || filtroTipo !== 'TODOS' || filtroEstado !== 'TODOS' || filtroPedidos) && (
+          <button
+            type="button"
+            onClick={() => {
+              setFiltroPedidos('');
+              setFiltroFecha('TODOS');
+              setFiltroTipo('TODOS');
+              setFiltroEstado('TODOS');
+            }}
+            className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-neutral-500 hover:text-rose-600 bg-neutral-100 dark:bg-neutral-800 transition cursor-pointer"
+          >
+            Restablecer filtros
+          </button>
+        )}
       </div>
 
       {pedidosFiltrados.length === 0 ? (

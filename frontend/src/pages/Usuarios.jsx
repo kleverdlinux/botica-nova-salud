@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { listarUsuariosApi, crearUsuarioApi, cambiarEstadoUsuarioApi } from '../api/usuariosApi.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { SkeletonTable } from '../components/ui/skeleton.tsx';
 import { formatearFechaLima } from '../utils/formateadores.js';
 import toast, { notificarExito, notificarError, notificarAdvertencia, confirmarAccion } from '../utils/alertaSweet.js';
 
@@ -27,6 +28,8 @@ export default function Usuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [busqueda, setBusqueda] = useState('');
+  const [filtroRol, setFiltroRol] = useState('TODOS'); // 'TODOS' | 'ADMIN' | 'CAJERO' | 'ALMACEN'
+  const [filtroEstado, setFiltroEstado] = useState('TODOS'); // 'TODOS' | 'ACTIVOS' | 'INACTIVOS'
 
   // Estados del modal de creación
   const [modalAbierto, setModalAbierto] = useState(false);
@@ -133,8 +136,11 @@ export default function Usuarios() {
     }
   };
 
-  // Filtrado de usuarios por término de búsqueda
+  // Filtrado de usuarios por término de búsqueda, rol y estado
   const usuariosFiltrados = usuarios.filter((u) => {
+    if (filtroRol !== 'TODOS' && u.rol !== filtroRol) return false;
+    if (filtroEstado === 'ACTIVOS' && !u.activo) return false;
+    if (filtroEstado === 'INACTIVOS' && u.activo) return false;
     const q = busqueda.toLowerCase().trim();
     if (!q) return true;
     return (
@@ -179,19 +185,44 @@ export default function Usuarios() {
       </div>
 
       {/* Barra de Filtro y Métricas Rápidas */}
-      <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-slate-400 dark:text-neutral-500 absolute left-3.5 top-3" />
-          <input
-            type="text"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            placeholder="Buscar por nombre, correo o rol..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-neutral-950 border border-slate-200 dark:border-neutral-700 rounded-xl text-xs focus:bg-white dark:focus:bg-neutral-900 focus:outline-hidden focus:ring-2 focus:ring-teal-500 text-slate-800 dark:text-neutral-100 placeholder:text-slate-400 dark:placeholder:text-neutral-500"
-          />
+      <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="w-4 h-4 text-slate-400 dark:text-neutral-500 absolute left-3.5 top-3" />
+            <input
+              type="text"
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              placeholder="Buscar por nombre, correo..."
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-neutral-950 border border-slate-200 dark:border-neutral-700 rounded-xl text-xs focus:bg-white dark:focus:bg-neutral-900 focus:outline-hidden focus:ring-2 focus:ring-teal-500 text-slate-800 dark:text-neutral-100 placeholder:text-slate-400 dark:placeholder:text-neutral-500"
+            />
+          </div>
+
+          {/* Selector de Rol */}
+          <select
+            value={filtroRol}
+            onChange={(e) => setFiltroRol(e.target.value)}
+            className="px-3 py-2 bg-slate-50 dark:bg-neutral-950 border border-slate-200 dark:border-neutral-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-neutral-300 focus:outline-none cursor-pointer"
+          >
+            <option value="TODOS">Todos los roles</option>
+            <option value="ADMIN">Administradores</option>
+            <option value="CAJERO">Cajeros</option>
+            <option value="ALMACEN">Almacén</option>
+          </select>
+
+          {/* Selector de Estado */}
+          <select
+            value={filtroEstado}
+            onChange={(e) => setFiltroEstado(e.target.value)}
+            className="px-3 py-2 bg-slate-50 dark:bg-neutral-950 border border-slate-200 dark:border-neutral-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-neutral-300 focus:outline-none cursor-pointer"
+          >
+            <option value="TODOS">Todos los estados</option>
+            <option value="ACTIVOS">Solo Activos</option>
+            <option value="INACTIVOS">Solo Inactivos</option>
+          </select>
         </div>
 
-        <div className="flex items-center space-x-4 text-xs font-semibold text-slate-600 dark:text-neutral-400">
+        <div className="flex items-center space-x-3 text-xs font-semibold text-slate-600 dark:text-neutral-400 shrink-0">
           <span className="flex items-center space-x-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
             <span>Activos: {usuarios.filter((u) => u.activo).length}</span>
@@ -200,17 +231,14 @@ export default function Usuarios() {
             <span className="w-2.5 h-2.5 rounded-full bg-slate-400 dark:bg-neutral-600 inline-block" />
             <span>Inactivos: {usuarios.filter((u) => !u.activo).length}</span>
           </span>
-          <span className="text-slate-400 dark:text-neutral-600">|</span>
-          <span>Total: {usuarios.length} cuentas</span>
         </div>
       </div>
 
       {/* Tabla de Usuarios */}
       <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs overflow-hidden">
         {cargando ? (
-          <div className="py-20 text-center text-slate-500 dark:text-neutral-400">
-            <Loader2 className="w-8 h-8 animate-spin mx-auto text-[#0d9488] dark:text-teal-400 mb-2" />
-            <p className="text-xs font-semibold">Cargando directorio de usuarios...</p>
+          <div className="p-4">
+            <SkeletonTable rows={4} cols={6} />
           </div>
         ) : usuariosFiltrados.length === 0 ? (
           <div className="py-16 text-center text-slate-400 dark:text-neutral-500">

@@ -27,6 +27,7 @@ import { obtenerAlertasApi } from '../api/alertasApi.js';
 import { obtenerDashboardApi } from '../api/dashboardApi.js';
 import { formatearMoneda, formatearFechaLima, formatearFechaHoraLima } from '../utils/formateadores.js';
 import { exportToCSV, printProfessionalReport } from '../utils/exportUtils.ts';
+import { SkeletonTable } from '../components/ui/skeleton.tsx';
 import { notificarExito, notificarError } from '../utils/alertaSweet.js';
 
 export default function Reportes() {
@@ -615,9 +616,8 @@ export default function Reportes() {
         {/* Tabla Dinámica según el reporte seleccionado */}
         <div className="overflow-x-auto max-h-96 overflow-y-auto">
           {cargando ? (
-            <div className="py-16 text-center text-slate-500">
-              <Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0d9488] mb-2" />
-              <p className="text-xs font-semibold">Cargando registros oficiales...</p>
+            <div className="p-4">
+              <SkeletonTable rows={5} cols={6} />
             </div>
           ) : reporteActivo === 'inventario' ? (
             <table className="w-full text-left text-xs">

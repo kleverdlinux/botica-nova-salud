@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header as InspirateHeader } from '@/components/inspirate/Header';
 import { useCart, CartState } from '@/hooks/useCart';
@@ -6,6 +6,7 @@ import { useWishlist } from '@/hooks/useWishlist';
 import { WishlistDrawer } from '@/components/WishlistDrawer';
 import { CartDrawer } from '@/components/CartDrawer';
 import { CheckoutModal } from '@/components/checkout/CheckoutModal';
+import { QuickSearchModal } from '@/components/QuickSearchModal';
 import { MenuDrawer } from '@/components/inspirate/MenuDrawer';
 import { QuotationModal } from '@/components/inspirate/QuotationModal';
 import { EarringBuilderModal } from '@/components/inspirate/EarringBuilderModal';
@@ -27,9 +28,16 @@ const Header: React.FC = () => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isQuotationOpen, setIsQuotationOpen] = useState(false);
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
   const [isBrandOpen, setIsBrandOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpenQuickSearch = () => setIsSearchOpen(true);
+    window.addEventListener('open-quick-search', handleOpenQuickSearch);
+    return () => window.removeEventListener('open-quick-search', handleOpenQuickSearch);
+  }, []);
 
   const handleOpenCatalog = (category?: string) => {
     if (!category || category === 'ALL') {
@@ -46,11 +54,18 @@ const Header: React.FC = () => {
         favoritesCount={wishlistCount}
         onOpenCart={() => openDrawer()}
         onOpenFavorites={() => setIsWishlistOpen(true)}
+        onOpenSearch={() => setIsSearchOpen(true)}
         onOpenMenu={() => setIsMenuOpen(true)}
         onOpenQuotation={() => setIsQuotationOpen(true)}
         onOpenBuilder={() => setIsBuilderOpen(true)}
         onOpenCatalog={handleOpenCatalog}
         onOpenBrand={() => setIsBrandOpen(true)}
+      />
+
+      {/* Modal de Búsqueda Rápida en la Web */}
+      <QuickSearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
       />
 
       {/* Official Wishlist Drawer */}

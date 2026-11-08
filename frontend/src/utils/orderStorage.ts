@@ -291,14 +291,27 @@ export function getActiveClient(): ClientProfile | null {
 export function saveActiveClient(client: ClientProfile): void {
   try {
     const existing = getActiveClient();
+    
+    // Proteger avatar existente: nunca sobreescribir con null, undefined o cadena vacía si ya había foto
+    const avatarValido =
+      client.avatar && typeof client.avatar === 'string' && client.avatar.trim() !== ''
+        ? client.avatar
+        : (existing?.avatar || null);
+
+    // Proteger contraseña: si el cliente ya tenía clave personalizada (distinta al DNI), nunca degradarla al DNI
+    const passwordValida =
+      client.password && client.password !== client.dni
+        ? client.password
+        : (existing?.password || client.password || undefined);
+
     const finalClient: ClientProfile = {
       ...existing,
       ...client,
-      avatar: client.avatar !== undefined ? client.avatar : (existing?.avatar || null),
+      avatar: avatarValido,
       fichaSalud: client.fichaSalud !== undefined ? client.fichaSalud : (existing?.fichaSalud || undefined),
       botiquin: client.botiquin !== undefined ? client.botiquin : (existing?.botiquin || undefined),
       puntos: client.puntos !== undefined ? client.puntos : (existing?.puntos || undefined),
-      password: client.password || (existing?.dni === client.dni ? existing?.password : undefined)
+      password: passwordValida
     };
 
     localStorage.setItem(CLIENT_USER_KEY, JSON.stringify(finalClient));

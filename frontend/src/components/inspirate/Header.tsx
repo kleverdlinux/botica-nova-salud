@@ -5,6 +5,7 @@ import { getActiveClient, ClientProfile } from '@/utils/orderStorage';
 import {
   User,
   LogIn,
+  Search,
   ChevronDown,
   ShieldCheck,
   Stethoscope,
@@ -28,6 +29,7 @@ interface HeaderProps {
   favoritesCount: number;
   onOpenCart: () => void;
   onOpenFavorites: () => void;
+  onOpenSearch?: () => void;
   onOpenMenu: () => void;
   onOpenQuotation: () => void;
   onOpenBuilder?: () => void;
@@ -44,6 +46,7 @@ export const Header: React.FC<HeaderProps> = ({
   favoritesCount,
   onOpenCart,
   onOpenFavorites,
+  onOpenSearch,
   onOpenMenu,
   onOpenQuotation,
   onOpenBuilder,
@@ -254,6 +257,24 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <LogIn className="w-[17px] sm:w-[18px] h-[17px] sm:h-[18px]" strokeWidth={1.8} />
         </Link>
+
+        {/* ICONO 3: Búsqueda Rápida de Productos */}
+        <button
+          type="button"
+          onClick={() => {
+            closeDropdown();
+            if (onOpenSearch) {
+              onOpenSearch();
+            } else {
+              window.dispatchEvent(new CustomEvent('open-quick-search'));
+            }
+          }}
+          aria-label="Buscar Productos"
+          title="Buscar medicamentos y productos"
+          className="w-[32px] sm:w-[36px] h-[32px] sm:h-[36px] flex items-center justify-center text-[#18181b] hover:text-[#0d9488] hover:bg-zinc-100/70 rounded-full transition-all duration-200 cursor-pointer"
+        >
+          <Search className="w-[17px] sm:w-[18px] h-[17px] sm:h-[18px]" strokeWidth={1.8} />
+        </button>
 
         <span className="h-[18px] w-[1px] bg-zinc-200 hidden sm:block" />
 

@@ -22,6 +22,7 @@ import {
   formatearFechaLima,
   calcularDiasParaCaducar
 } from '../utils/formateadores.js';
+import { SkeletonTableRow } from '../components/ui/skeleton.tsx';
 import ModalEntrada from '../components/ModalEntrada.jsx';
 import ModalProducto from '../components/ModalProducto.jsx';
 import ModalDetalleProducto from '../components/ModalDetalleProducto.jsx';
@@ -315,12 +316,9 @@ export default function Alertas() {
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-neutral-800 bg-white dark:bg-neutral-900">
               {cargando ? (
-                <tr>
-                  <td colSpan={esAdmin ? 7 : 6} className="py-20 text-center text-slate-500 dark:text-neutral-400">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-[#0d9488] dark:text-teal-400 mb-2" />
-                    <p className="text-xs font-bold text-slate-700 dark:text-neutral-300">Analizando registros de almacén y fechas DIGEMID...</p>
-                  </td>
-                </tr>
+                Array.from({ length: 5 }).map((_, idx) => (
+                  <SkeletonTableRow key={`skel-alerta-${idx}`} cols={esAdmin ? 7 : 6} />
+                ))
               ) : listaFiltrada.length === 0 ? (
                 <tr>
                   <td colSpan={esAdmin ? 7 : 6} className="py-16 text-center text-slate-400 dark:text-neutral-500">
