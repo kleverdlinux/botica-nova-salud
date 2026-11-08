@@ -106,3 +106,22 @@ export const useCart = create<CartState>()(
     }
   )
 );
+
+// Purgar carrito automáticamente al cerrar sesión para garantizar privacidad
+if (typeof window !== "undefined") {
+  window.addEventListener("client-auth-changed", (e: any) => {
+    if (!e.detail) {
+      useCart.getState().clearCart();
+      try {
+        localStorage.removeItem("maison-cart");
+      } catch {}
+    }
+  });
+
+  window.addEventListener("client-logout", () => {
+    useCart.getState().clearCart();
+    try {
+      localStorage.removeItem("maison-cart");
+    } catch {}
+  });
+}

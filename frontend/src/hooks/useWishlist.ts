@@ -115,7 +115,20 @@ if (typeof window !== 'undefined') {
         useWishlist.getState().setItems(client.botiquin);
       }
       useWishlist.getState().syncWithServer(client.dni);
+    } else {
+      // Usuario cerró sesión: purgar lista de favoritos / botiquín de inmediato
+      useWishlist.getState().setItems([]);
+      try {
+        localStorage.removeItem('wishlist-storage');
+      } catch {}
     }
+  });
+
+  window.addEventListener('client-logout', () => {
+    useWishlist.getState().setItems([]);
+    try {
+      localStorage.removeItem('wishlist-storage');
+    } catch {}
   });
 
   // Sincronización inicial si ya había sesión activa guardada
@@ -123,6 +136,9 @@ if (typeof window !== 'undefined') {
     const active = getActiveClient();
     if (active && active.dni) {
       useWishlist.getState().syncWithServer(active.dni);
+    } else {
+      // Si no hay cliente activo, asegurarse de no mostrar datos residuales
+      useWishlist.getState().setItems([]);
     }
   }, 100);
 }

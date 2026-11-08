@@ -291,6 +291,8 @@ export default function ClientPortal() {
       logoutClient();
       setActiveClient(null);
       setOrders([]);
+      useCart.getState().clearCart();
+      useWishlist.getState().clearWishlist();
       notificarExito('Sesión Finalizada', 'Hasta pronto, esperamos haber cuidado de tu salud.');
     }
   };

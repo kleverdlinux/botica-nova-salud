@@ -619,12 +619,16 @@ export async function loginClient(
 }
 
 /**
- * Cerrar la sesión del cliente
+ * Cerrar la sesión del cliente y purgar completamente la memoria local del navegador
  */
 export function logoutClient(): void {
   try {
     localStorage.removeItem(CLIENT_USER_KEY);
+    localStorage.removeItem('wishlist-storage');
+    localStorage.removeItem('maison-cart');
+
     window.dispatchEvent(new CustomEvent('client-auth-changed', { detail: null }));
+    window.dispatchEvent(new CustomEvent('client-logout'));
   } catch (e) {
     console.error('Error al cerrar sesión:', e);
   }
