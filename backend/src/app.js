@@ -77,6 +77,12 @@ if (fs.existsSync(rutaFrontendDist)) {
     immutable: true
   }));
 
+  // Si un recurso en /assets no existe (chunk reemplazado por un nuevo despliegue), responder 404
+  // para que el cliente detecte el cambio de versión y recargue limpiamente en lugar de recibir index.html
+  app.use('/assets', (req, res) => {
+    res.status(404).send('Asset not found');
+  });
+
   // Servir archivos estáticos con control de caché
   app.use(express.static(rutaFrontendDist, {
     maxAge: '1d',

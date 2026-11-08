@@ -10,29 +10,55 @@ import { useAuth } from './context/AuthContext.jsx';
 import GestorInactividadSeguridad from './components/GestorInactividadSeguridad.jsx';
 import Inicio from './pages/Inicio.jsx';
 
-// Carga diferida inteligente (Code Splitting con React.lazy)
-const LayoutPrivado = React.lazy(() => import('./components/LayoutPrivado.jsx'));
-const Login = React.lazy(() => import('./pages/Login.jsx'));
-const Pos = React.lazy(() => import('./pages/Pos.jsx'));
-const Inventario = React.lazy(() => import('./pages/Inventario.jsx'));
-const Alertas = React.lazy(() => import('./pages/Alertas.jsx'));
-const Ventas = React.lazy(() => import('./pages/Ventas.jsx'));
-const Dashboard = React.lazy(() => import('./pages/Dashboard.jsx'));
-const Usuarios = React.lazy(() => import('./pages/Usuarios.jsx'));
-const Reportes = React.lazy(() => import('./pages/Reportes.jsx'));
-const ProjectDetail = React.lazy(() => import('./pages/ProjectDetail'));
-const Products = React.lazy(() => import('./pages/Products'));
-const ProductDetail = React.lazy(() => import('./pages/ProductDetail'));
-const Cart = React.lazy(() => import('./pages/Cart'));
-const Checkout = React.lazy(() => import('./pages/Checkout'));
-const About = React.lazy(() => import('./pages/About'));
-const StoreIndex = React.lazy(() => import('./pages/StoreIndex'));
-const ClientPortal = React.lazy(() => import('./pages/ClientPortal'));
-const VisorCliente = React.lazy(() => import('./pages/VisorCliente.jsx'));
-const PagoMovilQR = React.lazy(() => import('./pages/PagoMovilQR.jsx'));
-const EscanerMovil = React.lazy(() => import('./pages/EscanerMovil.jsx'));
-const TerminalMovil = React.lazy(() => import('./pages/TerminalMovil.jsx'));
-const RibbonFoldLoaderDemo = React.lazy(() => import('./components/ui/demo'));
+// Carga diferida inteligente con autorecuperación ante nuevos despliegues en producción
+const lazyConReintento = (importFn) =>
+  React.lazy(async () => {
+    try {
+      return await importFn();
+    } catch (err) {
+      const msg = err?.message || '';
+      const esFalloModulo =
+        msg.includes('dynamically imported module') ||
+        msg.includes('Loading chunk') ||
+        msg.includes('ChunkLoadError') ||
+        msg.includes('Importing a module script failed') ||
+        msg.includes('Failed to fetch');
+
+      if (esFalloModulo && typeof window !== 'undefined') {
+        const lastReload = window.sessionStorage.getItem('chunk_reload_time');
+        const now = Date.now();
+        if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
+          window.sessionStorage.setItem('chunk_reload_time', String(now));
+          window.location.reload();
+          return new Promise(() => {});
+        }
+      }
+      throw err;
+    }
+  });
+
+const LayoutPrivado = lazyConReintento(() => import('./components/LayoutPrivado.jsx'));
+const Login = lazyConReintento(() => import('./pages/Login.jsx'));
+const Pos = lazyConReintento(() => import('./pages/Pos.jsx'));
+const Inventario = lazyConReintento(() => import('./pages/Inventario.jsx'));
+const Alertas = lazyConReintento(() => import('./pages/Alertas.jsx'));
+const Ventas = lazyConReintento(() => import('./pages/Ventas.jsx'));
+const Dashboard = lazyConReintento(() => import('./pages/Dashboard.jsx'));
+const Usuarios = lazyConReintento(() => import('./pages/Usuarios.jsx'));
+const Reportes = lazyConReintento(() => import('./pages/Reportes.jsx'));
+const ProjectDetail = lazyConReintento(() => import('./pages/ProjectDetail'));
+const Products = lazyConReintento(() => import('./pages/Products'));
+const ProductDetail = lazyConReintento(() => import('./pages/ProductDetail'));
+const Cart = lazyConReintento(() => import('./pages/Cart'));
+const Checkout = lazyConReintento(() => import('./pages/Checkout'));
+const About = lazyConReintento(() => import('./pages/About'));
+const StoreIndex = lazyConReintento(() => import('./pages/StoreIndex'));
+const ClientPortal = lazyConReintento(() => import('./pages/ClientPortal'));
+const VisorCliente = lazyConReintento(() => import('./pages/VisorCliente.jsx'));
+const PagoMovilQR = lazyConReintento(() => import('./pages/PagoMovilQR.jsx'));
+const EscanerMovil = lazyConReintento(() => import('./pages/EscanerMovil.jsx'));
+const TerminalMovil = lazyConReintento(() => import('./pages/TerminalMovil.jsx'));
+const RibbonFoldLoaderDemo = lazyConReintento(() => import('./components/ui/demo'));
 
 function LazyFallback() {
   return (
