@@ -124,9 +124,9 @@ export default function ClientPortal() {
       : null
   );
 
-  const [activeClient, setActiveClient] = useState<ClientProfile | null>(null);
+  const [activeClient, setActiveClient] = useState<ClientProfile | null>(() => getActiveClient());
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
-  const [cargando, setCargando] = useState(true);
+  const [cargando, setCargando] = useState<boolean>(() => Boolean(getActiveClient()));
   const [filtroPedidos, setFiltroPedidos] = useState('');
   const [filtroFecha, setFiltroFecha] = useState<'TODOS' | 'HOY' | '7DIAS' | 'MES'>('TODOS');
   const [filtroTipo, setFiltroTipo] = useState<'TODOS' | 'BOLETA' | 'FACTURA' | 'POS'>('TODOS');
@@ -217,6 +217,7 @@ export default function ClientPortal() {
       setActiveClient(null);
       setAvatarUrl(null);
       setOrders([]);
+      setCargando(false);
     }
   }, []);
 
@@ -548,7 +549,12 @@ export default function ClientPortal() {
     return true;
   });
 
-  // Skeleton de carga para evitar saltos al refrescar
+  // Si el usuario no ha iniciado sesión, mostrar la pantalla de acceso oficial inmediatamente
+  if (!activeClient) {
+    return <AuthSwitch onLoginSuccess={(client) => setActiveClient(client)} />;
+  }
+
+  // Skeleton de carga para evitar saltos al refrescar (solo para usuarios autenticados)
   if (cargando) {
     return (
       <div className="min-h-screen bg-neutral-100/70 dark:bg-neutral-950 flex flex-col font-sans">
@@ -558,11 +564,6 @@ export default function ClientPortal() {
         <SkeletonPortal />
       </div>
     );
-  }
-
-  // Si el usuario no ha iniciado sesión, mostrar la pantalla de acceso oficial
-  if (!activeClient) {
-    return <AuthSwitch onLoginSuccess={(client) => setActiveClient(client)} />;
   }
 
   // Puntos salud respaldados en la base de datos central
