@@ -24,7 +24,7 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({ isOpen, onCl
   const [searchTerm, setSearchTerm] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addItem: addToCart } = useCart();
 
   useEffect(() => {
     if (isOpen) {

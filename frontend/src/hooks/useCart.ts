@@ -16,6 +16,7 @@ export interface CartState {
   openCheckout: () => void;
   closeCheckout: () => void;
   addItem: (product: Product, quantity?: number) => void;
+  addToCart: (product: Product, quantity?: number) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   removeItem: (productId: string) => void;
   clearCart: () => void;
@@ -58,6 +59,10 @@ export const useCart = create<CartState>()(
             isDrawerOpen: true,
           };
         });
+      },
+
+      addToCart: (product: Product, quantity = 1) => {
+        get().addItem(product, quantity);
       },
 
       updateQuantity: (productId: string, quantity: number) => {
