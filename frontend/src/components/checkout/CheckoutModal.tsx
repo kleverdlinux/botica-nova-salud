@@ -20,6 +20,7 @@ import { useCart } from '@/hooks/useCart';
 import {
   getActiveClient,
   saveActiveClient,
+  registerClient,
   saveCustomerOrder,
   generateNextCorrelative,
   CustomerOrder,
@@ -173,7 +174,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     setIsPaymentModalOpen(true);
   };
 
-  const handleConfirmPayment = (paymentData: PaymentData) => {
+  const handleConfirmPayment = async (paymentData: PaymentData) => {
     try {
       const correlative = generateNextCorrelative(tipoComprobante);
       const now = new Date();
@@ -238,18 +239,36 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       // Guardar pedido persistente
       saveCustomerOrder(orderData);
 
-      // Auto-registrar o sincronizar cliente activo
-      saveActiveClient({
-        id: cleanDni || cleanRuc,
-        dni: cleanDni || cleanRuc,
-        name:
-          tipoComprobante === 'FACTURA' && formData.razonSocial
-            ? formData.razonSocial
-            : `${formData.firstName} ${formData.lastName}`,
-        email: formData.email || `${cleanDni || cleanRuc}@cliente.novasalud.pe`,
+      // Auto-registrar o sincronizar cliente activo en PostgreSQL con contraseña igual a su DNI
+      const clientName =
+        tipoComprobante === 'FACTURA' && formData.razonSocial
+          ? formData.razonSocial
+          : `${formData.firstName} ${formData.lastName}`;
+      const clientEmail = formData.email || `${cleanDni || cleanRuc}@cliente.novasalud.pe`;
+      const clientDni = cleanDni || cleanRuc;
+
+      // Registrar o sincronizar en PostgreSQL
+      await registerClient({
+        dni: clientDni,
+        name: clientName,
+        email: clientEmail,
         phone: cleanPhone,
         address: formData.address,
         district: formData.district,
+        password: clientDni,
+        esAutoRegistro: true,
+      });
+
+      // Asegurar sesión activa local
+      saveActiveClient({
+        id: clientDni,
+        dni: clientDni,
+        name: clientName,
+        email: clientEmail,
+        phone: cleanPhone,
+        address: formData.address,
+        district: formData.district,
+        password: clientDni,
       });
 
       // Limpiar y preparar boleta

@@ -112,7 +112,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header
-      className="fixed top-[10px] left-[10px] right-[10px] z-50 h-[54px] lg:h-[60px] bg-white px-4 lg:px-5 flex items-center justify-between transition-all duration-300 shadow-sm border border-zinc-200/80 rounded-sm"
+      className="fixed top-0 left-0 right-0 w-full lg:top-[10px] lg:left-[10px] lg:right-[10px] lg:w-[calc(100%-20px)] z-50 h-[58px] lg:h-[60px] bg-white px-4 lg:px-5 flex items-center justify-between transition-all duration-300 shadow-sm border-b lg:border border-zinc-200/80 lg:rounded-sm"
       onMouseLeave={handleMouseLeave}
     >
       {/* Left Navigation (Desktop) with Hover Mega Dropdowns */}
@@ -225,12 +225,20 @@ export const Header: React.FC<HeaderProps> = ({
               : 'Iniciar Sesión / Crear Cuenta de Cliente'
           }
           aria-label="Área de Cliente"
-          className="relative w-[32px] sm:w-[36px] h-[32px] sm:h-[36px] flex items-center justify-center text-[#18181b] hover:text-[#0d9488] hover:bg-zinc-100/70 rounded-full transition-all duration-200 cursor-pointer"
+          className="relative w-[32px] sm:w-[36px] h-[32px] sm:h-[36px] flex items-center justify-center text-[#18181b] hover:text-[#0d9488] hover:bg-zinc-100/70 rounded-full transition-all duration-200 cursor-pointer overflow-hidden border border-transparent hover:border-teal-200"
         >
-          <User className="w-[17px] sm:w-[18px] h-[17px] sm:h-[18px]" strokeWidth={1.8} />
+          {activeClient?.avatar ? (
+            <img
+              src={activeClient.avatar}
+              alt={activeClient.name}
+              className="w-full h-full object-cover rounded-full"
+            />
+          ) : (
+            <User className="w-[17px] sm:w-[18px] h-[17px] sm:h-[18px]" strokeWidth={1.8} />
+          )}
           {activeClient && (
             <span
-              className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#0d9488] ring-2 ring-white"
+              className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#0d9488] ring-2 ring-white"
               title={`Sesión activa: ${activeClient.name}`}
             />
           )}

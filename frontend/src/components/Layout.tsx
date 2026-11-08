@@ -35,7 +35,7 @@ export const Layout = ({ children, hideFooter = false }: LayoutProps) => {
   }, []);
   return (
     <TooltipProvider>
-      <div className="min-h-screen flex flex-col bg-background text-foreground relative pt-[70px] lg:pt-[76px] overflow-x-clip max-w-full">
+      <div className="min-h-screen flex flex-col bg-background text-foreground relative pt-[74px] lg:pt-[82px] overflow-x-clip max-w-full">
         <Header />
         <motion.main
           className="flex-1 w-full min-w-0 overflow-x-clip flex flex-col"

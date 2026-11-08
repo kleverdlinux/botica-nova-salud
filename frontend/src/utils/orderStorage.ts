@@ -55,7 +55,9 @@ export interface ClientProfile {
   address: string;
   district: string;
   reference?: string;
+  avatar?: string;
   password?: string;
+  fichaSalud?: any;
   createdAt?: number;
 }
 
@@ -262,14 +264,117 @@ export function saveActiveClient(client: ClientProfile): void {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         dni: client.dni,
+        nombre: client.name,
+        email: client.email,
         telefono: client.phone,
         direccion: client.address,
         distrito: client.district,
-        fichaMedica: client.fichaSalud || undefined
+        password: client.password || undefined,
+        fichaMedica: {
+          ...(client.fichaSalud || {}),
+          avatar: client.avatar || undefined,
+        }
       })
     }).catch(() => {});
   } catch (e) {
     console.error('Error guardando cliente:', e);
+  }
+}
+
+/**
+ * Actualiza el perfil de cliente (nombre, teléfono, correo, dirección, distrito, avatar, contraseña)
+ * sincronizando de forma segura tanto en PostgreSQL como en localStorage.
+ */
+export async function updateClientProfile(data: {
+  dni: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  district?: string;
+  reference?: string;
+  avatar?: string;
+  password?: string;
+  fichaSalud?: any;
+}): Promise<{ success: boolean; message: string; client?: ClientProfile }> {
+  try {
+    const cleanDni = data.dni.trim();
+    const current = getActiveClient() || {
+      id: cleanDni,
+      dni: cleanDni,
+      name: data.name || '',
+      email: data.email || '',
+      phone: data.phone || '',
+      address: data.address || '',
+      district: data.district || 'Lima Cercado',
+    };
+
+    const updatedClient: ClientProfile = {
+      ...current,
+      name: data.name !== undefined ? data.name.trim() : current.name,
+      email: data.email !== undefined ? data.email.trim() : current.email,
+      phone: data.phone !== undefined ? data.phone.trim() : current.phone,
+      address: data.address !== undefined ? data.address.trim() : current.address,
+      district: data.district !== undefined ? data.district.trim() : current.district,
+      reference: data.reference !== undefined ? data.reference.trim() : current.reference,
+      avatar: data.avatar !== undefined ? data.avatar : current.avatar,
+      fichaSalud: data.fichaSalud !== undefined ? data.fichaSalud : current.fichaSalud,
+    };
+    if (data.password) {
+      updatedClient.password = data.password;
+    }
+
+    saveActiveClient(updatedClient);
+
+    // Actualizar en el backend de PostgreSQL
+    const API_BASE = getApiBaseUrl();
+    try {
+      const res = await fetch(`${API_BASE}/catalogo/cliente/perfil`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dni: cleanDni,
+          nombre: updatedClient.name,
+          email: updatedClient.email,
+          telefono: updatedClient.phone,
+          direccion: updatedClient.address,
+          distrito: updatedClient.district,
+          password: data.password || undefined,
+          fichaMedica: {
+            ...(updatedClient.fichaSalud || {}),
+            avatar: updatedClient.avatar || undefined,
+          }
+        })
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        return {
+          success: false,
+          message: json.error || json.mensaje || 'Error al actualizar perfil en el servidor central.',
+          client: updatedClient,
+        };
+      }
+      if (json.client) {
+        const merged = { ...updatedClient, ...json.client, avatar: updatedClient.avatar || json.client.avatar };
+        saveActiveClient(merged);
+        return {
+          success: true,
+          message: json.mensaje || 'Perfil actualizado exitosamente en todos tus dispositivos.',
+          client: merged,
+        };
+      }
+    } catch (networkErr) {
+      console.warn('Servidor central no disponible, perfil actualizado en este dispositivo:', networkErr);
+    }
+
+    return {
+      success: true,
+      message: 'Perfil actualizado exitosamente en este dispositivo.',
+      client: updatedClient,
+    };
+  } catch (err: any) {
+    console.error('Error en updateClientProfile:', err);
+    return { success: false, message: err.message || 'Error al actualizar el perfil.' };
   }
 }
 
@@ -285,6 +390,7 @@ export async function registerClient(data: {
   address: string;
   district?: string;
   password?: string;
+  esAutoRegistro?: boolean;
 }): Promise<{ success: boolean; message: string; client?: ClientProfile }> {
   try {
     const cleanDni = data.dni.trim();
@@ -317,7 +423,8 @@ export async function registerClient(data: {
           telefono: data.phone?.trim() || '',
           direccion: data.address?.trim() || 'Lima',
           distrito: data.district?.trim() || 'Lima Cercado',
-          password: data.password || ''
+          password: data.password || cleanDni,
+          esAutoRegistro: Boolean(data.esAutoRegistro)
         })
       });
 

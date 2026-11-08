@@ -37,6 +37,8 @@ import {
   Receipt,
   Eye,
   X,
+  Camera,
+  Upload,
 } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Product } from '@/data/products';
@@ -46,6 +48,7 @@ import {
   getCustomerOrders,
   getActiveClient,
   saveActiveClient,
+  updateClientProfile,
   logoutClient,
   CustomerOrder,
   ClientProfile,
@@ -125,6 +128,13 @@ export default function ClientPortal() {
     reference: '',
   });
 
+  // Foto de perfil y cambio de contraseña
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const avatarFileRef = React.useRef<HTMLInputElement>(null);
+
   // Ficha de salud y prevención de interacciones farmacológicas
   const [fichaSalud, setFichaSalud] = useState<FichaSaludPaciente>({
     alergias: [],
@@ -140,6 +150,7 @@ export default function ClientPortal() {
     const client = getActiveClient();
     if (client) {
       setActiveClient(client);
+      setAvatarUrl(client.avatar || null);
       setProfileForm({
         name: client.name || '',
         dni: client.dni || '',
@@ -170,6 +181,7 @@ export default function ClientPortal() {
       }
     } else {
       setActiveClient(null);
+      setAvatarUrl(null);
       setOrders([]);
     }
   }, []);
@@ -180,6 +192,7 @@ export default function ClientPortal() {
       const client = e.detail;
       if (client) {
         setActiveClient(client);
+        setAvatarUrl(client.avatar || null);
         setProfileForm({
           name: client.name || '',
           dni: client.dni || '',
@@ -192,6 +205,7 @@ export default function ClientPortal() {
         setOrders(getCustomerOrders(client));
       } else {
         setActiveClient(null);
+        setAvatarUrl(null);
         setOrders([]);
       }
     };
@@ -244,8 +258,33 @@ export default function ClientPortal() {
     }
   };
 
-  // Guardar perfil y datos de contacto
-  const handleSaveProfile = (e: React.FormEvent) => {
+  // Carga y previsualización de foto de perfil
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 3 * 1024 * 1024) {
+      notificarAdvertencia('Imagen muy grande', 'Por favor selecciona una foto de menos de 3MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setAvatarUrl(base64);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatarUrl(null);
+    if (avatarFileRef.current) {
+      avatarFileRef.current.value = '';
+    }
+  };
+
+  // Guardar perfil, foto, contraseña y datos de contacto
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!profileForm.name.trim() || !profileForm.dni.trim()) {
       notificarAdvertencia('Campos Obligatorios', 'Nombre y DNI son obligatorios para emitir comprobantes SUNAT.');
@@ -253,18 +292,48 @@ export default function ClientPortal() {
     }
 
     if (!/^\d{8}$/.test(profileForm.dni.trim())) {
-      notificarAdvertencia('DNI Inválido', 'El DNI debe contener exactamente 8 dígitos.');
+      notificarAdvertencia('DNI Inválido', 'El DNI debe contener exactamente 8 dígitos numéricos.');
       return;
     }
 
-    const updated: ClientProfile = {
-      id: profileForm.dni,
-      ...profileForm,
-    };
+    if (newPassword && newPassword.length < 6) {
+      notificarAdvertencia('Contraseña Corta', 'La nueva contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
 
-    saveActiveClient(updated);
-    setActiveClient(updated);
-    notificarExito('Datos Actualizados', 'Tu información de entrega y facturación ha sido guardada correctamente.');
+    if (newPassword && newPassword !== confirmPassword) {
+      notificarAdvertencia('Contraseñas no coinciden', 'La nueva contraseña y su confirmación deben ser exactamente iguales.');
+      return;
+    }
+
+    setIsSavingProfile(true);
+    try {
+      const res = await updateClientProfile({
+        dni: profileForm.dni.trim(),
+        name: profileForm.name.trim(),
+        email: profileForm.email.trim(),
+        phone: profileForm.phone.trim(),
+        address: profileForm.address.trim(),
+        district: profileForm.district.trim(),
+        reference: profileForm.reference?.trim() || '',
+        avatar: avatarUrl || undefined,
+        password: newPassword || undefined,
+        fichaSalud,
+      });
+
+      if (res.success && res.client) {
+        setActiveClient(res.client);
+        setNewPassword('');
+        setConfirmPassword('');
+        notificarExito('Perfil Actualizado', 'Tu foto, datos personales y contraseña se guardaron exitosamente.');
+      } else {
+        notificarAdvertencia('Atención', res.message || 'No se pudo guardar la información.');
+      }
+    } catch (err: any) {
+      notificarError('Error al Guardar', err.message || 'Ocurrió un error inesperado al actualizar tu perfil.');
+    } finally {
+      setIsSavingProfile(false);
+    }
   };
 
   // Guardar ficha de salud
@@ -845,16 +914,87 @@ export default function ClientPortal() {
       <div className="pb-4 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
         <div>
           <h3 className="text-base font-black text-neutral-900 dark:text-white">
-            Datos de Facturación y Entrega en Lima
+            Mi Perfil, Foto y Facturación SUNAT
           </h3>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-            Se usarán de forma predeterminada para tus boletas electrónicas SUNAT y la dirección de despacho.
+            Personaliza tu foto de perfil, datos de contacto, dirección de entrega y contraseña de acceso.
           </p>
         </div>
         <ShieldCheck className="w-5 h-5 text-[#0d9488] dark:text-teal-400 shrink-0" />
       </div>
 
-      <form onSubmit={handleSaveProfile} className="space-y-4">
+      <form onSubmit={handleSaveProfile} className="space-y-5">
+        {/* ========================================================
+            SECCIÓN 1: FOTO DE PERFIL / AVATAR PERSONALIZADO
+            ======================================================== */}
+        <div className="bg-neutral-50/80 dark:bg-neutral-800/60 p-4 rounded-2xl border border-neutral-200/80 dark:border-neutral-700/80 flex flex-col sm:flex-row items-center gap-4">
+          <input
+            ref={avatarFileRef}
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
+            className="hidden"
+          />
+
+          <div className="relative group shrink-0">
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt="Foto de perfil"
+                className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl object-cover border-2 border-[#0d9488] shadow-sm"
+              />
+            ) : (
+              <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-teal-50 dark:bg-teal-950/60 border-2 border-teal-200 dark:border-teal-800 text-[#0d9488] dark:text-teal-400 flex items-center justify-center font-black text-2xl shadow-2xs">
+                {(profileForm.name || 'C').charAt(0).toUpperCase()}
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => avatarFileRef.current?.click()}
+              className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-[#0d9488] text-white shadow-md hover:bg-teal-700 transition cursor-pointer"
+              title="Cambiar foto de perfil"
+            >
+              <Camera className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="space-y-1 text-center sm:text-left flex-1 min-w-0">
+            <span className="text-xs font-black uppercase tracking-tight text-neutral-900 dark:text-white block">
+              Foto de Perfil
+            </span>
+            <p className="text-[11px] text-neutral-500 dark:text-neutral-400 leading-snug">
+              Tu foto será visible en tu portal y en la barra de navegación de la botica. Formatos JPG, PNG o WebP (máx 3MB).
+            </p>
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => avatarFileRef.current?.click()}
+                className="rounded-xl text-[11px] font-bold h-8 px-3 border-teal-300 text-[#0d9488] hover:bg-teal-50 dark:hover:bg-teal-950/40 cursor-pointer"
+              >
+                <Upload className="w-3.5 h-3.5 mr-1.5" />
+                <span>{avatarUrl ? 'Cambiar Foto' : 'Subir Foto'}</span>
+              </Button>
+              {avatarUrl && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRemoveAvatar}
+                  className="rounded-xl text-[11px] font-bold h-8 px-3 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5 mr-1" />
+                  <span>Quitar Foto</span>
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ========================================================
+            SECCIÓN 2: DATOS PERSONALES Y FACTURACIÓN
+            ======================================================== */}
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300">
@@ -958,12 +1098,62 @@ export default function ClientPortal() {
           />
         </div>
 
+        {/* ========================================================
+            SECCIÓN 3: SEGURIDAD Y CAMBIO DE CONTRASEÑA
+            ======================================================== */}
+        <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800 space-y-3">
+          <div className="flex items-center gap-2">
+            <Lock className="w-4 h-4 text-[#0d9488] dark:text-teal-400" />
+            <h4 className="text-xs font-black uppercase tracking-wider text-neutral-900 dark:text-white">
+              Seguridad y Cambio de Contraseña
+            </h4>
+          </div>
+          <p className="text-[11px] text-neutral-400 leading-snug">
+            Si no deseas cambiar tu contraseña, puedes dejar estos campos en blanco.
+          </p>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300">
+                Nueva Contraseña
+              </label>
+              <Input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="rounded-xl text-xs h-10 border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:border-[#0d9488]"
+                placeholder="Mínimo 6 caracteres"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300">
+                Confirmar Nueva Contraseña
+              </label>
+              <Input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="rounded-xl text-xs h-10 border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:border-[#0d9488]"
+                placeholder="Repite la nueva contraseña"
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="pt-3 flex justify-end">
           <Button
             type="submit"
-            className="rounded-xl px-6 py-2.5 text-xs font-bold uppercase bg-[#0d9488] hover:bg-teal-700 text-white shadow-xs cursor-pointer"
+            disabled={isSavingProfile}
+            className="rounded-xl px-6 py-2.5 text-xs font-bold uppercase bg-[#0d9488] hover:bg-teal-700 text-white shadow-xs cursor-pointer flex items-center gap-2"
           >
-            Guardar y Actualizar
+            {isSavingProfile ? (
+              <>
+                <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                <span>Guardando...</span>
+              </>
+            ) : (
+              <span>Guardar Cambios del Perfil</span>
+            )}
           </Button>
         </div>
       </form>
@@ -999,9 +1189,17 @@ export default function ClientPortal() {
               <div className="space-y-3">
                 {/* Perfil Condensado del Paciente */}
                 <div className="flex items-center gap-3 pb-3 border-b border-neutral-100 dark:border-neutral-800">
-                  <div className="w-11 h-11 rounded-2xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200/80 dark:border-teal-800 text-[#0d9488] dark:text-teal-400 flex items-center justify-center font-black text-lg shadow-2xs shrink-0">
-                    {activeClient.name.charAt(0).toUpperCase()}
-                  </div>
+                  {activeClient.avatar ? (
+                    <img
+                      src={activeClient.avatar}
+                      alt={activeClient.name}
+                      className="w-11 h-11 rounded-2xl object-cover border border-teal-200/80 shadow-2xs shrink-0"
+                    />
+                  ) : (
+                    <div className="w-11 h-11 rounded-2xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200/80 dark:border-teal-800 text-[#0d9488] dark:text-teal-400 flex items-center justify-center font-black text-lg shadow-2xs shrink-0">
+                      {activeClient.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
                       <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[8.5px] font-black uppercase tracking-wider bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
@@ -1234,9 +1432,17 @@ export default function ClientPortal() {
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-3 shadow-xs">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200/80 dark:border-teal-800 text-[#0d9488] dark:text-teal-400 flex items-center justify-center font-black text-base shadow-2xs shrink-0">
-                  {activeClient.name.charAt(0).toUpperCase()}
-                </div>
+                {activeClient.avatar ? (
+                  <img
+                    src={activeClient.avatar}
+                    alt={activeClient.name}
+                    className="w-10 h-10 rounded-2xl object-cover border border-teal-200/80 shadow-2xs shrink-0"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200/80 dark:border-teal-800 text-[#0d9488] dark:text-teal-400 flex items-center justify-center font-black text-base shadow-2xs shrink-0">
+                    {activeClient.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[8px] font-black uppercase tracking-wider bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800">

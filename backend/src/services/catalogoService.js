@@ -336,11 +336,11 @@ export async function registrarPedidoWebPublico({
 /**
  * Registra un nuevo cliente en la base de datos central de PostgreSQL
  */
-export async function registrarCliente({ dni, nombre, email, telefono, direccion, distrito, password }) {
+export async function registrarCliente({ dni, nombre, email, telefono, direccion, distrito, password, esAutoRegistro = false }) {
   const cleanDni = String(dni || '').trim();
   const cleanEmail = String(email || '').trim().toLowerCase();
   const cleanNombre = String(nombre || '').trim();
-  const rawPassword = String(password || '').trim();
+  const rawPassword = String(password || cleanDni).trim();
 
   if (!cleanNombre) {
     throw new ErrorNegocio('Ingresa tus nombres y apellidos completos.', 400);
@@ -355,15 +355,44 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
     throw new ErrorNegocio('La contraseña debe tener al menos 6 caracteres.', 400);
   }
 
-  // Verificar si ya existe por DNI o correo
+  // Verificar si ya existe por DNI
   const existenteDni = await prisma.cliente.findUnique({ where: { dni: cleanDni } });
   if (existenteDni) {
+    if (esAutoRegistro) {
+      // Si es auto-registro en checkout, actualizar datos de despacho y retornar cuenta existente
+      const actualizado = await prisma.cliente.update({
+        where: { dni: cleanDni },
+        data: {
+          nombre: cleanNombre || existenteDni.nombre,
+          telefono: telefono ? String(telefono).trim() : existenteDni.telefono,
+          direccion: direccion ? String(direccion).trim() : existenteDni.direccion,
+          distrito: distrito ? String(distrito).trim() : existenteDni.distrito,
+        }
+      });
+      return {
+        id: actualizado.dni,
+        dni: actualizado.dni,
+        name: actualizado.nombre,
+        email: actualizado.email,
+        phone: actualizado.telefono || '',
+        address: actualizado.direccion || 'Lima',
+        district: actualizado.distrito || 'Lima Cercado',
+        avatar: (actualizado.fichaMedica && actualizado.fichaMedica.avatar) || null,
+        fichaSalud: actualizado.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
+        createdAt: actualizado.createdAt
+      };
+    }
     throw new ErrorNegocio('Ya existe una cuenta registrada con este DNI. Por favor inicia sesión.', 400);
   }
 
+  let finalEmail = cleanEmail;
   const existenteEmail = await prisma.cliente.findUnique({ where: { email: cleanEmail } });
   if (existenteEmail) {
-    throw new ErrorNegocio('Ya existe una cuenta registrada con este correo electrónico. Por favor inicia sesión.', 400);
+    if (esAutoRegistro) {
+      finalEmail = `${cleanDni}@cliente.novasalud.pe`;
+    } else {
+      throw new ErrorNegocio('Ya existe una cuenta registrada con este correo electrónico. Por favor inicia sesión.', 400);
+    }
   }
 
   const hashedPassword = await bcrypt.hash(rawPassword, 10);
@@ -372,7 +401,7 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
     data: {
       dni: cleanDni,
       nombre: cleanNombre,
-      email: cleanEmail,
+      email: finalEmail,
       telefono: telefono ? String(telefono).trim() : '',
       direccion: direccion ? String(direccion).trim() : 'Lima',
       distrito: distrito ? String(distrito).trim() : 'Lima Cercado',
@@ -391,6 +420,7 @@ export async function registrarCliente({ dni, nombre, email, telefono, direccion
     phone: nuevo.telefono || '',
     address: nuevo.direccion || 'Lima',
     district: nuevo.distrito || 'Lima Cercado',
+    avatar: null,
     fichaSalud: nuevo.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
     createdAt: nuevo.createdAt
   };
@@ -439,6 +469,7 @@ export async function loginCliente({ identifier, password }) {
     phone: cliente.telefono || '',
     address: cliente.direccion || 'Lima',
     district: cliente.distrito || 'Lima Cercado',
+    avatar: (cliente.fichaMedica && cliente.fichaMedica.avatar) || null,
     fichaSalud: cliente.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
     createdAt: cliente.createdAt
   };
@@ -447,18 +478,23 @@ export async function loginCliente({ identifier, password }) {
 /**
  * Actualiza el perfil o ficha médica del cliente en PostgreSQL
  */
-export async function actualizarPerfilCliente({ dni, telefono, direccion, distrito, fichaMedica, botiquin }) {
+export async function actualizarPerfilCliente({ dni, nombre, email, telefono, direccion, distrito, fichaMedica, botiquin, password }) {
   const cleanDni = String(dni || '').trim();
   if (!cleanDni) {
     throw new ErrorNegocio('DNI de cliente requerido.', 400);
   }
 
   const dataToUpdate = {};
+  if (nombre !== undefined && String(nombre).trim()) dataToUpdate.nombre = String(nombre).trim();
+  if (email !== undefined && String(email).trim()) dataToUpdate.email = String(email).trim().toLowerCase();
   if (telefono !== undefined) dataToUpdate.telefono = String(telefono).trim();
   if (direccion !== undefined) dataToUpdate.direccion = String(direccion).trim();
   if (distrito !== undefined) dataToUpdate.distrito = String(distrito).trim();
   if (fichaMedica !== undefined) dataToUpdate.fichaMedica = fichaMedica;
   if (botiquin !== undefined) dataToUpdate.botiquin = botiquin;
+  if (password && String(password).trim().length >= 6) {
+    dataToUpdate.password = await bcrypt.hash(String(password).trim(), 10);
+  }
 
   const actualizado = await prisma.cliente.update({
     where: { dni: cleanDni },
@@ -473,6 +509,7 @@ export async function actualizarPerfilCliente({ dni, telefono, direccion, distri
     phone: actualizado.telefono || '',
     address: actualizado.direccion || 'Lima',
     district: actualizado.distrito || 'Lima Cercado',
+    avatar: (actualizado.fichaMedica && actualizado.fichaMedica.avatar) || null,
     fichaSalud: actualizado.fichaMedica || { grupoSanguineo: 'O+', alergias: [], condiciones: [] },
     createdAt: actualizado.createdAt
   };

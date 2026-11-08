@@ -196,7 +196,7 @@ const Products = () => {
       </section>
 
       {/* Filters & Sorting */}
-      <section className="py-3.5 border-b border-zinc-200 sticky top-[58px] bg-white/95 backdrop-blur-md z-40 shadow-xs">
+      <section className="py-3.5 border-b border-zinc-200 bg-white shadow-2xs">
         <div className="container-full space-y-3">
           {/* Navegación por Categorías */}
 

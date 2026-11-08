@@ -11,6 +11,10 @@ import {
   ExternalLink,
   Clock,
   MapPin,
+  Key,
+  Copy,
+  Check,
+  FileText,
 } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa6';
 import { CustomerOrder } from '@/utils/orderStorage';
@@ -100,6 +104,16 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
   const [isQrZoomed, setIsQrZoomed] = useState(false);
   const [fechaSunatStr, setFechaSunatStr] = useState<string>('');
   const [cadenaSunatStr, setCadenaSunatStr] = useState<string>('');
+  const [showCredentialsModal, setShowCredentialsModal] = useState(false);
+  const [copiedField, setCopiedField] = useState<'dni' | 'pass' | null>(null);
+
+  const handleCopy = (text: string, field: 'dni' | 'pass') => {
+    try {
+      navigator.clipboard.writeText(text);
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch {}
+  };
 
   // Generación en vivo de código QR oficial bajo normativa SUNAT
   useEffect(() => {
@@ -159,6 +173,11 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
   };
 
   const handleGoToClientPanel = () => {
+    setShowCredentialsModal(true);
+  };
+
+  const handleConfirmAccess = () => {
+    setShowCredentialsModal(false);
     onClose();
     navigate('/mi-cuenta', { state: { tab: 'pedidos', highlightOrder: order.id } });
   };
@@ -166,17 +185,21 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
   const esFactura =
     order.tipoComprobante === 'FACTURA' || order.serieNumero?.startsWith('F');
 
-  const whatsappMessage = encodeURIComponent(
-    `Hola Botica Nova Salud, confirmo mi pedido con ${
-      esFactura ? 'Factura' : 'Boleta'
-    } Electrónica ${order.serieNumero} (Pedido ${order.id}) por un total de S/ ${(
-      Number(order.total) || 0
-    ).toFixed(2)}. Titular: ${
-      esFactura && order.customer.razonSocial
-        ? order.customer.razonSocial
-        : `${order.customer.firstName} ${order.customer.lastName}`
-    }.`
-  );
+  const titular =
+    esFactura && order.customer.razonSocial
+      ? order.customer.razonSocial
+      : `${order.customer.firstName} ${order.customer.lastName}`;
+  const numDoc =
+    esFactura && order.customer.ruc ? order.customer.ruc : order.customer.dni;
+
+  const itemsListText = order.items
+    .map(
+      (item) =>
+        `• ${item.quantity}x ${item.name} (${item.presentation}) - S/ ${(
+          Number(item.price) || 0
+        ).toFixed(2)} = S/ ${(Number(item.subtotal) || 0).toFixed(2)}`
+    )
+    .join('\n');
 
   const subtotalNeto = ((Number(order.subtotal) || 0) / 1.18).toFixed(2);
   const igvCalculado = (
@@ -184,14 +207,40 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
     (Number(order.subtotal) || 0) / 1.18
   ).toFixed(2);
 
+  const whatsappMessage = encodeURIComponent(
+`🌿 *BOTICA NOVA SALUD - COMPROBANTE DE PAGO*
+📋 *${esFactura ? 'Factura' : 'Boleta'} Electrónica:* ${order.serieNumero}
+🔖 *Código de Pedido:* ${order.id}
+📅 *Fecha de Emisión:* ${order.date}
+
+👤 *Cliente:* ${titular}
+🪪 *DNI / RUC:* ${numDoc}
+📱 *Teléfono:* ${order.customer.phone}
+📍 *Entrega:* ${order.customer.address} (${order.customer.district || 'Lima Cercado'})
+
+🛍️ *DETALLE DE MEDICAMENTOS Y PRODUCTOS:*
+${itemsListText}
+
+💰 *RESUMEN DE PAGO:*
+• Op. Gravada: S/ ${subtotalNeto}
+• I.G.V. (18%): S/ ${igvCalculado}
+• Delivery Lima: ${order.shipping === 0 ? 'Gratis' : `S/ ${(Number(order.shipping) || 0).toFixed(2)}`}
+💳 *TOTAL PAGADO:* *S/ ${(Number(order.total) || 0).toFixed(2)}*
+💳 *Método de Pago:* ${order.paymentDetails}
+
+✅ Comprobante tributario oficial registrado en SUNAT.
+Para seguimiento de tu despacho ingresa a tu panel de cliente en Botica Nova Salud.`
+  );
+
   return (
-    <div
-      className="fixed inset-0 z-60 overflow-y-auto sm:overflow-hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-200 print:p-0 print:bg-white"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-zinc-200 overflow-hidden flex flex-col max-h-[96vh] sm:max-h-[92vh] text-[#18181b] animate-in zoom-in-95 duration-200 print:border-none print:shadow-none print:max-w-none print:rounded-none print:max-h-none">
+    <>
+      <div
+        className="fixed inset-0 z-[100] overflow-y-auto bg-black/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-2.5 sm:p-4 pt-16 sm:pt-6 pb-6 animate-in fade-in duration-200 print:p-0 print:bg-white"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) onClose();
+        }}
+      >
+      <div className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-zinc-200 flex flex-col my-auto text-[#18181b] animate-in zoom-in-95 duration-200 print:border-none print:shadow-none print:max-w-none print:rounded-none">
         {/* ========================================================
             HEADER DEL MODAL (Fondo blanco, diseño unificado)
             ======================================================== */}
@@ -228,13 +277,13 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
         {/* ========================================================
             CUERPO HORIZONTAL EN 2 COLUMNAS (DOCUMENTO + BOTONES DERECHA)
             ======================================================== */}
-        <div className="grid grid-cols-1 md:grid-cols-12 flex-1 overflow-y-auto md:overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-12 flex-1">
           {/* ====================================================================
               COLUMNA IZQUIERDA (7 u 8 cols): BOLETA / FACTURA FÍSICA AUTÉNTICA
               ==================================================================== */}
           <div
             ref={printRef}
-            className="md:col-span-7 lg:col-span-8 p-4 sm:p-5 flex flex-col justify-between space-y-3 bg-white border-b md:border-b-0 md:border-r border-zinc-200 overflow-y-auto print:border-none print:p-8"
+            className="md:col-span-7 lg:col-span-8 p-3.5 sm:p-5 flex flex-col justify-between space-y-3 bg-white border-b md:border-b-0 md:border-r border-zinc-200 print:border-none print:p-8"
           >
             <div className="space-y-3">
               {/* Encabezado de la Boleta / Factura */}
@@ -525,11 +574,12 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
           </div>
         </div>
       </div>
+    </div>
 
       {/* Modal de Zoom para Código QR Oficial SUNAT */}
       {isQrZoomed && (
         <div
-          className="fixed inset-0 z-70 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150"
+          className="fixed inset-0 z-[110] bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150"
           onClick={() => setIsQrZoomed(false)}
         >
           <div
@@ -594,7 +644,134 @@ export const BoletaModal: React.FC<BoletaModalProps> = ({ isOpen, onClose, order
           </div>
         </div>
       )}
-    </div>
+
+      {/* Modal Centrado de Credenciales para Acceso a Panel de Cliente */}
+      {showCredentialsModal && (
+        <div
+          className="fixed inset-0 z-[120] overflow-y-auto bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowCredentialsModal(false);
+          }}
+        >
+          <div className="relative w-full max-w-sm sm:max-w-md bg-white rounded-3xl p-4 sm:p-5 shadow-2xl border border-zinc-200 text-[#18181b] space-y-3 sm:space-y-3.5 my-auto animate-in zoom-in-95 duration-200 max-h-[94vh] overflow-y-auto">
+            {/* Header Modal */}
+            <div className="flex items-start justify-between gap-2.5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-teal-50 border border-teal-200 text-[#0d9488] flex items-center justify-center shrink-0">
+                  <Key className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-black tracking-tight text-zinc-950">
+                    Tu Cuenta de Cliente
+                  </h3>
+                  <p className="text-[11px] text-zinc-500">
+                    Acceso para consultar tus pedidos y boletas
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowCredentialsModal(false)}
+                className="p-1 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-400 hover:text-black transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Credenciales Destacadas */}
+            <div className="bg-zinc-50 rounded-2xl p-3 border border-zinc-200/90 space-y-2.5">
+              {/* Usuario */}
+              <div>
+                <label className="text-[9.5px] font-black uppercase tracking-wider text-zinc-400 block mb-0.5">
+                  Usuario (DNI o RUC)
+                </label>
+                <div className="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-xl border border-zinc-200">
+                  <span className="font-mono font-bold text-xs sm:text-sm text-zinc-900">
+                    {order.customer.dni || order.customer.ruc}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(order.customer.dni || order.customer.ruc || '', 'dni')}
+                    className="flex items-center gap-1 text-[10.5px] font-bold text-[#0d9488] hover:text-teal-700 transition cursor-pointer"
+                  >
+                    {copiedField === 'dni' ? (
+                      <>
+                        <Check className="w-3 h-3 text-emerald-600" />
+                        <span className="text-emerald-600">Copiado</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>Copiar</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Contraseña */}
+              <div>
+                <label className="text-[9.5px] font-black uppercase tracking-wider text-zinc-400 block mb-0.5">
+                  Contraseña de Acceso Inicial
+                </label>
+                <div className="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-xl border border-zinc-200">
+                  <span className="font-mono font-bold text-xs sm:text-sm text-zinc-900">
+                    {order.customer.dni || order.customer.ruc}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(order.customer.dni || order.customer.ruc || '', 'pass')}
+                    className="flex items-center gap-1 text-[10.5px] font-bold text-[#0d9488] hover:text-teal-700 transition cursor-pointer"
+                  >
+                    {copiedField === 'pass' ? (
+                      <>
+                        <Check className="w-3 h-3 text-emerald-600" />
+                        <span className="text-emerald-600">Copiado</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>Copiar</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                <p className="text-[10px] text-zinc-400 mt-1">
+                  Por seguridad tu contraseña inicial es tu número de DNI. Podrás cambiarla fácilmente en tu perfil.
+                </p>
+              </div>
+            </div>
+
+            {/* Aviso informativo */}
+            <div className="bg-teal-50/70 border border-teal-200 rounded-xl p-2.5 flex items-start gap-2">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#0d9488] shrink-0 mt-0.5" />
+              <p className="text-[10.5px] text-teal-900 leading-snug">
+                Puedes iniciar sesión con estas credenciales en cualquier celular, laptop o tablet para ver tus compras y boletas.
+              </p>
+            </div>
+
+            {/* Botón de acción */}
+            <div className="pt-0.5 space-y-1.5">
+              <button
+                type="button"
+                onClick={handleConfirmAccess}
+                className="w-full py-2.5 px-3 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shadow-teal-700/20"
+              >
+                <span>Continuar a Mi Panel</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowCredentialsModal(false)}
+                className="w-full py-1.5 text-center text-[11px] font-bold text-zinc-500 hover:text-zinc-800 transition cursor-pointer"
+              >
+                Permanecer en el comprobante
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
