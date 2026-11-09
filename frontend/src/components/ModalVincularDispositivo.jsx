@@ -40,10 +40,7 @@ export default function ModalVincularDispositivo({
       base = `http://${ip || ipLocal}:5173/terminal-movil`;
     }
     const params = new URLSearchParams();
-    if (Number(monto) > 0) params.set('monto', Number(monto).toFixed(2));
     if (ticketId) params.set('ticket', ticketId);
-    if (clienteDoc) params.set('doc', clienteDoc);
-    if (clienteNom) params.set('cliente', clienteNom);
     const qs = params.toString();
     return qs ? `${base}?${qs}` : base;
   };

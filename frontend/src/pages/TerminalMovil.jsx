@@ -34,8 +34,8 @@ export default function TerminalMovil() {
     total: montoUrl > 0 ? montoUrl : 0,
     items: [],
     ticketId: ticketUrl || 'TKT-001',
-    clienteNom: clienteUrl || '',
-    clienteDoc: docUrl || ''
+    clienteNom: '',
+    clienteDoc: ''
   });
 
   const [conectado, setConectado] = useState(true);
@@ -46,7 +46,7 @@ export default function TerminalMovil() {
   const [cardNumber, setCardNumber] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');
   const [cardCvv, setCardCvv] = useState('');
-  const [cardHolder, setCardHolder] = useState(clienteUrl || '');
+  const [cardHolder, setCardHolder] = useState('');
 
   // Limpiar parámetros de la URL inmediatamente al montar para evitar montos y datos residuales entre ventas
   useEffect(() => {
@@ -87,8 +87,8 @@ export default function TerminalMovil() {
             metodo: payload.metodoPago || metodoActivo,
             referencia: payload.comprobante || 'VCH-APROBADO',
             ticket: payload.ticketId || ticketUrl || 'TKT-001',
-            cliente: payload.clienteNom || cardHolder || clienteUrl || 'Cliente General',
-            clienteDoc: payload.clienteDoc || docUrl || '',
+            cliente: payload.clienteNom ? String(payload.clienteNom).trim() : 'Cliente General',
+            clienteDoc: payload.clienteDoc ? String(payload.clienteDoc).trim() : '',
             hora: new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
             fecha: new Date().toLocaleDateString('es-PE'),
             items: Array.isArray(payload.items) && payload.items.length > 0 ? payload.items : (Array.isArray(estadoPos.items) ? estadoPos.items : [])
