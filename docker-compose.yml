@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  # ============================================================================
+  # SERVICIO 1: MOTOR DE BASE DE DATOS (POSTGRESQL 16)
+  # ============================================================================
+  farmacia-db:
+    image: postgres:16-alpine
+    container_name: farmacia-nova-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: farmacia_nova
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      # Inicialización automática con el volcado completo de 9 tablas y catálogo
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      # Volumen persistente para que las ventas y stock no se borren
+      - farmacia_nova_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d farmacia_nova"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - farmacia-network
+
+  # ============================================================================
+  # SERVICIO 2: APLICACIÓN COMPLETA (NODE.JS + EXPRESS + PRISMA + REACT SPA)
+  # ============================================================================
+  farmacia-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: farmacia-nova-app
+    restart: unless-stopped
+    depends_on:
+      farmacia-db:
+        condition: service_healthy
+    environment:
+      PORT: 4000
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres@farmacia-db:5432/farmacia_nova?schema=public
+      JWT_SECRET: super_secreto_botica_nova_salud_2026_seguro_y_robusto_llave_maestra
+    ports:
+      - "4000:4000"
+    networks:
+      - farmacia-network
+
+# ==============================================================================
+# VOLÚMENES PERSISTENTES
+# ==============================================================================
+volumes:
+  farmacia_nova_data:
+    driver: local
+
+# ==============================================================================
+# RED INTERNA AISLADA
+# ==============================================================================
+networks:
+  farmacia-network:
+    driver: bridge
+
