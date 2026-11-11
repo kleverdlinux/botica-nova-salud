@@ -28,6 +28,7 @@ import {
   User,
   AlertTriangle,
   XCircle,
+  CheckCircle2,
   RefreshCw
 } from 'lucide-react';
 import { formatearFechaLima } from '../utils/formateadores.js';
