@@ -164,45 +164,118 @@ El esquema en `backend/prisma/schema.prisma` define las siguientes entidades pri
 
 ## Instalación y Ejecución Local
 
-### Requisitos Previos
-- **Node.js** `>= 20.0.0` y **npm**
-- **PostgreSQL** `>= 15` (local o en contenedor Docker)
+El sistema puede ejecutarse localmente de dos formas: **con Docker Compose** (opción más rápida, sin instalar PostgreSQL manualmente) o **de forma directa con Node.js y PostgreSQL**.
 
-### 1. Clonar el repositorio
+### Opción 1: Ejecución rápida con Docker Compose (Recomendada)
+
+**Requisitos:** Docker Desktop instalado y en ejecución.
+
+1. Clonar el repositorio (o descomprimir el ZIP del proyecto) y entrar a la carpeta raíz:
 ```bash
 git clone https://github.com/kleverdlinux/botica-nova-salud.git
 cd botica-nova-salud
 ```
 
-### 2. Configurar variables de entorno
-Crear el archivo `backend/.env` tomando como base `.env.example`:
-```env
-PORT=3000
-NODE_ENV=development
-DATABASE_URL="postgresql://usuario:password@localhost:5432/novasalud?schema=public"
-JWT_SECRET="clave_secreta_segura_jwt"
+2. Construir e iniciar los contenedores (`farmacia-db` con PostgreSQL 16 precargado mediante `db/init.sql` y `farmacia-app` con Backend + Frontend compilado):
+```bash
+docker compose up --build -d
 ```
 
-### 3. Instalar dependencias, migrar base de datos y poblar semilla
+3. Abrir en el navegador:
+- **Aplicación Web y API:** `http://localhost:4000`
+- **Verificación de salud del API:** `http://localhost:4000/api/health`
+
+4. Comandos útiles de Docker:
+```bash
+# Ver logs en tiempo real
+docker compose logs -f
+
+# Detener los contenedores conservando los datos
+docker compose down
+
+# Detener y limpiar el volumen de base de datos para reiniciar desde cero
+docker compose down -v
+```
+
+---
+
+### Opción 2: Ejecución manual con Node.js + PostgreSQL Local
+
+**Requisitos previos:**
+- **Node.js** `>= 20.0.0` y **npm**
+- **PostgreSQL** `>= 15` instalado y en ejecución local
+
+#### 1. Clonar el repositorio (o descomprimir el ZIP) y entrar a la carpeta raíz
+```bash
+git clone https://github.com/kleverdlinux/botica-nova-salud.git
+cd botica-nova-salud
+```
+
+#### 2. Crear la base de datos vacía en PostgreSQL
+Desde `psql` o pgAdmin, crear la base de datos local:
+```sql
+CREATE DATABASE botica_novasalud;
+```
+
+#### 3. Configurar variables de entorno (`backend/.env` y `frontend/.env`)
+Copiar las plantillas de ejemplo incluidas en el proyecto:
+
+En Windows (PowerShell):
+```powershell
+Copy-Item backend\.env.example backend\.env
+Copy-Item frontend\.env.example frontend\.env
+```
+
+En Linux / macOS / Git Bash:
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+```
+
+Editar `backend/.env` reemplazando `tu_password_aqui` por la contraseña real de tu PostgreSQL local (y manteniendo `JWT_SECRET` con al menos 32 caracteres):
+```env
+PORT=4000
+NODE_ENV=development
+FRONTEND_URL=http://localhost:5173
+JWT_SECRET=super_secreto_botica_nova_salud_2026_seguro_y_robusto_llave_maestra
+DATABASE_URL="postgresql://postgres:TU_PASSWORD@localhost:5432/botica_novasalud?schema=public"
+```
+
+Contenido de `frontend/.env`:
+```env
+VITE_API_URL=http://localhost:4000/api
+```
+
+#### 4. Instalar dependencias, generar Prisma Client, migrar tablas y poblar catálogo inicial
+Ejecutar desde la carpeta raíz `botica-nova-salud`:
 ```bash
 npm run render-build
 npm run prisma:deploy
 npm run prisma:seed
 ```
 
-### 4. Iniciar en modo desarrollo
+#### 5. Iniciar los servidores en dos terminales (carpeta raíz)
 ```bash
-# Terminal 1: Servidor Backend API (Puerto 3000)
+# Terminal 1: Backend API REST (http://localhost:4000/api/health)
 npm run dev:backend
 
-# Terminal 2: Servidor Frontend Vite (Puerto 5173)
+# Terminal 2: Frontend Vite + React (http://localhost:5173)
 npm run dev:frontend
 ```
 
-### Ejecución Alternativa con Docker Compose
-```bash
-docker compose up --build -d
-```
+Abrir en el navegador: **`http://localhost:5173`**
+
+*(Opcional: tras `npm run render-build`, también puede servir frontend y backend unificados en un solo proceso ejecutando `npm --prefix backend start` y abriendo `http://localhost:4000`.)*
+
+---
+
+### Credenciales de Prueba (Precargadas tras `seed` / `db/init.sql`)
+
+| Rol | Correo Electrónico | Contraseña |
+| :--- | :--- | :--- |
+| **Administrador (`ADMIN`)** | `admin@novasalud.com` | `Admin123!` |
+| **Cajero (`CAJERO`)** | `cajero@novasalud.com` | `Cajero123!` |
+| **Almacén (`ALMACEN`)** | `almacen@novasalud.com` | `Almacen123!` |
 
 ---
 
