@@ -163,8 +163,7 @@ export const obtenerEstado = (req, res) => {
     estado: ultimoEstado,
     dispositivosConectados: clientesSSE.size,
     ipLocal,
-    urlTerminal: `http://${ipLocal}:5173/terminal-movil`,
-    urlVisor: `http://${ipLocal}:5173/visor-cliente`
+    urlTerminal: `http://${ipLocal}:5173/terminal-movil`
   });
 };
 
@@ -196,14 +195,12 @@ export const obtenerInfoConexion = (req, res) => {
   const protocol = req.protocol === 'https' || req.get('x-forwarded-proto') === 'https' ? 'https' : 'http';
 
   const urlTerminal = isCloud ? `${protocol}://${host}/terminal-movil` : `http://${ipLocal}:5173/terminal-movil`;
-  const urlVisor = isCloud ? `${protocol}://${host}/visor-cliente` : `http://${ipLocal}:5173/visor-cliente`;
 
   return res.status(200).json({
     ipLocal,
     anclajeUsbActivo,
     interfaces,
     urlTerminal,
-    urlVisor,
     perifericosConocidos: [
       { id: 'touchpad', nombre: 'Touchpad Integrado (Laptop ASUS FX507)', tipo: 'touchpad', detalle: 'Panel táctil interno I2C (HIDI2C Device)' },
       { id: 'mouse', nombre: 'Mouse Inalámbrico 2.4G', tipo: 'mouse', detalle: 'Dongle receptor USB (2.4G Mouse)' },

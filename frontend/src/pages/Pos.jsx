@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import QRCode from 'qrcode';
 import {
   Search,
   ShoppingCart,
@@ -102,7 +101,6 @@ export default function Pos() {
 
   // Cobro Yape / Plin
   const [modalYapeAbierto, setModalYapeAbierto] = useState(false);
-  const [qrCodeDataUrl, setQrCodeDataUrl] = useState('');
   const [mostrarQrEnCajero, setMostrarQrEnCajero] = useState(false);
   const [numeroOperacionYape, setNumeroOperacionYape] = useState('');
   const [yapeEnviadoADispositivo, setYapeEnviadoADispositivo] = useState(false);
@@ -306,26 +304,7 @@ export default function Pos() {
     }
   }, [items, totalCalculadoUI, metodoPago, yapeEnviadoADispositivo, tarjetaEnviadaADispositivo, clienteNom, clienteDoc, tipoComprobante, ventaCompletada]);
 
-  // Generar código QR dinámico de Yape / Plin accesible desde el celular por Wi-Fi o Producción
-  useEffect(() => {
-    if (totalCalculadoUI > 0) {
-      const host = posDisplay.obtenerHostMovil();
-      const esLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-      const baseOrigin = typeof window !== 'undefined' && !esLocal && !window.location.hostname.startsWith('192.168.')
-        ? window.location.origin
-        : `http://${host}:5173`;
-      const urlPagoMovil = `${baseOrigin}/pago-movil?monto=${totalCalculadoUI.toFixed(2)}&ticket=${encodeURIComponent(ticketIdActual.current)}&comercio=${encodeURIComponent('Botica Nova Salud')}`;
 
-      QRCode.toDataURL(urlPagoMovil, {
-        width: 260,
-        margin: 2,
-        color: { dark: '#0f172a', light: '#ffffff' },
-        errorCorrectionLevel: 'M'
-      })
-        .then((url) => setQrCodeDataUrl(url))
-        .catch((err) => console.error('Error generando QR:', err));
-    }
-  }, [totalCalculadoUI]);
 
   // Consulta automática de DNI / RUC con API gratuita y protección contra alertas duplicadas
   const handleConsultarDocumento = async (docValor) => {
@@ -401,7 +380,7 @@ export default function Pos() {
     return () => window.removeEventListener('keydown', handleWindowKeyDown);
   }, []);
 
-  // Enviar Yape al visor del cliente
+  // Enviar Yape a Terminal Móvil
   const handleEnviarYapeADispositivo = () => {
     if (items.length === 0) {
       toast.error('Agregue productos antes de enviar el cobro.');
@@ -415,10 +394,10 @@ export default function Pos() {
       ticketId: ticketIdActual.current,
       clienteNom
     });
-    toast.success('Código QR proyectado en la pantalla del cliente.');
+    toast.success('Cobro Yape enviado a la Terminal Móvil.');
   };
 
-  // Enviar Tarjeta al visor del cliente
+  // Enviar Tarjeta a Terminal Móvil
   const handleEnviarTarjetaADispositivo = () => {
     if (items.length === 0) {
       toast.error('Agregue productos antes de enviar el cobro.');
@@ -432,7 +411,7 @@ export default function Pos() {
       ticketId: ticketIdActual.current,
       clienteNom
     });
-    toast.success('Monto y terminal enviados a la pantalla del cliente.');
+    toast.success('Monto y terminal enviados a la Terminal Móvil.');
   };
 
   // Simulación rápida de Yape
@@ -1323,10 +1302,10 @@ export default function Pos() {
                       ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200'
                       : 'bg-[#732282] text-white hover:bg-[#5b1968] shadow-xs'
                   }`}
-                  title="Enviar el código QR al visor del cliente o pantalla secundaria"
+                  title="Enviar cobro Yape / Plin a la Terminal Móvil vinculada"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>{yapeEnviadoADispositivo ? 'Enviado a Pantalla' : 'Enviar a Visor'}</span>
+                  <span>{yapeEnviadoADispositivo ? 'Enviado a Terminal' : 'Enviar a Terminal'}</span>
                 </button>
               )}
             </div>

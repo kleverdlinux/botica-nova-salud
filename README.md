@@ -51,13 +51,13 @@ Plataforma web empresarial e integral diseñada para la gestión centralizada de
    - Catálogo sincronizado de **120 productos farmacéuticos certificados** con registro de código de barras, principio activo, presentación, laboratorio, costo, precio, lote y vencimiento.
    - Registro auditable de movimientos (`ENTRADA`, `SALIDA`, `AJUSTE`) en la tabla `MovimientoInventario`, conservando stock anterior, stock resultante, motivo justificado, fecha/hora exacta y usuario responsable.
 
-4. **Ecosistema Móvil de Mostrador en Tiempo Real:**
+4. **Terminal Móvil de Mostrador en Tiempo Real:**
    - Sincronización inmediata entre la laptop de caja y dispositivos móviles mediante Server-Sent Events (`/api/dispositivos/stream`), sondeo REST y detección física por puerto USB (`detectarUsb.ps1`).
-   - Incluye **Visor de Cliente** (`/visor-cliente`), **Terminal Móvil** (`/terminal-movil`), **Escáner Móvil por Cámara** (`/escanear-movil` con `@zxing/library`) y **Pago Móvil QR** (`/pago-movil`).
+   - Incluye **Terminal Móvil** (`/terminal-movil`), vinculada directamente desde el POS mediante código QR para visualizar el detalle de medicamentos, monto total y completar el cobro por Yape/Plin o tarjeta.
 
 5. **Tienda Virtual E-Commerce 24/7, Portal del Cliente y Tópico Clínico:**
    - Catálogo público interactivo con filtrado por categorías terapéuticas, carrito de compras, checkout y módulo de seguimiento de despachos delivery (cobertura en Juliaca, San Román, Puno).
-   - **Portal del Cliente (`/portal-cliente`):** Gestión de perfil, ficha médica básica, historial de compras y botiquín familiar sincronizado en PostgreSQL.
+   - **Portal del Cliente (`/mi-cuenta`):** Gestión de perfil, ficha médica básica, historial de compras y botiquín familiar sincronizado en PostgreSQL.
    - **Módulo de Citas de Tópico (`/app/citas`):** Programación y control de atención para servicios farmacéuticos asistenciales (inyectables, toma de presión arterial y control de glucosa).
 
 6. **Seguridad Perimetral y Control de Accesos Basado en Roles (RBAC):**
@@ -70,7 +70,7 @@ Plataforma web empresarial e integral diseñada para la gestión centralizada de
 
 | Capa | Tecnologías e Instrumentos |
 | :--- | :--- |
-| **Frontend (SPA)** | React 19.3, Vite 8.3, Tailwind CSS 3.4, Radix UI, Lucide React, Zustand, Axios, Chart.js, Recharts, SweetAlert2, `@zxing/library`, `qrcode`, `html2canvas` |
+| **Frontend (SPA)** | React 19.3, Vite 8.3, Tailwind CSS 3.4, Radix UI, Lucide React, Zustand, Axios, Chart.js, Recharts, SweetAlert2, `qrcode`, `html2canvas` |
 | **Backend (API REST)** | Node.js (>= 20.0), Express 5.0, Prisma ORM 6.4, `jsonwebtoken` (JWT), `bcryptjs`, `zod`, `helmet`, `cors`, `compression` (GZIP), `express-rate-limit`, `nodemailer` |
 | **Base de Datos** | PostgreSQL (Esquema relacional transaccional gestionado con migraciones de Prisma) |
 | **DevOps y Despliegue** | Render Cloud (Web Service + Managed PostgreSQL con SSL/TLS), Docker, Docker Compose, Git y GitHub |

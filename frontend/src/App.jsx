@@ -55,11 +55,7 @@ const Checkout = lazyConReintento(() => import('./pages/Checkout'));
 const About = lazyConReintento(() => import('./pages/About'));
 const StoreIndex = lazyConReintento(() => import('./pages/StoreIndex'));
 const ClientPortal = lazyConReintento(() => import('./pages/ClientPortal'));
-const VisorCliente = lazyConReintento(() => import('./pages/VisorCliente.jsx'));
-const PagoMovilQR = lazyConReintento(() => import('./pages/PagoMovilQR.jsx'));
-const EscanerMovil = lazyConReintento(() => import('./pages/EscanerMovil.jsx'));
 const TerminalMovil = lazyConReintento(() => import('./pages/TerminalMovil.jsx'));
-const RibbonFoldLoaderDemo = lazyConReintento(() => import('./components/ui/demo'));
 
 function LazyFallback() {
   return (
@@ -105,13 +101,7 @@ export default function App() {
             <TooltipProvider>
               <Suspense fallback={<LazyFallback />}>
                 <Routes>
-                  {/* Ruta de Demo de Ribbon Fold Loader */}
-                  <Route path="/demo/loading" element={<RibbonFoldLoaderDemo />} />
-
-                  {/* Pantalla de Cliente / Visor Externo y Pago Móvil QR */}
-                  <Route path="/visor-cliente" element={<VisorCliente />} />
-                  <Route path="/pago-movil" element={<PagoMovilQR />} />
-                  <Route path="/escanear-movil" element={<EscanerMovil />} />
+                  {/* Terminal Móvil vinculada por QR desde el POS */}
                   <Route path="/terminal-movil" element={<TerminalMovil />} />
 
                   {/* Ruta pública de Autenticación */}

@@ -78,16 +78,7 @@ class PosDisplayManager {
     return `http://${host}:5173/terminal-movil`;
   }
 
-  obtenerUrlVisor() {
-    if (typeof window !== 'undefined') {
-      const { protocol, host, hostname } = window.location;
-      if (!hostname.includes('localhost') && !hostname.includes('127.0.0.1') && !hostname.startsWith('192.168.')) {
-        return `${protocol}//${host}/visor-cliente`;
-      }
-    }
-    const host = this.obtenerHostMovil();
-    return `http://${host}:5173/visor-cliente`;
-  }
+
 
   notificarSubscriptores(data) {
     for (const callback of this.subscriptores) {
